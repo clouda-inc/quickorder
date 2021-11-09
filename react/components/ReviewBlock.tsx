@@ -165,6 +165,7 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
 
   const customerNumber =
     accountData?.getOrderSoldToAccount?.customerNumber ?? ''
+
   const targetSystem = accountData?.getOrderSoldToAccount?.targetSystem ?? ''
   const salesOrganizationCode =
     accountData?.getOrderSoldToAccount?.salesOrganizationCode ?? ''
@@ -232,10 +233,13 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       const unit = refidData.getSkuAvailability?.items?.find(
         d => i.sku === d.refid
       )?.unitMultiplier
+
       const minQty = refidData.getSkuAvailability?.items?.find(
         d => i.sku === d.refid
       )?.minQty
+
       i.quantity = validateQuantity(minQty, unit, i.quantity)
+
       return {
         ...i,
         unit,
@@ -592,7 +596,7 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           if (rowData.error) {
             const text = intl.formatMessage(
               errorMessage[
-                cellData !== null && cellData !== void 0
+                cellData !== null && cellData !== undefined
                   ? cellData
                   : 'store/quickorder.valid'
               ]
