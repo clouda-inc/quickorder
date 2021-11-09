@@ -48,14 +48,12 @@ const UploadBlock: StorefrontFunctionComponent<UploadBlockInterface &
   intl,
 }: any) => {
   let productsArray: any = []
-  const [state, setState] = useState<any>({
-    reviewItems: [],
-    reviewState: false,
-    showAddToCart: false,
-  })
+  const [state, setState] = useState<any>({})
 
   const [refidLoading, setRefIdLoading] = useState<any>()
-  const { reviewItems, reviewState, showAddToCart } = state
+  const [reviewItems, setReviewItems] = useState<any>([])
+  const [reviewState, setReviewState] = useState(false)
+  const [showAddToCart, setShowAddToCart] = useState(false)
 
   const [
     addToCart,
@@ -125,11 +123,10 @@ const UploadBlock: StorefrontFunctionComponent<UploadBlockInterface &
           return !item.vtexSku || item.availability !== 'available'
         }).length === 0
 
+      setReviewItems(items)
+      setReviewState(true)
+      setShowAddToCart(show)
       setState({
-        ...state,
-        reviewItems: items,
-        reviewState: true,
-        showAddToCart: show,
         textAreaValue: GetText(items),
       })
     }
@@ -149,9 +146,9 @@ const UploadBlock: StorefrontFunctionComponent<UploadBlockInterface &
       return item.error !== null
     }).length
 
+    setReviewItems(items)
     setState({
       ...state,
-      reviewItems: items,
       hasError: error,
     })
     onReviewItems(items)
@@ -215,9 +212,9 @@ const UploadBlock: StorefrontFunctionComponent<UploadBlockInterface &
   const handleReset = () => {}
 
   const backList = () => {
+    setReviewState(false)
     setState({
       ...state,
-      reviewState: false,
     })
   }
 
@@ -311,17 +308,16 @@ const UploadBlock: StorefrontFunctionComponent<UploadBlockInterface &
     if (promptOnCustomEvent === 'addToCart' && showInstallPrompt) {
       showInstallPrompt()
     }
-
     return showInstallPrompt
   }
 
   const addToCartUpload = () => {
     const items: any = reviewItems
       .filter((item: any) => item.error === null && item.vtexSku !== null)
-      .map(({ vtexSku, quantity, seller }: any) => {
+      .map(({ vtexSku, quantity, seller, unit }: any) => {
         return {
           id: parseInt(vtexSku, 10),
-          quantity: parseFloat(quantity),
+          quantity: parseFloat(quantity) / unit,
           seller,
         }
       })
@@ -342,7 +338,7 @@ const UploadBlock: StorefrontFunctionComponent<UploadBlockInterface &
     'textContainerTitle',
     'textContainerDescription',
     'inactiveAddToCart',
-    'inactiveAddToCart',
+    'activeAddToCart',
   ] as const
 
   const handles = useCssHandles(CSS_HANDLES)
@@ -434,7 +430,7 @@ const UploadBlock: StorefrontFunctionComponent<UploadBlockInterface &
               </Button>
               {refidLoading && <Spinner />}
               {showAddToCart ? (
-                <div className={handles.inactiveAddToCart}>
+                <div className={handles.activeAddToCart}>
                   <Button
                     variation="primary"
                     size="small"
