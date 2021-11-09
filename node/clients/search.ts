@@ -1,4 +1,5 @@
-import { ExternalClient, InstanceOptions, IOContext } from '@vtex/api'
+import type { InstanceOptions, IOContext } from '@vtex/api'
+import { ExternalClient } from '@vtex/api'
 import axios from 'axios'
 
 interface RefIdArgs {
@@ -48,7 +49,7 @@ export class Search extends ExternalClient {
     if (res.status === 200) {
       const refs = Object.getOwnPropertyNames(res.data)
 
-      refs.forEach(id => {
+      refs.forEach((id) => {
         resultStr[id] = {
           sku: res.data[id],
           refid: id,
@@ -61,6 +62,7 @@ export class Search extends ExternalClient {
         const promises = result.map(async (o: any) =>
           this.sellerBySku(o.sku, o.refid)
         )
+
         result = await Promise.all(promises)
       }
 
@@ -74,6 +76,7 @@ export class Search extends ExternalClient {
         }
       })
     }
+
     return result
   }
 
@@ -86,6 +89,7 @@ export class Search extends ExternalClient {
     const [availabilityItem] = items.filter((curr: any) => {
       return curr.id === item.sku
     })
+
     return availabilityItem?.availability ?? ''
   }
 
@@ -113,18 +117,21 @@ export class Search extends ExternalClient {
       storePreferencesData: { countryCode },
       shippingData,
     } = orderForm
+
     const items = refids
       .filter((item: any) => {
         return !!item.sku
       })
       .map((item: any) => {
         const [seller] = item.sellers
+
         return {
           id: item.sku,
           quantity: 1,
           seller: seller?.id,
         }
       })
+
     return this.http.post(
       `/api/checkout/pub/orderForms/simulation?sc=${salesChannel}`,
       {
@@ -148,6 +155,7 @@ export class Search extends ExternalClient {
         sellers: null,
       }
     }
+
     const url = `http://${this.context.account}.vtexcommercestable.com.br/api/catalog_system/pvt/sku/stockkeepingunitbyid/${skuId}`
     const res = await axios.get(url, {
       headers: {
@@ -216,7 +224,8 @@ export class Search extends ExternalClient {
         Authorization: `bearer ${this.context.authToken}`,
       },
     })
-    return res?.status === 200 && res.data.length > 0? res.data[0]: {}
+
+    return res?.status === 200 && res.data.length > 0 ? res.data[0] : {}
   }
 
   /**
@@ -231,6 +240,7 @@ export class Search extends ExternalClient {
         Authorization: `bearer ${this.context.authToken}`,
       },
     })
-    return res?.status === 200? res.data: {}
+
+    return res?.status === 200 ? res.data : {}
   }
 }

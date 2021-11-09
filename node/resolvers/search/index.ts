@@ -48,6 +48,7 @@ export const queries = {
     } = ctx
 
     const items = await search.sellers()
+
     return {
       cacheId: 'sellers',
       items,
@@ -108,16 +109,16 @@ export const queries = {
       }
     })
 
-    const brands = await masterdata.searchDocumentsWithPaginationInfo<
-      BrandForClients
-    >({
-      dataEntity: BRAND_CLIENT_ACRONYM,
-      schema: BRAND_CLIENT_SCHEMA,
-      fields: BRNAD_CLIENT_FIELDS,
-      where: `(user=${customerNumber ?? ''} AND targetSystem=${targetSystem ??
-        ''})`,
-      pagination: { pageSize: 100, page: 1 },
-    })
+    const brands =
+      await masterdata.searchDocumentsWithPaginationInfo<BrandForClients>({
+        dataEntity: BRAND_CLIENT_ACRONYM,
+        schema: BRAND_CLIENT_SCHEMA,
+        fields: BRNAD_CLIENT_FIELDS,
+        where: `(user=${customerNumber ?? ''} AND targetSystem=${
+          targetSystem ?? ''
+        })`,
+        pagination: { pageSize: 100, page: 1 },
+      })
 
     const brandsList = brands?.data ?? []
 
@@ -136,6 +137,7 @@ export const queries = {
         ) {
           return {}
         }
+
         const { items, productId, productName } = product
 
         const itemId = items[0]?.itemId
@@ -157,12 +159,14 @@ export const queries = {
                   plant?.refId?.toLowerCase() === skuRefId.toLowerCase()
               )
               ?.plants?.map((plant: any) => plant.plant) ?? []
+
           const selectedProductWearhouses =
             allInventoryByItemIds
               .find((inventory: any) => inventory.skuId === itemId)
               ?.balance?.filter((wearhouse: any) =>
                 productPlants.includes(wearhouse.warehouseName)
               ) ?? []
+
           availableQuantity = selectedProductWearhouses.reduce(
             (partialSum: number, current: { totalQuantity: number }) =>
               partialSum + current?.totalQuantity ?? 0,
@@ -208,6 +212,7 @@ export const queries = {
 
     const itemsRequested = (refIds ?? []).map((refId: string) => {
       const existing = allSkus.find((s: any) => s.refid === refId)
+
       return (
         existing || {
           refid: refId,

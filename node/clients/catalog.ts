@@ -1,4 +1,5 @@
-import { ExternalClient, InstanceOptions, IOContext } from '@vtex/api'
+import type { InstanceOptions, IOContext } from '@vtex/api'
+import { ExternalClient } from '@vtex/api'
 
 export class Catalog extends ExternalClient {
   constructor(context: IOContext, options?: InstanceOptions) {
@@ -15,6 +16,7 @@ export class Catalog extends ExternalClient {
       url: this.context.host,
     })
     const endpoint = `${this.options?.baseURL}/api/logistics/pvt/inventory/skus/${id}`
+
     return this.http.get(`/api/logistics/pvt/inventory/skus/${id}`, {
       headers: {
         'Content-Type': 'application/json',
