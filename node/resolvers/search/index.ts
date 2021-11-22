@@ -141,19 +141,19 @@ export const queries = {
         const { items, productId, productName } = product
 
         const itemId = items[0]?.itemId
-        const skuRefId = skus.find((sku: any) => sku.skuId === itemId)?.refId
+        const skuRefId = (skus ?? []).find((sku: any) => sku.skuId === itemId)?.refId
         // const refId = (items[0]?.referenceId ?? []).find((ref: any) => ref.Key === 'RefId')?.Value ?? ''
         const { commertialOffer, sellerId, sellerName } = items[0].sellers[0]
-        const minQty = product['Minimum Order Quantity'].find((d: string) => d)
+        const minQty = (product['Minimum Order Quantity'] ?? []).find((d: string) => d) ?? '1'
 
         let availableQuantity = 0
         let isAvailable = false
         const unitMultiplier =
-          items.find((item: any) => item)?.unitMultiplier ?? 1
+          (items ?? []).find((item: any) => item)?.unitMultiplier ?? 1
 
         if (targetSystem.toUpperCase() === 'SAP') {
           const productPlants =
-            plantList
+            (plantList ?? [])
               .find(
                 (plant: any) =>
                   plant?.refId?.toLowerCase() === skuRefId.toLowerCase()
@@ -161,7 +161,7 @@ export const queries = {
               ?.plants?.map((plant: any) => plant.plant) ?? []
 
           const selectedProductWearhouses =
-            allInventoryByItemIds
+            (allInventoryByItemIds ?? [])
               .find((inventory: any) => inventory.skuId === itemId)
               ?.balance?.filter((wearhouse: any) =>
                 productPlants.includes(wearhouse.warehouseName)
@@ -178,7 +178,7 @@ export const queries = {
 
           const productBrand = product.brand
           // const brandClientData = brandData?.brandClient?.data ?? []
-          const brandDataMatch: any = brandsList?.find(
+          const brandDataMatch: any = (brandsList ?? []).find(
             (data: any) => data.trade === productBrand
           )
 
