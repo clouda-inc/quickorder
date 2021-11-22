@@ -4922,10 +4922,6 @@ sax@^1.2.4:
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
   integrity sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==
 
-"sbdsefuat.checkout-simulation@http://sbdsefuat.vtexassets.com/_v/public/typings/v1/sbdsefuat.checkout-simulation@1.0.31/public/@types/sbdsefuat.checkout-simulation":
-  version "1.0.31"
-  resolved "http://sbdsefuat.vtexassets.com/_v/public/typings/v1/sbdsefuat.checkout-simulation@1.0.31/public/@types/sbdsefuat.checkout-simulation#3a21fb83f00402698f84231baea53482985d2eaf"
-
 scheduler@^0.18.0:
   version "0.18.0"
   resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.18.0.tgz#5901ad6659bc1d8f3fdaf36eb7a67b0d6746b1c4"

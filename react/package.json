@@ -31,7 +31,6 @@
     "prettier": "^1.18.2",
     "react": "^16.9.2",
     "react-apollo": "^3.1.3",
-    "sbdsefuat.checkout-simulation": "http://sbdsefuat.vtexassets.com/_v/public/typings/v1/sbdsefuat.checkout-simulation@1.0.31/public/@types/sbdsefuat.checkout-simulation",
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "3.9.7",
     "vtex.apps-graphql": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.apps-graphql@2.8.0/public/@types/vtex.apps-graphql",

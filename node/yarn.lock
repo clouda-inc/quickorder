@@ -1266,10 +1266,10 @@
   resolved "https://registry.yarnpkg.com/@types/zen-observable/-/zen-observable-0.8.0.tgz#8b63ab7f1aa5321248aad5ac890a485656dcea4d"
   integrity sha512-te5lMAWii1uEJ4FwLjzdlbw3+n0FZNOvFXHxQDKeT0dilh7HOzdMzV2TrJVUzq8ep7J4Na8OUYPRLSQkJHAlrg==
 
-"@vtex/api@6.45.3":
-  version "6.45.3"
-  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-6.45.3.tgz#fe7d08adb4eab1fda5e34143cc6302a4c5aa5f52"
-  integrity sha512-kiD7We1TCKDyBdpYoh2Se3An+jTJRUzXGNpKifoDZylWQ1PyIx+3oL5ZAif9InlY3uJkfEisSAI6nxoKTgvPfw==
+"@vtex/api@6.45.6":
+  version "6.45.6"
+  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-6.45.6.tgz#e5f08476d7c76f26baa1c040666d1364bdd6bc35"
+  integrity sha512-9pDiUxcUzq8RZa9yBex4C8dcAHXBRGAZokvHJ6sykrojq6mJxs+rUTE28TPeeQxwvvKsvrdpsfCUAYQ+UDz+zA==
   dependencies:
     "@types/koa" "^2.11.0"
     "@types/koa-compose" "^3.2.3"
@@ -5081,10 +5081,6 @@ sax@^1.2.4:
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
   integrity sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==
 
-"sbdsefuat.checkout-simulation@http://sbdsefuat.vtexassets.com/_v/public/typings/v1/sbdsefuat.checkout-simulation@1.0.31/public/@types/sbdsefuat.checkout-simulation":
-  version "1.0.31"
-  resolved "http://sbdsefuat.vtexassets.com/_v/public/typings/v1/sbdsefuat.checkout-simulation@1.0.31/public/@types/sbdsefuat.checkout-simulation#3a21fb83f00402698f84231baea53482985d2eaf"
-
 scheduler@^0.15.0:
   version "0.15.0"
   resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.15.0.tgz#6bfcf80ff850b280fed4aeecc6513bc0b4f17f8e"
@@ -5290,7 +5286,7 @@ static-extend@^0.1.1:
     define-property "^0.2.5"
     object-copy "^0.1.0"
 
-stats-lite@vtex/node-stats-lite#dist:
+"stats-lite@github:vtex/node-stats-lite#dist":
   version "2.2.0"
   resolved "https://codeload.github.com/vtex/node-stats-lite/tar.gz/1b0d39cc41ef7aaecfd541191f877887a2044797"
   dependencies:
