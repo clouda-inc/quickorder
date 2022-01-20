@@ -109,16 +109,16 @@ export const queries = {
       }
     })
 
-    const brands =
-      await masterdata.searchDocumentsWithPaginationInfo<BrandForClients>({
-        dataEntity: BRAND_CLIENT_ACRONYM,
-        schema: BRAND_CLIENT_SCHEMA,
-        fields: BRNAD_CLIENT_FIELDS,
-        where: `(user=${customerNumber ?? ''} AND targetSystem=${
-          targetSystem ?? ''
-        })`,
-        pagination: { pageSize: 100, page: 1 },
-      })
+    const brands = await masterdata.searchDocumentsWithPaginationInfo<
+      BrandForClients
+    >({
+      dataEntity: BRAND_CLIENT_ACRONYM,
+      schema: BRAND_CLIENT_SCHEMA,
+      fields: BRNAD_CLIENT_FIELDS,
+      where: `(user=${customerNumber ?? ''} AND targetSystem=${targetSystem ??
+        ''})`,
+      pagination: { pageSize: 100, page: 1 },
+    })
 
     const brandsList = brands?.data ?? []
 
@@ -140,11 +140,17 @@ export const queries = {
 
         const { items, productId, productName } = product
 
-        const itemId = items[0]?.itemId
-        const skuRefId = (skus ?? []).find((sku: any) => sku.skuId === itemId)?.refId
+        // One item has one sku
+        const skuItem = items[0]
+        const itemId = skuItem?.itemId
+        const skuRefId = (skus ?? []).find((sku: any) => sku.skuId === itemId)
+          ?.refId
+
         // const refId = (items[0]?.referenceId ?? []).find((ref: any) => ref.Key === 'RefId')?.Value ?? ''
         const { commertialOffer, sellerId, sellerName } = items[0].sellers[0]
-        const minQty = (product['Minimum Order Quantity'] ?? []).find((d: string) => d) ?? '1'
+        const minQty =
+          (product['Minimum Order Quantity'] ?? []).find((d: string) => d) ??
+          '1'
 
         let availableQuantity = 0
         let isAvailable = false
@@ -193,11 +199,23 @@ export const queries = {
           ? commertialOffer.Price
           : commertialOffer.ListPrice
 
+        const uom = (product['Unit of Measure'] ?? []).find(
+          (i: string) => i !== ''
+        )
+
+        const uomDescription = (product.UOM_Description ?? []).find(
+          (i: string) => i !== ''
+        )
+
         return {
           refid: skuRefId,
           sku: itemId,
           productId,
           productName,
+          skuName: sku?.name,
+          uom,
+          uomDescription,
+          linkText: product.linkText,
           price,
           availableQuantity,
           seller: {
@@ -219,6 +237,10 @@ export const queries = {
           sku: null,
           productId: null,
           productName: null,
+          skuName: null,
+          uom: null,
+          uomDescription: null,
+          linkText: null,
           price: null,
           availableQuantity: null,
           seller: null,

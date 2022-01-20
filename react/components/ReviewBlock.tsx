@@ -11,6 +11,7 @@ import {
 import { defineMessages, injectIntl, WrappedComponentProps } from 'react-intl'
 import PropTypes from 'prop-types'
 import { useApolloClient, useQuery } from 'react-apollo'
+// import { useCssHandles } from 'vtex.css-handles'
 
 import { GetText, ParseText, validateQuantity } from '../utils'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -139,6 +140,10 @@ const messages = defineMessages({
 })
 
 // let orderFormId = ''
+
+// const CSS_HANDLES = [
+//   'quickOrderTableCol1',
+// ]
 
 const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
   onReviewItems,
