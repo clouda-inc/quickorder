@@ -84,6 +84,9 @@ export const queries = {
       skus.map(async (sku: any) => search.searchProductBySkuId(sku.skuId))
     )
 
+    let allInventoryByItemIds: any[] = []
+    let brandsList: any[] = []
+
     const plants = await Promise.all(
       refIds.map((refId: string) => {
         const where = `skuRefId=${refId} ${
@@ -109,24 +112,28 @@ export const queries = {
       }
     })
 
-    const brands =
-      await masterdata.searchDocumentsWithPaginationInfo<BrandForClients>({
-        dataEntity: BRAND_CLIENT_ACRONYM,
-        schema: BRAND_CLIENT_SCHEMA,
-        fields: BRNAD_CLIENT_FIELDS,
-        where: `(user=${customerNumber ?? ''} AND targetSystem=${
-          targetSystem ?? ''
-        })`,
-        pagination: { pageSize: 100, page: 1 },
-      })
+    if (targetSystem.toUpperCase() === 'SAP') {
+      allInventoryByItemIds = await Promise.all(
+        ((Object.values(skuIds ?? {}) as string[]) ?? []).map(
+          (skuId: string) => {
+            return catalog.inventoryBySkuId(skuId)
+          }
+        )
+      )
+    } else if (targetSystem.toUpperCase() === 'JDE') {
+      const brands =
+        await masterdata.searchDocumentsWithPaginationInfo<BrandForClients>({
+          dataEntity: BRAND_CLIENT_ACRONYM,
+          schema: BRAND_CLIENT_SCHEMA,
+          fields: BRNAD_CLIENT_FIELDS,
+          where: `(user=${customerNumber ?? ''} AND targetSystem=${
+            targetSystem ?? ''
+          })`,
+          pagination: { pageSize: 100, page: 1 },
+        })
 
-    const brandsList = brands?.data ?? []
-
-    const allInventoryByItemIds = await Promise.all(
-      ((Object.values(skuIds ?? {}) as string[]) ?? []).map((skuId: string) => {
-        return catalog.inventoryBySkuId(skuId)
-      })
-    )
+      brandsList = brands?.data ?? []
+    }
 
     const allSkus = (products ?? [])
       .filter((r: any) => Object.entries(r).length > 0)
@@ -141,10 +148,15 @@ export const queries = {
         const { items, productId, productName } = product
 
         const itemId = items[0]?.itemId
-        const skuRefId = (skus ?? []).find((sku: any) => sku.skuId === itemId)?.refId
+        const skuRefId = (skus ?? []).find(
+          (sku: any) => sku.skuId === itemId
+        )?.refId
+
         // const refId = (items[0]?.referenceId ?? []).find((ref: any) => ref.Key === 'RefId')?.Value ?? ''
         const { commertialOffer, sellerId, sellerName } = items[0].sellers[0]
-        const minQty = (product['Minimum Order Quantity'] ?? []).find((d: string) => d) ?? '1'
+        const minQty =
+          (product['Minimum Order Quantity'] ?? []).find((d: string) => d) ??
+          '1'
 
         let availableQuantity = 0
         let isAvailable = false
