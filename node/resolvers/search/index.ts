@@ -87,28 +87,37 @@ export const queries = {
     let allInventoryByItemIds: any[] = []
     let brandsList: any[] = []
 
-    const plants = await Promise.all(
-      refIds.map((refId: string) => {
-        const where = `skuRefId=${refId} ${
-          salesOrganizationCode
-            ? `AND salesOrganizationCode=${salesOrganizationCode}`
-            : ''
-        }`
+    const plantRefWhereClause = refIds
+      .map((refId) => `skuRefId=${refId}`)
+      .join(' OR ')
 
-        return masterdata.searchDocumentsWithPaginationInfo<SalesOrgPlant>({
-          dataEntity: PLANT_ACRONYM,
-          schema: PLANT_SCHEMA,
-          fields: PLANT_FIELDS,
-          where,
-          pagination: { pageSize: 100, page: 1 },
-        })
+    const plantRefWhereClauseWithParentheses =
+      plantRefWhereClause.length > 0 ? `(${plantRefWhereClause})` : ''
+
+    const salesOrgWhereClause = salesOrganizationCode
+      ? `salesOrganizationCode=${salesOrganizationCode}`
+      : ''
+
+    const plantWhereClause = [
+      salesOrgWhereClause,
+      plantRefWhereClauseWithParentheses,
+    ]
+      .filter((clause) => clause.length > 0)
+      .join(' AND ')
+
+    const plants =
+      await masterdata.searchDocumentsWithPaginationInfo<PlantData>({
+        dataEntity: PLANT_ACRONYM,
+        schema: PLANT_SCHEMA,
+        fields: PLANT_FIELDS,
+        where: plantWhereClause,
+        pagination: { pageSize: 2000, page: 1 },
       })
-    )
 
-    const plantList = refIds.map((refId: string, index: number) => {
+    const plantList = refIds.map((refId: string) => {
       return {
         refId,
-        plants: plants[index]?.data ?? [],
+        plants: plants.data.filter((plant) => plant.skuRefId === refId) ?? [],
       }
     })
 

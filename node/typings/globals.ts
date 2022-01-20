@@ -10,6 +10,7 @@ interface SearchArgs {
 interface PlantData {
   plant: number
   salesOrganizationCode: number
+  skuRefId: string
 }
 interface ClientBrand {
   brand: string
