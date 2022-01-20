@@ -403,7 +403,14 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       })
 
       // TODO: Remove this line
-      console.log(JSON.stringify(keyValuePairsToString(data?.getSkuAvailability?.performanceData) , null, 2))
+      // eslint-disable-next-line no-console
+      console.log(
+        JSON.stringify(
+          keyValuePairsToString(data?.getSkuAvailability?.performanceData),
+          null,
+          2
+        )
+      )
 
       validateRefids(data, reviewed)
     } catch (error) {
