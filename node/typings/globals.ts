@@ -40,3 +40,8 @@ interface UnitMultiplierMoQ {
   pagination: Pagination
   data: MoqUM
 }
+
+interface KeyValue {
+  key: string
+  value: string
+}

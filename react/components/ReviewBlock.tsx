@@ -25,6 +25,7 @@ import { GetText, ParseText, validateQuantity } from '../utils'
 import GET_PRODUCT_DATA from '../queries/getPrductAvailability.graphql'
 // import { stubFalse } from 'lodash'
 import GET_ACCOUNT_INFO from '../queries/orderSoldToAccount.graphql'
+import { keyValuePairsToString } from '../utils/performanceDataProcessing'
 
 const remove = <IconDelete />
 
@@ -400,6 +401,9 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           salesOrganizationCode,
         },
       })
+
+      // TODO: Remove this line
+      console.log(JSON.stringify(keyValuePairsToString(data?.getSkuAvailability?.performanceData) , null, 2))
 
       validateRefids(data, reviewed)
     } catch (error) {
