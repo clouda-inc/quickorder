@@ -71,6 +71,8 @@ export const queries = {
       clients: { search, masterdata, catalog },
     } = ctx
 
+    console.time('quick-order')
+
     const skuIds = await search.getSkusByRefIds(refIds)
     const refIdsFound = Object.getOwnPropertyNames(skuIds)
     const skus = refIdsFound
@@ -80,9 +82,13 @@ export const queries = {
       }))
       .filter((sku: any) => sku.skuId != null)
 
+    console.timeLog('quick-order', 'SKU by Ref ID')
+
     const products = await Promise.all(
       skus.map(async (sku: any) => search.searchProductBySkuId(sku.skuId))
     )
+
+    console.timeLog('quick-order', 'Search')
 
     let allInventoryByItemIds: any[] = []
     let brandsList: any[] = []
@@ -122,6 +128,7 @@ export const queries = {
     })
 
     if (targetSystem.toUpperCase() === 'SAP') {
+      console.timeLog('quick-order', 'Plant MD')
       allInventoryByItemIds = await Promise.all(
         ((Object.values(skuIds ?? {}) as string[]) ?? []).map(
           (skuId: string) => {
@@ -130,6 +137,7 @@ export const queries = {
         )
       )
     } else if (targetSystem.toUpperCase() === 'JDE') {
+      console.timeLog('quick-order', 'Plant MD')
       const brands =
         await masterdata.searchDocumentsWithPaginationInfo<BrandForClients>({
           dataEntity: BRAND_CLIENT_ACRONYM,
@@ -214,6 +222,8 @@ export const queries = {
           ? commertialOffer.Price
           : commertialOffer.ListPrice
 
+        console.timeLog('quick-order', 'End of map')
+
         return {
           refid: skuRefId,
           sku: itemId,
@@ -247,6 +257,9 @@ export const queries = {
         }
       )
     })
+
+    console.timeLog('quick-order', 'Before return')
+    console.timeEnd('quick-order')
 
     return {
       items: itemsRequested,

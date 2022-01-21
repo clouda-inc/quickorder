@@ -230,6 +230,19 @@ export class Search extends ExternalClient {
 
   /**
    *
+   * @param skuIds
+   */
+  public searchProductsBySkuIds = async (skuIds: string[]) => {
+    const searchQuery = skuIds.map((skuId) => `fq=skuId:${skuId}`).join('&')
+    const searchUrl = `http://${this.context.account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search?${searchQuery}`
+
+    return this.http.get(searchUrl, {
+      retries: 3,
+    })
+  }
+
+  /**
+   *
    * @param refIds
    */
   public getSkusByRefIds = async (refIds: string[]) => {
