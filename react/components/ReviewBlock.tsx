@@ -394,6 +394,7 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           targetSystem,
           salesOrganizationCode,
         },
+        fetchPolicy: 'no-cache',
       })
 
       validateRefids(data, reviewed)

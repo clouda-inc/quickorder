@@ -20,6 +20,12 @@ declare global {
     cookie: string
     originalPath: string
     vtex: IOContext
+    graphql: {
+      cacheControl: {
+        noStore: boolean
+        noCache: boolean
+      }
+    }
   }
 
   interface Property {

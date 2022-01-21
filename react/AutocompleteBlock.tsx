@@ -242,6 +242,7 @@ const AutocompleteBlock: StorefrontFunctionComponent<any &
             targetSystem,
             salesOrganizationCode,
           },
+          fetchPolicy: 'no-cache',
         })
 
         if (productInfo) {
