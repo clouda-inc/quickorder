@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable vtex/prefer-early-return */
-import React, { useEffect, useState } from 'react'
+import React, { useState, FunctionComponent } from 'react'
 import {
   ButtonWithIcon,
   IconDelete,
@@ -26,6 +27,7 @@ import GET_PRODUCT_DATA from '../queries/getPrductAvailability.graphql'
 import GET_ACCOUNT_INFO from '../queries/orderSoldToAccount.graphql'
 
 const remove = <IconDelete />
+let initialLoad = ''
 
 const messages = defineMessages({
   valid: {
@@ -140,7 +142,7 @@ const messages = defineMessages({
 
 // let orderFormId = ''
 
-const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
+const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   onReviewItems,
   reviewedItems,
   onRefidLoading,
@@ -277,6 +279,14 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         return ret?.price
       }
 
+      const mappedRefId = {}
+
+      if (refidData?.skuFromRefIds?.items) {
+        refidData.skuFromRefIds.items.forEach((item: any) => {
+          mappedRefId[item.refid] = item
+        })
+      }
+
       const getAvailableQuantity = (item: any) => {
         const ret: any = itemsFromQuery.find((curr: any) => {
           return !!item.sku && item.sku === curr.refid
@@ -291,14 +301,6 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         })
 
         return ret?.availability
-      }
-
-      const getSeller = (item: any) => {
-        const ret: any = itemsFromQuery.find((curr: any) => {
-          return !!item.sku && item.sku === curr.refid
-        })
-
-        return ret?.seller
       }
 
       // const getSellers = (item: any) => {
@@ -340,16 +342,23 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       }
 
       const items = reviewed.map((item: any) => {
-        // const sellers = getSellers(item)
+        const sellers = item.sku ? mappedRefId[item.sku]?.sellers : '1'
 
         return {
           ...item,
+          sellers: item.sku ? mappedRefId[item.sku]?.sellers : '1',
+          seller: sellers?.length ? sellers[0].id : '1',
           availableQuantity: getAvailableQuantity(item),
           price: getPrice(item),
           vtexSku: vtexSku(item),
+          unitMultiplier: item.sku
+            ? mappedRefId[item.sku]?.unitMultiplier
+            : '1',
+          totalQuantity:
+            (item.sku ? mappedRefId[item.sku]?.unitMultiplier : '1') *
+            item.quantity,
           error: errorMsg(item),
           availability: getAvailability(item),
-          seller: getSeller(item)?.id,
         }
       })
 
@@ -426,9 +435,10 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     }
   }
 
-  useEffect(() => {
+  if (initialLoad !== GetText(reviewItems)) {
     checkValidatedItems()
-  })
+    initialLoad = GetText(reviewItems)
+  }
 
   const removeLine = (i: number) => {
     const items: [any] = reviewItems
@@ -501,6 +511,7 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         title: intl.formatMessage({
           id: 'store/quickorder.review.label.lineNumber',
         }),
+        width: 50,
         // eslint-disable-next-line react/display-name
         cellRenderer: ({ rowData }: any) => {
           return <div>{parseInt(rowData.line, 10) + 1}</div>
@@ -535,12 +546,28 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       sku: {
         type: 'string',
         title: intl.formatMessage({ id: 'store/quickorder.review.label.sku' }),
+        width: 125,
       },
       quantity: {
         type: 'string',
         title: intl.formatMessage({
           id: 'store/quickorder.review.label.quantity',
         }),
+        width: 75,
+      },
+      unitMultiplier: {
+        type: 'float',
+        title: intl.formatMessage({
+          id: 'store/quickorder.review.label.multiplier',
+        }),
+        width: 100,
+      },
+      totalQuantity: {
+        type: 'float',
+        title: intl.formatMessage({
+          id: 'store/quickorder.review.label.totalQuantity',
+        }),
+        width: 100,
       },
       unit: {
         hidden: true,
@@ -563,9 +590,8 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       //   cellRenderer: ({ rowData }: any) => {
       //     if (rowData?.sellers?.length > 1) {
       //       return (
-      //         <div className="mb5">
+      //         <div>
       //           <Dropdown
-      //             label="Regular"
       //             options={rowData.sellers.map((item: any) => {
       //               return {
       //                 label: item.name,
@@ -581,9 +607,7 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       //       )
       //     }
       //
-      //     return rowData.sellers && rowData.sellers.length
-      //       ? rowData.sellers[0].name
-      //       : ''
+      //     return rowData?.sellers?.length ? rowData.sellers[0].name : ''
       //   },
       // },
       error: {
@@ -591,7 +615,7 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         title: intl.formatMessage({
           id: 'store/quickorder.review.label.status',
         }),
-
+        width: 75,
         cellRenderer: ({ cellData, rowData }: any) => {
           if (rowData.error) {
             const text = intl.formatMessage(
@@ -619,6 +643,7 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
       delete: {
         type: 'object',
         title: ' ',
+        width: 75,
         // eslint-disable-next-line react/display-name
         cellRenderer: ({ rowData }: any) => {
           return (

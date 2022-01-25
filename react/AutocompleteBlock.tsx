@@ -1,18 +1,13 @@
-import React, { useState, useContext } from 'react'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react/prop-types */
+import React, { useState, useContext, FunctionComponent } from 'react'
 import {
   FormattedMessage,
   WrappedComponentProps,
   injectIntl,
   defineMessages,
 } from 'react-intl'
-import {
-  Button,
-  Tag,
-  ToastContext,
-  IconClear,
-  Spinner,
-  NumericStepper,
-} from 'vtex.styleguide'
+import { Button, Tag, Input, ToastContext, IconClear } from 'vtex.styleguide'
 import { OrderForm } from 'vtex.order-manager'
 import { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
@@ -20,15 +15,11 @@ import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
 import PropTypes from 'prop-types'
 import { useCssHandles } from 'vtex.css-handles'
-import { useApolloClient, useMutation, useQuery } from 'react-apollo'
-import { useOrderItems } from 'vtex.order-items/OrderItems'
+import { useApolloClient, useMutation } from 'react-apollo'
 
 import QuickOrderAutocomplete from './components/QuickOrderAutocomplete'
 import productQuery from './queries/product.gql'
-import GET_ACCOUNT_INFO from './queries/orderSoldToAccount.graphql'
-import GET_PRODUCT_DATA from './queries/getPrductAvailability.graphql'
 import './global.css'
-import { getNewItems, itemsInSystem } from './utils'
 
 const messages = defineMessages({
   success: {
@@ -46,6 +37,11 @@ const messages = defineMessages({
     defaultMessage: '',
     label: '',
   },
+  multiplier: {
+    id: 'store/quickorder.category.multiplier',
+    defaultMessage: '',
+    label: '',
+  },
   error: { id: 'store/toaster.cart.error', defaultMessage: '', label: '' },
   seeCart: {
     id: 'store/toaster.cart.seeCart',
@@ -54,46 +50,33 @@ const messages = defineMessages({
   },
 })
 
-const AutocompleteBlock: StorefrontFunctionComponent<any &
-  // eslint-disable-next-line react/prop-types
-  WrappedComponentProps> = ({ text, description, componentOnly, intl }) => {
+const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
+                                                                             text,
+                                                                             description,
+                                                                             componentOnly,
+                                                                             intl,
+                                                                           }) => {
   const client = useApolloClient()
   const { showToast } = useContext(ToastContext)
   const [state, setState] = useState<any>({
     selectedItem: null,
-    quantitySelected: 1,
+    quantitySelected: 0,
+    unitMultiplier: 1,
   })
-
-  const [hideAddToCart, setHideAddToCart] = useState(true)
 
   const [addToCart, { error, loading }] = useMutation<
     { addToCart: OrderFormType },
     { items: [] }
-  >(ADD_TO_CART)
+    >(ADD_TO_CART)
 
   const { push } = usePixel()
   const { settings = {}, showInstallPrompt = undefined } = usePWA() || {}
   const { promptOnCustomEvent } = settings
-  const { addItem } = useOrderItems()
-  const { setOrderForm, orderForm }: OrderFormContext = OrderForm.useOrderForm()
 
-  const { data: accountData, loading: accountDataLoading } = useQuery(
-    GET_ACCOUNT_INFO,
-    {
-      notifyOnNetworkStatusChange: true,
-      ssr: false,
-    }
-  )
-
-  const customerNumber =
-    accountData?.getOrderSoldToAccount?.customerNumber ?? ''
-
-  const targetSystem = accountData?.getOrderSoldToAccount?.targetSystem ?? ''
-  const salesOrganizationCode =
-    accountData?.getOrderSoldToAccount?.salesOrganizationCode ?? ''
+  const { setOrderForm }: OrderFormContext = OrderForm.useOrderForm()
+  const orderForm = OrderForm.useOrderForm()
 
   const translateMessage = (message: MessageDescriptor) => {
-    // eslint-disable-next-line react/prop-types
     return intl.formatMessage(message)
   }
 
@@ -106,9 +89,9 @@ const AutocompleteBlock: StorefrontFunctionComponent<any &
 
   const toastMessage = (arg: any) => {
     let message
+    let action
 
     if (typeof arg === 'string') {
-      // eslint-disable-next-line react/prop-types
       message = intl.formatMessage(messages[arg])
     } else {
       const {
@@ -120,91 +103,96 @@ const AutocompleteBlock: StorefrontFunctionComponent<any &
       } = arg
 
       message = resolveToastMessage(success, isNewItem)
+
+      action = success
+        ? {
+          label: translateMessage(messages.seeCart),
+          href: '/checkout/#/cart',
+        }
+        : undefined
     }
 
-    showToast({ message })
+    showToast({ message, action })
   }
 
   const clear = () => {
     setState({
       ...state,
       selectedItem: null,
-      quantitySelected: 1,
+      quantitySelected: 0,
+      unitMultiplier: 1,
     })
   }
 
-  const { selectedItem, quantitySelected } = state
+  interface ItemType {
+    id: string
+    quantity: number
+  }
+
+  const { selectedItem, quantitySelected, unitMultiplier } = state
   const callAddToCart = async (items: any) => {
-    const existItems = itemsInSystem(orderForm?.items, items)
-    const newItems = getNewItems(orderForm?.items, items)
+    const currentItemsInCart = orderForm.orderForm.items
+    const mutationResult = await addToCart({
+      variables: {
+        items: items.map((item: ItemType) => {
+          const [existsInCurrentOrder] = currentItemsInCart.filter(
+            el => el.id === item.id.toString()
+          )
 
-    if (existItems.length > 0) {
-      addItem(existItems)
+          if (existsInCurrentOrder) {
+            item.quantity += parseInt(existsInCurrentOrder.quantity, 10)
+          }
 
-      if (promptOnCustomEvent === 'addToCart' && showInstallPrompt) {
-        showInstallPrompt()
-      }
+          return {
+            ...item,
+          }
+        }),
+      },
+    })
 
-      toastMessage({ success: true, isNewItem: true })
+    if (error) {
+      console.error(error)
+      toastMessage({ success: false, isNewItem: false })
+
+      return
     }
 
-    if (newItems.length > 0) {
-      const mutationResult = await addToCart({
-        variables: {
-          items: items.map((item: any) => {
-            return {
-              ...item,
-            }
-          }),
-        },
+    // Update OrderForm from the context
+    mutationResult.data && setOrderForm(mutationResult.data.addToCart)
+
+    const adjustSkuItemForPixelEvent = (item: any) => {
+      return {
+        skuId: item.id,
+        quantity: item.quantity,
+      }
+    }
+
+    // Send event to pixel-manager
+    const pixelEventItems = items.map(adjustSkuItemForPixelEvent)
+
+    push({
+      event: 'addToCart',
+      items: pixelEventItems,
+    })
+
+    if (
+      mutationResult.data?.addToCart?.messages?.generalMessages &&
+      mutationResult.data.addToCart.messages.generalMessages.length
+    ) {
+      mutationResult.data.addToCart.messages.generalMessages.map((msg: any) => {
+        return showToast({
+          message: msg.text,
+          action: undefined,
+          duration: 30000,
+        })
       })
+    } else {
+      toastMessage({ success: true, isNewItem: true })
+      clear()
+    }
 
-      if (error) {
-        console.error(error)
-        toastMessage({ success: false, isNewItem: false })
-
-        return
-      }
-
-      // Update OrderForm from the context
-      mutationResult.data && setOrderForm(mutationResult.data.addToCart)
-
-      const adjustSkuItemForPixelEvent = (item: any) => {
-        return {
-          skuId: item.id,
-          quantity: item.quantity,
-        }
-      }
-
-      // Send event to pixel-manager
-      const pixelEventItems = items.map(adjustSkuItemForPixelEvent)
-
-      push({
-        event: 'addToCart',
-        items: pixelEventItems,
-      })
-
-      if (
-        mutationResult.data?.addToCart?.messages?.generalMessages &&
-        mutationResult.data.addToCart.messages.generalMessages.length
-      ) {
-        mutationResult.data.addToCart.messages.generalMessages.map(
-          (msg: any) => {
-            return showToast({
-              message: msg.text,
-              action: undefined,
-              duration: 30000,
-            })
-          }
-        )
-      } else {
-        toastMessage({ success: true, isNewItem: true })
-        clear()
-      }
-
-      if (promptOnCustomEvent === 'addToCart' && showInstallPrompt) {
-        showInstallPrompt()
-      }
+    if (promptOnCustomEvent === 'addToCart' && showInstallPrompt) {
+      showInstallPrompt()
     }
 
     return showInstallPrompt
@@ -223,47 +211,14 @@ const AutocompleteBlock: StorefrontFunctionComponent<any &
 
       const seller = selectedSku
         ? data.product.items[0].sellers.find((item: any) => {
-            return item.sellerDefault === true
-          }).sellerId
+          return item.sellerDefault === true
+        }).sellerId
         : null
 
-      // validate product
-      const refId =
-        (data?.product?.items[0]?.referenceId ?? []).find(
-          (ref: any) => ref.Key === 'RefId'
-        )?.Value ?? ''
+      let multiplier = 1
 
-      try {
-        const { data: productInfo } = await client.query({
-          query: GET_PRODUCT_DATA,
-          variables: {
-            refIds: [refId] as string[],
-            customerNumber,
-            targetSystem,
-            salesOrganizationCode,
-          },
-        })
-
-        if (productInfo) {
-          const itemsFromQuery = productInfo.getSkuAvailability?.items ?? []
-          const refIdNotFound = itemsFromQuery.filter((item: any) => {
-            return item.sku === null
-          })
-
-          const refNotAvailable = itemsFromQuery.filter((item: any) => {
-            return item.availability !== 'available'
-          })
-
-          if (
-            itemsFromQuery.length > 0 &&
-            refIdNotFound.length === 0 &&
-            refNotAvailable.length === 0
-          ) {
-            setHideAddToCart(false)
-          }
-        }
-      } catch (err) {
-        console.error(err)
+      if (data.product.items.length === 1) {
+        multiplier = data.product.items[0].unitMultiplier
       }
 
       setState({
@@ -272,6 +227,7 @@ const AutocompleteBlock: StorefrontFunctionComponent<any &
           !!product && product.length
             ? { ...product[0], value: selectedSku, seller, data }
             : null,
+        unitMultiplier: multiplier,
       })
     }
 
@@ -293,9 +249,14 @@ const AutocompleteBlock: StorefrontFunctionComponent<any &
       value,
     }
 
+    const matchedItem = selectedItem.data.product.items.find(
+      item => item.itemId === value
+    )
+
     setState({
       ...state,
       selectedItem: newSelected,
+      unitMultiplier: matchedItem.unitMultiplier,
     })
   }
 
@@ -303,12 +264,23 @@ const AutocompleteBlock: StorefrontFunctionComponent<any &
     return url.replace('25-25', `50-50`)
   }
 
+  const calculateDivisible = (quantity: number, multiplier: number) => {
+    if (multiplier) {
+      return quantity / multiplier
+    }
+
+    return quantity
+  }
+
   const callAddUnitToCart = () => {
-    if (selectedItem && selectedItem.value) {
+    if (selectedItem?.value) {
       const items = [
         {
           id: parseInt(selectedItem.value, 10),
-          quantity: parseFloat(quantitySelected),
+          quantity: calculateDivisible(
+            parseFloat(quantitySelected),
+            unitMultiplier
+          ),
           seller: selectedItem.seller,
         },
       ]
@@ -317,6 +289,16 @@ const AutocompleteBlock: StorefrontFunctionComponent<any &
     } else {
       toastMessage('selectSku')
     }
+  }
+
+  const roundToNearestMultiple = (quantity: number, multiplier: number) => {
+    if (multiplier) {
+      toastMessage('multiplier')
+
+      return Math.round(quantity / multiplier) * multiplier
+    }
+
+    return quantity
   }
 
   const CSS_HANDLES = [
@@ -332,62 +314,14 @@ const AutocompleteBlock: StorefrontFunctionComponent<any &
     'textContainerDescription',
     'componentContainer',
     'buttonClear',
-    'inactiveAddToCart',
   ] as const
 
   const handles = useCssHandles(CSS_HANDLES)
 
-  const numberValidator = (minQty: number, unit: number, value: number) => {
-    const actualQty = value * unit
-    const adjustedQty =
-      minQty % unit === 0
-        ? actualQty < minQty
-          ? minQty
-          : actualQty
-        : actualQty < minQty
-        ? minQty + (unit - (minQty % unit))
-        : actualQty
-
-    return adjustedQty / unit
-  }
-
-  const numStepper = (itemSelected: any, selectedQuantity: number) => {
-    const minQty =
-      itemSelected.data.product.properties
-        .find(
-          (property: { name: string }) =>
-            property.name === 'Minimum Order Quantity'
-        )
-        ?.values.find(value => value) ?? 1
-
-    const unit =
-      itemSelected.data.product.items.find(item => item)?.unitMultiplier ?? 1
-
-    return (
-      <div>
-        <NumericStepper
-          size="small"
-          minValue={1}
-          value={numberValidator(minQty, unit, selectedQuantity)}
-          unitMultiplier={unit}
-          maxValue={9999999}
-          onChange={(e: any) => {
-            setState({
-              ...state,
-              quantitySelected: e.value,
-            })
-          }}
-        />
-      </div>
-    )
-  }
-
-  return accountDataLoading ? (
-    <Spinner />
-  ) : (
-    <div className="flex">
+  return (
+    <div>
       {!componentOnly && (
-        <div className={`${handles.textContainer} w-20-l w-100-ns fl-l`}>
+        <div className={`${handles.textContainer} w-third-l w-100-ns fl-l`}>
           <h2
             className={`${handles.textContainerTitle} t-heading-3 mb3 ml5 ml3-ns mt4`}
           >
@@ -402,7 +336,7 @@ const AutocompleteBlock: StorefrontFunctionComponent<any &
       )}
       <div
         className={`${handles.componentContainer} ${
-          !componentOnly ? 'w-80-l w-100-ns fr-l flex' : ''
+          !componentOnly ? 'w-two-thirds-l w-100-ns fr-l' : ''
         }`}
       >
         <div className="w-100 mb5">
@@ -410,10 +344,7 @@ const AutocompleteBlock: StorefrontFunctionComponent<any &
             {!selectedItem && <QuickOrderAutocomplete onSelect={onSelect} />}
             {!!selectedItem && (
               <div>
-                <div
-                  className="w-one-thirds-l w-100-ns fl-l"
-                  style={{ maxWidth: '430px', width: '100%' }}
-                >
+                <div className="w-two-thirds-l w-100-ns fl-l">
                   <div
                     className={`flex flex-column w-10 fl ${handles.productThumb}`}
                   >
@@ -430,6 +361,7 @@ const AutocompleteBlock: StorefrontFunctionComponent<any &
                     <span className={`${handles.productTitle}`}>
                       {selectedItem.label}
                     </span>
+
                     {!!selectedItem &&
                       selectedItem.data.product.items.length > 1 && (
                         <div className={`${handles.productSku} flex flex-row`}>
@@ -458,40 +390,60 @@ const AutocompleteBlock: StorefrontFunctionComponent<any &
                         </div>
                       )}
                   </div>
+                  {!!selectedItem && unitMultiplier && (
+                    <div
+                      className={`flex flex-column w-90 fl ${handles.productLabel}`}
+                    >
+                      <span className="mr4">
+                        <Tag type="warning" variation="low">
+                          Unit Multiplier of {unitMultiplier}
+                        </Tag>
+                      </span>
+                    </div>
+                  )}
                 </div>
-                <div
-                  className="w-two-thirds-l w-100-ns fr-l"
-                  style={{ maxWidth: '430px', width: '100%' }}
-                >
+                <div className="w-third-l w-100-ns fr-l">
                   <div
                     className={`flex flex-column w-40 ph5-l ph2 p fl ${handles.inputQuantity}`}
                   >
-                    {numStepper(selectedItem, quantitySelected)}
+                    <Input
+                      value={quantitySelected}
+                      size="small"
+                      type="number"
+                      step={unitMultiplier}
+                      onChange={(e: any) => {
+                        setState({
+                          ...state,
+                          quantitySelected: e.target.value,
+                        })
+                      }}
+                      onBlur={() => {
+                        const roundedValue = roundToNearestMultiple(
+                          quantitySelected,
+                          unitMultiplier
+                        )
+
+                        setState({
+                          ...state,
+                          quantitySelected: roundedValue,
+                        })
+                      }}
+                    />
                   </div>
-                  {!hideAddToCart ? (
-                    <div
-                      className={`flex flex-column w-40 fl ${handles.buttonAdd}`}
+                  <div
+                    className={`flex flex-column w-40 fl ${handles.buttonAdd}`}
+                  >
+                    <Button
+                      variation="primary"
+                      size="small"
+                      isLoading={loading}
+                      onClick={() => {
+                        callAddUnitToCart()
+                      }}
                     >
-                      <Button
-                        variation="primary"
-                        size="small"
-                        isLoading={loading}
-                        onClick={() => {
-                          callAddUnitToCart()
-                        }}
-                      >
-                        <FormattedMessage id="store/quickorder.addToCart" />
-                      </Button>
-                    </div>
-                  ) : (
-                    <div
-                      className={`flex flex-column w-40 fl ${handles.inactiveAddToCart}`}
-                    >
-                      <Button variation="primary" size="small">
-                        <FormattedMessage id="store/quickorder.addToCart" />
-                      </Button>
-                    </div>
-                  )}
+                      <FormattedMessage id="store/quickorder.autocomplete.addButton" />
+                    </Button>
+                  </div>
                   <div
                     className={`flex flex-column w-20 fl ${handles.buttonClear}`}
                   >
@@ -534,7 +486,7 @@ interface OrderFormContext {
 
 interface MessageDescriptor {
   id: string
-  description?: Record<string, unknown>
+  description?: string | any
   defaultMessage?: string
 }
 

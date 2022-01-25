@@ -4,7 +4,7 @@ import { Search } from './search'
 import { Catalog } from './catalog'
 
 export class Clients extends IOClients {
-  public get search() {
+  public get search(): any {
     return this.getOrSet('search', Search)
   }
 
