@@ -436,8 +436,6 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         return merge(item)
       })
 
-      console.log(JSON.stringify(updated, null, 2))
-
       onReviewItems(updated)
       setReviewState({
         ...state,

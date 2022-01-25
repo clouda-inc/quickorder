@@ -229,9 +229,6 @@ export const queries = {
         }
       })
 
-    // eslint-disable-next-line no-console
-    console.log(JSON.stringify(allSkus, null, 2))
-
     const itemsRequested = (refIds ?? []).map((refId: string) => {
       const existing = allSkus.find((s: any) => s.refid === refId)
 
