@@ -51,11 +51,11 @@ const messages = defineMessages({
 })
 
 const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
-  text,
-  description,
-  componentOnly,
-  intl,
-}) => {
+                                                                             text,
+                                                                             description,
+                                                                             componentOnly,
+                                                                             intl,
+                                                                           }) => {
   const client = useApolloClient()
   const { showToast } = useContext(ToastContext)
   const [state, setState] = useState<any>({
@@ -67,7 +67,7 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
   const [addToCart, { error, loading }] = useMutation<
     { addToCart: OrderFormType },
     { items: [] }
-  >(ADD_TO_CART)
+    >(ADD_TO_CART)
 
   const { push } = usePixel()
   const { settings = {}, showInstallPrompt = undefined } = usePWA() || {}
@@ -77,7 +77,6 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
   const orderForm = OrderForm.useOrderForm()
 
   const translateMessage = (message: MessageDescriptor) => {
-    // eslint-disable-next-line react/prop-types
     return intl.formatMessage(message)
   }
 
@@ -93,7 +92,6 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
     let action
 
     if (typeof arg === 'string') {
-      // eslint-disable-next-line react/prop-types
       message = intl.formatMessage(messages[arg])
     } else {
       const {
@@ -108,9 +106,9 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
 
       action = success
         ? {
-            label: translateMessage(messages.seeCart),
-            href: '/checkout/#/cart',
-          }
+          label: translateMessage(messages.seeCart),
+          href: '/checkout/#/cart',
+        }
         : undefined
     }
 
@@ -213,8 +211,8 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
 
       const seller = selectedSku
         ? data.product.items[0].sellers.find((item: any) => {
-            return item.sellerDefault === true
-          }).sellerId
+          return item.sellerDefault === true
+        }).sellerId
         : null
 
       let multiplier = 1
@@ -443,7 +441,7 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
                         callAddUnitToCart()
                       }}
                     >
-                      <FormattedMessage id="store/quickorder.addToCart" />
+                      <FormattedMessage id="store/quickorder.autocomplete.addButton" />
                     </Button>
                   </div>
                   <div

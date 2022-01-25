@@ -9,6 +9,40 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Fixed add to cart button unavailability
+
+## [0.0.8] - 2021-11-22
+
+### Fixed
+
+- Changed vendor to production
+- Handled null issues on SKU availability
+
+## [0.0.7] - 2021-11-09
+
+### Fixed
+
+- Fix linting issues.
+
+## [0.0.6] - 2021-11-09
+
+## [0.0.5] - 2021-11-09
+
+### Fixed
+
+- Remove unwanted columns from review table
+- Fix add to cart issues
+- Fix numeric stepper.
+- Fix the quantity validation against MOQ and UM.
+- Fix the add to cart quantity.
+- Fix the add to cart behaviour in pdp search. 
+
+## [0.0.4] - 2021-11-01
+
+## [0.0.3] - 2021-10-29
+
+### Fixed
+
 - Added the Avble qty for bulk order.
 - Fixed the duplicate sku addition
 

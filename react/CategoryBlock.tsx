@@ -102,7 +102,6 @@ const CategoryBlock: FunctionComponent<WrappedComponentProps & any> = ({
 
   const toastMessage = (arg: any) => {
     let message
-    let action
 
     if (typeof arg === 'string') {
       message = intl.formatMessage(messages[arg])
@@ -116,16 +115,9 @@ const CategoryBlock: FunctionComponent<WrappedComponentProps & any> = ({
       } = arg
 
       message = resolveToastMessage(success, isNewItem)
-
-      action = success
-        ? {
-            label: intl.formatMessage(messages.seeCart),
-            href: '/checkout/#/cart',
-          }
-        : undefined
     }
 
-    showToast({ message, action })
+    showToast({ message })
   }
 
   const _setState = (props: any) => {

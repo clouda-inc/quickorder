@@ -1,7 +1,7 @@
 interface SearchRefIdItem {
-    sku: string
-  }
-  
+  sku: string
+}
+
 interface SearchRefIdUnit {
   items: SearchRefIdItem[]
-  }
+}

@@ -66,6 +66,7 @@ export class Search extends JanusClient {
         const promises = result.map(async (o: any) =>
           this.sellerBySku(o.sku, o.refid)
         )
+
         result = await Promise.all(promises)
       }
 
@@ -84,9 +85,14 @@ export class Search extends JanusClient {
         }
       })
     }
+
     return result
   }
 
+  /**
+   *
+   * @param orderFormId
+   */
   private getOrderForm = async (orderFormId: string) => {
     return this.http.get(`/api/checkout/pub/orderForm/${orderFormId}`, {
       headers: {
@@ -107,12 +113,14 @@ export class Search extends JanusClient {
       storePreferencesData: { countryCode },
       shippingData,
     } = orderForm
+
     const items = refids
       .filter((item: any) => {
         return !!item.sku
       })
       .map((item: any) => {
         const [seller] = item.sellers
+
         return {
           id: item.sku,
           quantity: 1,
@@ -199,86 +207,31 @@ export class Search extends JanusClient {
    * @param sku
    * @param refid
    */
-  private getSkuById = async (sku: string, refid: string) => {
-    if (sku === null) {
-      return {}
-    }
-
-    const priceBySkuIdUrl = `/api/catalog_system/pub/products/search/?fq=skuId:${sku}`
-    const priceRes = await this.http.getRaw(priceBySkuIdUrl, {
+  public searchProductBySkuId = async (sku: string) => {
+    const priceBySkuIdUrl = `http://${this.context.account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search?fq=skuId:${sku}`
+    const res = await this.http.getRaw(priceBySkuIdUrl, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `bearer ${this.context.authToken}`,
       },
     })
 
-    const { items, productId, productName } = priceRes.data[0]
-    const { commertialOffer, sellerId, sellerName } = items[0].sellers[0]
-
-    const { AvailableQuantity, IsAvailable } = commertialOffer
-    const price = commertialOffer.SellingPrice
-      ? commertialOffer.SellingPrice
-      : commertialOffer.Price
-      ? commertialOffer.Price
-      : commertialOffer.ListPrice
-    const sellers = [
-      {
-        id: sellerId,
-        name: sellerName,
-      },
-    ]
-
-    return {
-      refid,
-      sku,
-      productId,
-      productName,
-      price,
-      availableQuantity: AvailableQuantity,
-      sellers,
-      availability: IsAvailable ? 'available' : 'unavailable',
-    }
+    return res?.status === 200 && res.data.length > 0 ? res.data[0] : {}
   }
 
   /**
    *
    * @param refIds
    */
-  public getSkuAvailability = async (refIds: string[]) => {
-    this.sellersList = await this.sellers()
-
-    const url = `/api/catalog_system/pub/sku/stockkeepingunitidsbyrefids`
-    const res = await this.http.postRaw<{ [key: string]: string }>(url, refIds, {
+  public getSkusByRefIds = async (refIds: string[]) => {
+    const url = `http://${this.context.account}.vtexcommercestable.com.br/api/catalog_system/pub/sku/stockkeepingunitidsbyrefids`
+    const res = await this.http.postRaw(url, refIds, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `bearer ${this.context.authToken}`,
       },
     })
 
-    let result: any = []
-    const resultStr: any = {}
-
-    if (res.status === 200) {
-      const refs = Object.getOwnPropertyNames(res.data)
-
-      refs.forEach(id => {
-        resultStr[id] = {
-          sku: res.data[id],
-          refid: id,
-          sellers: this.sellersList,
-        }
-        result.push(resultStr[id])
-      })
-
-      if (this.sellersList?.length) {
-        const promises = result.map(async (o: any) =>
-          this.getSkuById(o.sku, o.refid)
-        )
-        result = await Promise.all(promises)
-      }
-
-      return result
-    }
-    return []
+    return res?.status === 200 ? res.data : {}
   }
 }
