@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+
+- Release new minor with telemetry changes
+
 ## [0.0.11] - 2022-01-25
 
 ### Added 
