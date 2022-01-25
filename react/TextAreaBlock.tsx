@@ -12,12 +12,13 @@ import { OrderForm } from 'vtex.order-manager'
 import { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
 import { useCssHandles } from 'vtex.css-handles'
-import { useMutation } from 'react-apollo'
+import {useMutation, useQuery} from 'react-apollo'
 import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
 
 import ReviewBlock from './components/ReviewBlock'
 import { ParseText, GetText } from './utils'
+import GET_ACCOUNT_INFO from './queries/orderSoldToAccount.graphql'
 
 const messages = defineMessages({
   success: {
@@ -74,6 +75,14 @@ const TextAreaBlock: FunctionComponent<TextAreaBlockInterface &
   const { setOrderForm }: OrderFormContext = OrderForm.useOrderForm()
   const orderForm = OrderForm.useOrderForm()
   const { showToast } = useContext(ToastContext)
+
+  const { data: accountData, loading: accountDataLoading } = useQuery(
+    GET_ACCOUNT_INFO,
+    {
+      notifyOnNetworkStatusChange: true,
+      ssr: false,
+    }
+  )
 
   const translateMessage = (message: MessageDescriptor) => {
     return intl.formatMessage(message)
@@ -268,6 +277,10 @@ const TextAreaBlock: FunctionComponent<TextAreaBlockInterface &
     })
   }
 
+  if (accountDataLoading) {
+    return <p>Loading sold to..</p>
+  }
+
   return (
     <div>
       {!componentOnly && (
@@ -320,6 +333,7 @@ const TextAreaBlock: FunctionComponent<TextAreaBlockInterface &
               reviewedItems={reviewItems}
               onReviewItems={onReviewItems}
               onRefidLoading={onRefidLoading}
+              soldToAccount={accountData}
             />
             <div
               className={`mb4 mt4 flex justify-between ${handles.buttonsBlock}`}
