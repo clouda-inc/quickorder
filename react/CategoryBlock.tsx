@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/jsx-key */
 import PropTypes from 'prop-types'
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, FunctionComponent } from 'react'
 import {
   FormattedMessage,
   WrappedComponentProps,
@@ -13,6 +14,7 @@ import {
   Button,
   ToastContext,
   Spinner,
+  Tag,
 } from 'vtex.styleguide'
 import { OrderForm } from 'vtex.order-manager'
 import { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
@@ -41,6 +43,11 @@ const messages = defineMessages({
     defaultMessage: '',
     label: '',
   },
+  multiplier: {
+    id: 'store/quickorder.category.multiplier',
+    defaultMessage: '',
+    label: '',
+  },
   error: { id: 'store/toaster.cart.error', defaultMessage: '', label: '' },
   seeCart: {
     id: 'store/toaster.cart.seeCart',
@@ -49,19 +56,32 @@ const messages = defineMessages({
   },
 })
 
-const CategoryBlock: StorefrontFunctionComponent<WrappedComponentProps &
-  any> = ({ text, description, componentOnly, intl, data: { categories } }) => {
+const CategoryBlock: FunctionComponent<WrappedComponentProps & any> = ({
+  text,
+  description,
+  componentOnly,
+  intl,
+  data: { categories },
+}) => {
   const [state, setState] = useState<any>({
     categoryItems: {},
     quantitySelected: {},
     defaultSeller: {},
+    // All the items with their respective units
+    unitMultiplierList: {},
   })
 
   const { showToast } = useContext(ToastContext)
 
   const client = useApolloClient()
 
-  const { categoryItems, quantitySelected, defaultSeller } = state
+  const {
+    categoryItems,
+    quantitySelected,
+    defaultSeller,
+    unitMultiplierList,
+  } = state
+
   const [addToCart, { error, loading }] = useMutation<
     { addToCart: OrderFormType },
     { items: [] }
@@ -238,6 +258,14 @@ const CategoryBlock: StorefrontFunctionComponent<WrappedComponentProps &
         variables: { selectedFacets },
       })
 
+      for (const product of dataProducts.productSearch.products) {
+        for (const item of product.items) {
+          if (item.unitMultiplier > 1) {
+            unitMultiplierList[item.itemId] = item
+          }
+        }
+      }
+
       setOptions(
         categoryId,
         !!dataProducts &&
@@ -251,6 +279,16 @@ const CategoryBlock: StorefrontFunctionComponent<WrappedComponentProps &
     return true
   }
 
+  const calculateDivisible = (quantity: number, contentItemId: string) => {
+    if (contentItemId in unitMultiplierList) {
+      const multiplier = unitMultiplierList[contentItemId].unitMultiplier
+
+      return quantity / multiplier
+    }
+
+    return quantity
+  }
+
   const callAddToCart = () => {
     const skus: any = Object.getOwnPropertyNames(quantitySelected).filter(
       (sku: any) => {
@@ -262,7 +300,10 @@ const CategoryBlock: StorefrontFunctionComponent<WrappedComponentProps &
       const items = skus.map((item: any) => {
         return {
           id: parseInt(item, 10),
-          quantity: parseFloat(quantitySelected[item]),
+          quantity: calculateDivisible(
+            parseFloat(quantitySelected[item]),
+            item
+          ),
           seller: defaultSeller[item],
         }
       })
@@ -280,6 +321,18 @@ const CategoryBlock: StorefrontFunctionComponent<WrappedComponentProps &
     return url.replace(ids, `${ids}-50-50`)
   }
 
+  const roundToNearestMultiple = (quantity: number, contentItemId: string) => {
+    if (contentItemId in unitMultiplierList) {
+      const multiplier = unitMultiplierList[contentItemId].unitMultiplier
+
+      toastMessage('multiplier')
+
+      return Math.round(quantity / multiplier) * multiplier
+    }
+
+    return quantity
+  }
+
   const drawProducts = (a: any) => {
     return a.length ? (
       a.map((b: any, i: number) => {
@@ -287,14 +340,13 @@ const CategoryBlock: StorefrontFunctionComponent<WrappedComponentProps &
           <div key={`ifany_${i}`}>
             {b.items.length
               ? b.items.map((content: any) => {
-                  console.info('Content =>', content)
                   const [referenceId] = content.referenceId
                   const [image] = content.images
 
                   return (
                     <div
                       className="flex flex-row pa2 pl4 bg-white hover-bg-near-white"
-                      key={`prod_${b.itemId}`}
+                      key={`prod_${i}_${content.itemId}`}
                     >
                       <div
                         className={`flex flex-row w-90 fl ${handles.categoryProductLabel}`}
@@ -303,10 +355,10 @@ const CategoryBlock: StorefrontFunctionComponent<WrappedComponentProps &
                           <img
                             src={thumb(image.imageUrl)}
                             title={image.imageLabel}
+                            alt={image.imageLabel}
                             width="50"
                             height="50"
                             className={`pr5 ${handles.categoryProductThumb}`}
-                            alt={image.imageLabel}
                           />
                         )}
                         <span className={handles.categoryProductTitle}>
@@ -317,6 +369,17 @@ const CategoryBlock: StorefrontFunctionComponent<WrappedComponentProps &
                             className={`pl5 ${handles.categoryProductReference}`}
                           >
                             {referenceId.Value}
+                          </span>
+                        )}
+                        {content.itemId in unitMultiplierList && (
+                          <span className="pl5 mr4">
+                            <Tag type="warning" variation="low">
+                              Unit Multiplier of{' '}
+                              {
+                                unitMultiplierList[content.itemId]
+                                  .unitMultiplier
+                              }
+                            </Tag>
                           </span>
                         )}
                       </div>
@@ -345,6 +408,21 @@ const CategoryBlock: StorefrontFunctionComponent<WrappedComponentProps &
                             _setState({
                               quantitySelected: newQtd,
                               defaultSeller: newSeller,
+                            })
+                          }}
+                          onBlur={() => {
+                            const roundedValue = roundToNearestMultiple(
+                              quantitySelected[content.itemId] || 0,
+                              content.itemId
+                            )
+
+                            const newQtd = quantitySelected
+
+                            quantitySelected[content.itemId] = String(
+                              roundedValue
+                            )
+                            _setState({
+                              quantitySelected: newQtd,
                             })
                           }}
                         />

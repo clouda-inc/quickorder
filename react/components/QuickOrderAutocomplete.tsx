@@ -1,9 +1,8 @@
-import React, { useState, useRef } from 'react'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useState, useRef, FunctionComponent } from 'react'
 import { AutocompleteInput } from 'vtex.styleguide'
 import PropTypes from 'prop-types'
 import { WrappedComponentProps, injectIntl, defineMessages } from 'react-intl'
-// eslint-disable-next-line no-restricted-imports
-import { uniq } from 'lodash'
 import { useApolloClient } from 'react-apollo'
 
 import autocomplete from '../queries/autocomplete.gql'
@@ -28,7 +27,7 @@ const CustomOption = (props: any) => {
 
   const renderOptionHighlightedText = () => {
     const highlightableText = typeof value === 'string' ? value : value.label
-    const index = highlightableText
+    const index: number = highlightableText
       .toLowerCase()
       .indexOf(searchTerm.toLowerCase())
 
@@ -38,8 +37,9 @@ const CustomOption = (props: any) => {
 
     const prefix = highlightableText.substring(0, index)
     const match = highlightableText.substr(index, searchTerm.length)
-    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-    const suffix = highlightableText.substring(index + match.length)
+    const suffix = highlightableText.substring(
+      index + parseInt(match.length, 10)
+    )
 
     return (
       <span className="truncate">
@@ -80,7 +80,7 @@ const CustomOption = (props: any) => {
 interface QuickOrderAutocompleteInt {
   onSelect: any
 }
-const QuickOrderAutocomplete: StorefrontFunctionComponent<WrappedComponentProps &
+const QuickOrderAutocomplete: FunctionComponent<WrappedComponentProps &
   QuickOrderAutocompleteInt> = ({ onSelect, intl }: any) => {
   const client = useApolloClient()
   const [optionsResult, setOptions] = useState([])
@@ -127,7 +127,7 @@ const QuickOrderAutocomplete: StorefrontFunctionComponent<WrappedComponentProps 
       value: lastSearched,
       label: 'Last searched products',
       onChange: (option: never) =>
-        option && setLastSearched(uniq([...lastSearched, option])),
+        option && setLastSearched([...new Set([...lastSearched, option])]),
     },
     // --- This is what makes the custom option work!
     // eslint-disable-next-line react/display-name
@@ -135,8 +135,8 @@ const QuickOrderAutocomplete: StorefrontFunctionComponent<WrappedComponentProps 
   }
 
   const input = {
-    onChange: (terms: any) => {
-      if (terms) {
+    onChange: (nterm: any) => {
+      if (nterm) {
         setLoading(true)
         if (timeoutRef.current) {
           clearTimeout(timeoutRef.current)
@@ -144,12 +144,12 @@ const QuickOrderAutocomplete: StorefrontFunctionComponent<WrappedComponentProps 
 
         timeoutRef.current = setTimeout(() => {
           setLoading(false)
-          setTerm(terms)
-          handleSearch({ value: terms })
+          setTerm(nterm)
+          handleSearch({ value: nterm })
           timeoutRef.current = null
         }, 1000)
       } else {
-        setTerm(terms)
+        setTerm(nterm)
       }
     },
     onSearch: () => () => {},

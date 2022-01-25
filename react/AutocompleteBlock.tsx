@@ -1,4 +1,6 @@
-import React, { useState, useContext } from 'react'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react/prop-types */
+import React, { useState, useContext, FunctionComponent } from 'react'
 import {
   FormattedMessage,
   WrappedComponentProps,
@@ -35,6 +37,11 @@ const messages = defineMessages({
     defaultMessage: '',
     label: '',
   },
+  multiplier: {
+    id: 'store/quickorder.category.multiplier',
+    defaultMessage: '',
+    label: '',
+  },
   error: { id: 'store/toaster.cart.error', defaultMessage: '', label: '' },
   seeCart: {
     id: 'store/toaster.cart.seeCart',
@@ -43,14 +50,18 @@ const messages = defineMessages({
   },
 })
 
-const AutocompleteBlock: StorefrontFunctionComponent<any &
-  // eslint-disable-next-line react/prop-types
-  WrappedComponentProps> = ({ text, description, componentOnly, intl }) => {
+const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
+  text,
+  description,
+  componentOnly,
+  intl,
+}) => {
   const client = useApolloClient()
   const { showToast } = useContext(ToastContext)
   const [state, setState] = useState<any>({
     selectedItem: null,
-    quantitySelected: 1,
+    quantitySelected: 0,
+    unitMultiplier: 1,
   })
 
   const [addToCart, { error, loading }] = useMutation<
@@ -63,6 +74,7 @@ const AutocompleteBlock: StorefrontFunctionComponent<any &
   const { promptOnCustomEvent } = settings
 
   const { setOrderForm }: OrderFormContext = OrderForm.useOrderForm()
+  const orderForm = OrderForm.useOrderForm()
 
   const translateMessage = (message: MessageDescriptor) => {
     // eslint-disable-next-line react/prop-types
@@ -109,15 +121,30 @@ const AutocompleteBlock: StorefrontFunctionComponent<any &
     setState({
       ...state,
       selectedItem: null,
-      quantitySelected: 1,
+      quantitySelected: 0,
+      unitMultiplier: 1,
     })
   }
 
-  const { selectedItem, quantitySelected } = state
+  interface ItemType {
+    id: string
+    quantity: number
+  }
+
+  const { selectedItem, quantitySelected, unitMultiplier } = state
   const callAddToCart = async (items: any) => {
+    const currentItemsInCart = orderForm.orderForm.items
     const mutationResult = await addToCart({
       variables: {
-        items: items.map((item: any) => {
+        items: items.map((item: ItemType) => {
+          const [existsInCurrentOrder] = currentItemsInCart.filter(
+            el => el.id === item.id.toString()
+          )
+
+          if (existsInCurrentOrder) {
+            item.quantity += parseInt(existsInCurrentOrder.quantity, 10)
+          }
+
           return {
             ...item,
           }
@@ -190,12 +217,19 @@ const AutocompleteBlock: StorefrontFunctionComponent<any &
           }).sellerId
         : null
 
+      let multiplier = 1
+
+      if (data.product.items.length === 1) {
+        multiplier = data.product.items[0].unitMultiplier
+      }
+
       setState({
         ...state,
         selectedItem:
           !!product && product.length
             ? { ...product[0], value: selectedSku, seller, data }
             : null,
+        unitMultiplier: multiplier,
       })
     }
 
@@ -217,9 +251,14 @@ const AutocompleteBlock: StorefrontFunctionComponent<any &
       value,
     }
 
+    const matchedItem = selectedItem.data.product.items.find(
+      item => item.itemId === value
+    )
+
     setState({
       ...state,
       selectedItem: newSelected,
+      unitMultiplier: matchedItem.unitMultiplier,
     })
   }
 
@@ -227,12 +266,23 @@ const AutocompleteBlock: StorefrontFunctionComponent<any &
     return url.replace('25-25', `50-50`)
   }
 
+  const calculateDivisible = (quantity: number, multiplier: number) => {
+    if (multiplier) {
+      return quantity / multiplier
+    }
+
+    return quantity
+  }
+
   const callAddUnitToCart = () => {
-    if (selectedItem && selectedItem.value) {
+    if (selectedItem?.value) {
       const items = [
         {
           id: parseInt(selectedItem.value, 10),
-          quantity: parseFloat(quantitySelected),
+          quantity: calculateDivisible(
+            parseFloat(quantitySelected),
+            unitMultiplier
+          ),
           seller: selectedItem.seller,
         },
       ]
@@ -241,6 +291,16 @@ const AutocompleteBlock: StorefrontFunctionComponent<any &
     } else {
       toastMessage('selectSku')
     }
+  }
+
+  const roundToNearestMultiple = (quantity: number, multiplier: number) => {
+    if (multiplier) {
+      toastMessage('multiplier')
+
+      return Math.round(quantity / multiplier) * multiplier
+    }
+
+    return quantity
   }
 
   const CSS_HANDLES = [
@@ -303,6 +363,7 @@ const AutocompleteBlock: StorefrontFunctionComponent<any &
                     <span className={`${handles.productTitle}`}>
                       {selectedItem.label}
                     </span>
+
                     {!!selectedItem &&
                       selectedItem.data.product.items.length > 1 && (
                         <div className={`${handles.productSku} flex flex-row`}>
@@ -331,6 +392,17 @@ const AutocompleteBlock: StorefrontFunctionComponent<any &
                         </div>
                       )}
                   </div>
+                  {!!selectedItem && unitMultiplier && (
+                    <div
+                      className={`flex flex-column w-90 fl ${handles.productLabel}`}
+                    >
+                      <span className="mr4">
+                        <Tag type="warning" variation="low">
+                          Unit Multiplier of {unitMultiplier}
+                        </Tag>
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="w-third-l w-100-ns fr-l">
                   <div
@@ -340,10 +412,22 @@ const AutocompleteBlock: StorefrontFunctionComponent<any &
                       value={quantitySelected}
                       size="small"
                       type="number"
+                      step={unitMultiplier}
                       onChange={(e: any) => {
                         setState({
                           ...state,
                           quantitySelected: e.target.value,
+                        })
+                      }}
+                      onBlur={() => {
+                        const roundedValue = roundToNearestMultiple(
+                          quantitySelected,
+                          unitMultiplier
+                        )
+
+                        setState({
+                          ...state,
+                          quantitySelected: roundedValue,
                         })
                       }}
                     />
@@ -404,7 +488,7 @@ interface OrderFormContext {
 
 interface MessageDescriptor {
   id: string
-  description?: Record<string, unknown>
+  description?: string | any
   defaultMessage?: string
 }
 
