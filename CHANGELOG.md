@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added 
+
+- Added performance telemetry logs
+
+### Changed
+
+- New field mappings for new table design
+- Frontend changes in new table
+
+### Fixed
+
+- Fixed add to cart button unavailability
+
 ## [0.0.10] - 2022-01-20
 
 ## [0.0.9] - 2022-01-20
@@ -45,6 +58,54 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Added the Avble qty for bulk order.
 - Fixed the duplicate sku addition
+
+## [3.5.1] - 2022-01-21
+
+### Fixed
+
+- Fixed typo
+
+## [3.5.0] - 2022-01-14
+
+### Added
+
+- Ability to run SonarCloud external PR after checking the code by adding a label to it
+
+### Changed
+
+- Sellers API
+
+### Updated
+
+- Code linting
+
+## [3.4.2] - 2022-01-11
+
+### Fixed
+
+- Restricting the Quick Order Upload to accept only .xls and .xlsx files
+
+## [3.4.1] - 2022-01-07
+
+## [3.4.0] - 2021-12-29
+
+## [3.3.2] - 2021-12-21
+
+### Fixed
+
+- Widened the quickorder table
+
+## [3.3.1] - 2021-12-17
+
+### Fixed
+
+- Fixed a bug where the add to cart button will spin forever when given a faulty item SKU
+
+## [3.3.0] - 2021-12-13
+
+### Added
+
+- Displayed the unit modifier value for all items that have it
 
 ## [3.2.0] - 2021-05-17
 

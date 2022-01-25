@@ -1,0 +1,35 @@
+.productName {
+  font-size: 1.85rem;
+  line-height: 1.85rem;
+  padding-bottom: 0.75rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.deleteRowBtn :global(.vtex-button) {
+  background: unset;
+}
+
+.deleteRowBtn :global(.vtex__icon-delete) {
+  color: #787879;
+}
+
+.deleteRowBtn :global(.vtex-button):hover :global(.vtex__icon-delete) {
+  color: black;
+}
+
+.inStockMessage {
+  color: #137752;
+}
+
+.outOfStockMessage {
+  color: #e7040f;
+}
+
+.tableCol2 {
+  background: #f6f7f2;
+}
+
+.deleteRowBtn :global(.vtex-button__label) {
+  padding-right: 0;
+}

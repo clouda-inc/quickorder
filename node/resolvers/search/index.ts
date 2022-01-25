@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { UserInputError } from '@vtex/api'
 
 import { resolvers as refidsResolvers } from './refids'
@@ -22,7 +24,7 @@ export const queries = {
     _: any,
     args: { refids: [string]; orderFormId: string },
     ctx: Context
-  ) => {
+  ): Promise<any> => {
     const {
       clients: { search },
     } = ctx
@@ -41,8 +43,7 @@ export const queries = {
       items,
     }
   },
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  sellers: async (_: any, __: {}, ctx: Context) => {
+  sellers: async (_: any, __: any, ctx: Context): Promise<any> => {
     const {
       clients: { search },
     } = ctx
@@ -68,8 +69,12 @@ export const queries = {
     // @ts-ignore
 
     // TODO: Remove this Line
-    let performanceArray = [] as KeyValue []
-    performanceArray.push({ key: 'REQUEST_START', value: Date.now().toString()})
+    const performanceArray = [] as KeyValue[]
+
+    performanceArray.push({
+      key: 'REQUEST_START',
+      value: Date.now().toString(),
+    })
 
     const { refIds, customerNumber, targetSystem, salesOrganizationCode } = args
     const {
@@ -77,12 +82,18 @@ export const queries = {
     } = ctx
 
     // TODO: Remove this line
-    performanceArray.push({ key: 'START Get Skus by RefIds', value: Date.now().toString()})
+    performanceArray.push({
+      key: 'START Get Skus by RefIds',
+      value: Date.now().toString(),
+    })
 
     const skuIds = await search.getSkusByRefIds(refIds)
 
     // TODO: Remove this line
-    performanceArray.push({ key: 'START Pre Process SKUs into objects', value: Date.now().toString()})
+    performanceArray.push({
+      key: 'START Pre Process SKUs into objects',
+      value: Date.now().toString(),
+    })
 
     const refIdsFound = Object.getOwnPropertyNames(skuIds)
     const skus = refIdsFound
@@ -92,16 +103,21 @@ export const queries = {
       }))
       .filter((sku: any) => sku.skuId != null)
 
-
     // TODO: Remove this line
-    performanceArray.push({ key: 'START Get All Products by sku Ids', value: Date.now().toString()})
+    performanceArray.push({
+      key: 'START Get All Products by sku Ids',
+      value: Date.now().toString(),
+    })
 
     const products = await Promise.all(
       skus.map(async (sku: any) => search.searchProductBySkuId(sku.skuId))
     )
 
     // TODO: Remove this line
-    performanceArray.push({ key: 'START Get All plants for sales organizations', value: Date.now().toString()})
+    performanceArray.push({
+      key: 'START Get All plants for sales organizations',
+      value: Date.now().toString(),
+    })
 
     const plants = await Promise.all(
       refIds.map((refId: string) => {
@@ -122,7 +138,10 @@ export const queries = {
     )
 
     // TODO: Remove this line
-    performanceArray.push({ key: 'START Pre process plants data', value: Date.now().toString()})
+    performanceArray.push({
+      key: 'START Pre process plants data',
+      value: Date.now().toString(),
+    })
 
     const plantList = refIds.map((refId: string, index: number) => {
       return {
@@ -131,25 +150,28 @@ export const queries = {
       }
     })
 
-    // TODO: Remove this line
-    performanceArray.push({ key: 'START Get Brand Info', value: Date.now().toString()})
-
-    const brands = await masterdata.searchDocumentsWithPaginationInfo<
-      BrandForClients
-    >({
-      dataEntity: BRAND_CLIENT_ACRONYM,
-      schema: BRAND_CLIENT_SCHEMA,
-      fields: BRNAD_CLIENT_FIELDS,
-      where: `(user=${customerNumber ?? ''} AND targetSystem=${targetSystem ??
-        ''})`,
-      pagination: { pageSize: 100, page: 1 },
+    performanceArray.push({
+      key: 'START Get Brand Info',
+      value: Date.now().toString(),
     })
+    const brands =
+      await masterdata.searchDocumentsWithPaginationInfo<BrandForClients>({
+        dataEntity: BRAND_CLIENT_ACRONYM,
+        schema: BRAND_CLIENT_SCHEMA,
+        fields: BRNAD_CLIENT_FIELDS,
+        where: `(user=${customerNumber ?? ''} AND targetSystem=${
+          targetSystem ?? ''
+        })`,
+        pagination: { pageSize: 100, page: 1 },
+      })
 
     const brandsList = brands?.data ?? []
 
-
     // TODO: Remove this line
-    performanceArray.push({ key: 'START All Inventory by ItemIds', value: Date.now().toString()})
+    performanceArray.push({
+      key: 'START All Inventory by ItemIds',
+      value: Date.now().toString(),
+    })
 
     const allInventoryByItemIds = await Promise.all(
       ((Object.values(skuIds ?? {}) as string[]) ?? []).map((skuId: string) => {
@@ -158,7 +180,10 @@ export const queries = {
     )
 
     // TODO: Remove this line
-    performanceArray.push({ key: 'START SKU mappings', value: Date.now().toString()})
+    performanceArray.push({
+      key: 'START for each product find availability',
+      value: Date.now().toString(),
+    })
 
     const allSkus = (products ?? [])
       .filter((r: any) => Object.entries(r).length > 0)
@@ -175,8 +200,9 @@ export const queries = {
         // One item has one sku
         const skuItem = items[0]
         const itemId = skuItem?.itemId
-        const skuRefId = (skus ?? []).find((sku: any) => sku.skuId === itemId)
-          ?.refId
+        const skuRefId = (skus ?? []).find(
+          (sku: any) => sku.skuId === itemId
+        )?.refId
 
         // const refId = (items[0]?.referenceId ?? []).find((ref: any) => ref.Key === 'RefId')?.Value ?? ''
         const { commertialOffer, sellerId, sellerName } = items[0].sellers[0]
@@ -261,7 +287,10 @@ export const queries = {
       })
 
     // TODO: Remove this line
-    performanceArray.push({ key: 'START Processed SKU Item mappings', value: Date.now().toString()})
+    performanceArray.push({
+      key: 'START Processed SKU Item mappings',
+      value: Date.now().toString(),
+    })
 
     const itemsRequested = (refIds ?? []).map((refId: string) => {
       const existing = allSkus.find((s: any) => s.refid === refId)
@@ -285,10 +314,14 @@ export const queries = {
     })
 
     // TODO: Remove this line
-    performanceArray.push({ key: 'BEFORE Sending Response', value: Date.now().toString()})
+    performanceArray.push({
+      key: 'BEFORE Sending Response',
+      value: Date.now().toString(),
+    })
+
     return {
       items: itemsRequested,
-      performanceData: performanceArray
+      performanceData: performanceArray,
     }
   },
 }

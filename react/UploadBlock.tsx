@@ -1,4 +1,6 @@
-import React, { useState, useContext } from 'react'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
+import React, { useState, useContext, FunctionComponent } from 'react'
 import {
   FormattedMessage,
   injectIntl,
@@ -10,15 +12,19 @@ import { OrderForm } from 'vtex.order-manager'
 import { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
 import { useCssHandles } from 'vtex.css-handles'
-import { ExecutionResult, useMutation } from 'react-apollo'
+import {useMutation, useQuery} from 'react-apollo'
 import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
-import { useOrderItems } from 'vtex.order-items/OrderItems'
-import { useOrderForm } from 'vtex.order-manager/OrderForm'
 import XLSX from 'xlsx'
 
-import { ParseText, GetText, itemsInSystem, getNewItems } from './utils'
+import { ParseText, GetText } from './utils'
 import ReviewBlock from './components/ReviewBlock'
+import GET_ACCOUNT_INFO from './queries/orderSoldToAccount.graphql'
+
+interface ItemType {
+  id: string
+  quantity: number
+}
 
 const messages = defineMessages({
   success: {
@@ -39,21 +45,23 @@ const messages = defineMessages({
   },
 })
 
-const UploadBlock: StorefrontFunctionComponent<UploadBlockInterface &
+const UploadBlock: FunctionComponent<UploadBlockInterface &
   WrappedComponentProps> = ({
-  text,
-  description,
-  downloadText,
-  componentOnly,
-  intl,
-}: any) => {
+                              text,
+                              description,
+                              downloadText,
+                              componentOnly,
+                              intl,
+                            }: any) => {
   let productsArray: any = []
-  const [state, setState] = useState<any>({})
+  const [state, setState] = useState<any>({
+    reviewItems: [],
+    reviewState: false,
+    showAddToCart: false,
+  })
 
   const [refidLoading, setRefIdLoading] = useState<any>()
-  const [reviewItems, setReviewItems] = useState<any>([])
-  const [reviewState, setReviewState] = useState(false)
-  const [showAddToCart, setShowAddToCart] = useState(false)
+  const { reviewItems, reviewState, showAddToCart } = state
 
   const [
     addToCart,
@@ -65,9 +73,16 @@ const UploadBlock: StorefrontFunctionComponent<UploadBlockInterface &
   const { promptOnCustomEvent } = settings
 
   const { setOrderForm }: OrderFormContext = OrderForm.useOrderForm()
+  const orderForm = OrderForm.useOrderForm()
   const { showToast } = useContext(ToastContext)
-  const { addItem } = useOrderItems()
-  const { orderForm } = useOrderForm()
+
+  const { data: accountData, loading: accountDataLoading } = useQuery(
+    GET_ACCOUNT_INFO,
+    {
+      notifyOnNetworkStatusChange: true,
+      ssr: false,
+    }
+  )
 
   const translateMessage = (message: MessageDescriptor) => {
     return intl.formatMessage(message)
@@ -81,15 +96,22 @@ const UploadBlock: StorefrontFunctionComponent<UploadBlockInterface &
   }
 
   const toastMessage = ({
-    success,
-    isNewItem,
-  }: {
+                          success,
+                          isNewItem,
+                        }: {
     success: boolean
     isNewItem: boolean
   }) => {
     const message = resolveToastMessage(success, isNewItem)
 
-    showToast({ message })
+    const action = success
+      ? {
+        label: translateMessage(messages.seeCart),
+        href: '/checkout/#/cart',
+      }
+      : undefined
+
+    showToast({ message, action })
   }
 
   const download = () => {
@@ -120,13 +142,14 @@ const UploadBlock: StorefrontFunctionComponent<UploadBlockInterface &
     if (items) {
       const show =
         items.filter((item: any) => {
-          return !item.vtexSku || item.availability !== 'available'
+          return !item.vtexSku
         }).length === 0
 
-      setReviewItems(items)
-      setReviewState(true)
-      setShowAddToCart(show)
       setState({
+        ...state,
+        reviewItems: items,
+        reviewState: true,
+        showAddToCart: show,
         textAreaValue: GetText(items),
       })
     }
@@ -146,9 +169,9 @@ const UploadBlock: StorefrontFunctionComponent<UploadBlockInterface &
       return item.error !== null
     }).length
 
-    setReviewItems(items)
     setState({
       ...state,
+      reviewItems: items,
       hasError: error,
     })
     onReviewItems(items)
@@ -178,8 +201,7 @@ const UploadBlock: StorefrontFunctionComponent<UploadBlockInterface &
     }
   })()
 
-  const doFile = (files: any) => {
-    const f = files[0]
+  const doFile = ([f]: any) => {
     const reader: any = new FileReader()
 
     reader.onload = (e: any) => {
@@ -187,7 +209,7 @@ const UploadBlock: StorefrontFunctionComponent<UploadBlockInterface &
 
       data = new Uint8Array(data)
       const result = processWb(XLSX.read(data, { type: 'array' }))
-      const sheetName = Object.getOwnPropertyNames(result)[0]
+      const [sheetName] = Object.getOwnPropertyNames(result)
 
       result[sheetName].splice(0, 1)
       productsArray = result[sheetName]
@@ -212,83 +234,69 @@ const UploadBlock: StorefrontFunctionComponent<UploadBlockInterface &
   const handleReset = () => {}
 
   const backList = () => {
-    setReviewState(false)
     setState({
       ...state,
+      reviewState: false,
     })
   }
 
   const callAddToCart = async (items: any) => {
     const splitBy = 10
     const tempItems = items
+    const loopCount = Math.floor(items.length / splitBy) + 1
 
-    const existItems = itemsInSystem(orderForm?.items, tempItems)
-    const newItems = getNewItems(orderForm?.items, tempItems)
-
-    const loopCount = Math.floor(newItems.length / splitBy) + 1
-    const loopCountExist = Math.floor(existItems.length / splitBy) + 1
-
-    const promises: Array<ExecutionResult<{ addToCart: OrderFormType }>> = []
+    const promises: any = []
     // let orderFormData = []
 
-    if (existItems.length) {
-      for (let i = 0; i < loopCountExist; i++) {
-        const chunk = tempItems.splice(0, splitBy)
+    for (let i = 0; i < loopCount; i++) {
+      const chunk = tempItems.splice(0, splitBy)
 
-        if (chunk.length) {
-          addItem(chunk)
-        }
-      }
+      if (chunk.length) {
+        const currentItemsInCart = orderForm.orderForm.items
 
-      toastMessage({ success: true, isNewItem: true })
-    }
+        const mutationChunk = addToCart({
+          variables: {
+            items: chunk.map((item: ItemType) => {
+              const [existsInCurrentOrder] = currentItemsInCart.filter(
+                el => el.id === item.id.toString()
+              )
 
-    if (newItems.length > 0) {
-      for (let i = 0; i < loopCount; i++) {
-        const chunk = tempItems.splice(0, splitBy)
+              if (existsInCurrentOrder) {
+                item.quantity += parseInt(existsInCurrentOrder.quantity, 10)
+              }
 
-        if (chunk.length) {
-          // eslint-disable-next-line no-await-in-loop
-          const mutationChunk = await addToCart({
-            variables: {
-              items: chunk.map((item: any) => {
-                return {
-                  ...item,
-                }
-              }),
-            },
-          })
-
-          console.info('mutationChunk =>', mutationChunk)
-
-          mutationChunk.data && setOrderForm(mutationChunk.data.addToCart)
+              return {
+                ...item,
+              }
+            }),
+          },
+        }).then((data: any) => {
+          data && setOrderForm(data.addToCart)
 
           if (
-            mutationChunk.data?.addToCart?.messages?.generalMessages &&
-            mutationChunk.data.addToCart.messages.generalMessages.length
+            data?.addToCart?.messages?.generalMessages &&
+            data.addToCart.messages.generalMessages.length
           ) {
-            mutationChunk.data.addToCart.messages.generalMessages.map(
-              (msg: any) => {
-                return showToast({
-                  message: msg.text,
-                  action: undefined,
-                  duration: 30000,
-                })
-              }
-            )
+            data.addToCart.messages.generalMessages.map((msg: any) => {
+              return showToast({
+                message: msg.text,
+                action: undefined,
+                duration: 30000,
+              })
+            })
           } else {
             toastMessage({ success: true, isNewItem: true })
           }
+        })
 
-          promises.push(mutationChunk)
-        }
+        promises.push(mutationChunk)
       }
-
-      Promise.all(promises).catch(() => {
-        console.error(mutationError)
-        toastMessage({ success: false, isNewItem: false })
-      })
     }
+
+    Promise.all(promises).catch(() => {
+      console.error(mutationError)
+      toastMessage({ success: false, isNewItem: false })
+    })
 
     // Update OrderForm from the context
 
@@ -317,15 +325,32 @@ const UploadBlock: StorefrontFunctionComponent<UploadBlockInterface &
   const addToCartUpload = () => {
     const items: any = reviewItems
       .filter((item: any) => item.error === null && item.vtexSku !== null)
-      .map(({ vtexSku, quantity, seller, unit }: any) => {
+      .map(({ vtexSku, quantity, seller }: any) => {
         return {
           id: parseInt(vtexSku, 10),
-          quantity: parseFloat(quantity) / unit,
+          quantity: parseFloat(quantity),
           seller,
         }
       })
 
-    callAddToCart(items)
+    const merge = internalItems => {
+      return internalItems.reduce((acc: any, val) => {
+        const { id, quantity }: ItemType = val
+        const ind = acc.findIndex(el => el.id === id)
+
+        if (ind !== -1) {
+          acc[ind].quantity += quantity
+        } else {
+          acc.push(val)
+        }
+
+        return acc
+      }, [])
+    }
+
+    const mergedItems = merge(items)
+
+    callAddToCart(mergedItems)
   }
 
   const CSS_HANDLES = [
@@ -340,16 +365,18 @@ const UploadBlock: StorefrontFunctionComponent<UploadBlockInterface &
     'buttonsBlock',
     'textContainerTitle',
     'textContainerDescription',
-    'inactiveAddToCart',
-    'activeAddToCart',
   ] as const
 
   const handles = useCssHandles(CSS_HANDLES)
 
+  if (accountDataLoading) {
+    return <p>Loading sold to..</p>
+  }
+
   return (
     <div>
       {!componentOnly && (
-        <div className={`${handles.textContainer} w-third-l w-100-ns fl-l`}>
+        <div className={`${handles.textContainer} w-20-l w-100-ns fl-l`}>
           <h2
             className={`t-heading-3 mb3 ml5 ml3-ns mt4 ${handles.textContainerTitle}`}
           >
@@ -374,15 +401,19 @@ const UploadBlock: StorefrontFunctionComponent<UploadBlockInterface &
       )}
       <div
         className={`${handles.componentContainer} ${
-          !componentOnly ? 'w-two-thirds-l w-100-ns fr-l' : ''
+          !componentOnly ? 'w-80-l w-100-ns fr-l' : ''
         }`}
       >
         {!reviewState && (
           <div className="w-100 mb5">
             <div
-              className={`bg-base t-body c-on-base pa7 br3 b--muted-4 ${handles.dropzoneContainer}`}
+              className={`bg-base t-body c-on-base ph6 pb6 br3 b--muted-4 ${handles.dropzoneContainer}`}
             >
-              <Dropzone onDropAccepted={handleFile} onFileReset={handleReset}>
+              <Dropzone
+                onDropAccepted={handleFile}
+                onFileReset={handleReset}
+                accept=".xls,.xlsx"
+              >
                 <div className="pt7">
                   <div>
                     <span className={`f4 ${handles.dropzoneText}`}>
@@ -413,11 +444,12 @@ const UploadBlock: StorefrontFunctionComponent<UploadBlockInterface &
         )}
 
         {reviewState && (
-          <div className={`w-100 pa6 ${handles.reviewBlock}`}>
+          <div className={`w-100 ph6 ${handles.reviewBlock}`}>
             <ReviewBlock
               reviewedItems={reviewItems}
               onReviewItems={onReviewItems}
               onRefidLoading={onRefidLoading}
+              soldToAccount={accountData}
             />
             <div
               className={`mb4 mt4 flex justify-between ${handles.buttonsBlock}`}
@@ -432,29 +464,17 @@ const UploadBlock: StorefrontFunctionComponent<UploadBlockInterface &
                 <FormattedMessage id="store/quickorder.back" />
               </Button>
               {refidLoading && <Spinner />}
-              {showAddToCart ? (
-                <div className={handles.activeAddToCart}>
-                  <Button
-                    variation="primary"
-                    size="small"
-                    isLoading={mutationLoading}
-                    onClick={() => {
-                      addToCartUpload()
-                    }}
-                  >
-                    <FormattedMessage id="store/quickorder.addToCart" />
-                  </Button>
-                </div>
-              ) : (
-                <div className={handles.inactiveAddToCart}>
-                  <Button
-                    variation="primary"
-                    size="small"
-                    isLoading={mutationLoading}
-                  >
-                    <FormattedMessage id="store/quickorder.addToCart" />
-                  </Button>
-                </div>
+              {showAddToCart && (
+                <Button
+                  variation="primary"
+                  size="small"
+                  isLoading={mutationLoading}
+                  onClick={() => {
+                    addToCartUpload()
+                  }}
+                >
+                  <FormattedMessage id="store/quickorder.addToCart" />
+                </Button>
               )}
             </div>
           </div>
@@ -466,7 +486,7 @@ const UploadBlock: StorefrontFunctionComponent<UploadBlockInterface &
 
 interface MessageDescriptor {
   id: string
-  description?: any
+  description?: string | any
   defaultMessage?: string
 }
 
