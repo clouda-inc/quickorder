@@ -55,5 +55,13 @@
   "store/toaster.cart.error": "store/toaster.cart.error",
   "store/toaster.cart.seeCart": "store/toaster.cart.seeCart",
   "store/toaster.cart.success": "store/toaster.cart.success",
-  "store/quickorder.unavailable": "store/quickorder.unavailable"
+  "store/quickorder.unavailable": "store/quickorder.unavailable",
+  "store/quickorder.inStock": "store/quickorder.inStock",
+  "store/quickorder.outOfStock": "store/quickorder.outOfStock",
+  "store/quickorder.customerPart": "store/quickorder.customerPart",
+  "store/quickorder.goToProductPage": "store/quickorder.goToProductPage",
+  "store/quickorder.unitOfMeasure": "store/quickorder.unitOfMeasure",
+  "store/quickorder.quantityPerUnit": "store/quickorder.quantityPerUnit",
+  "store/quickorder.unitMultiplier": "store/quickorder.unitMultiplier",
+  "store/quickorder.moq": "store/quickorder.moq"
 }

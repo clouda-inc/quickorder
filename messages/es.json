@@ -55,5 +55,13 @@
   "store/toaster.cart.error": "Error al agregar productos al carrito",
   "store/toaster.cart.seeCart": "Ver el carrito",
   "store/toaster.cart.success": "Productos agregados correctamente",
-  "store/quickorder.unavailable": "Item not available in the store"
+  "store/quickorder.unavailable": "Item not available in the store",
+  "store/quickorder.inStock": "In Stock",
+  "store/quickorder.customerPart": "Customer Part:",
+  "store/quickorder.goToProductPage": "Go To Product Page",
+  "store/quickorder.unitOfMeasure": "Unit of Measure",
+  "store/quickorder.outOfStock": "Out of Stock",
+  "store/quickorder.quantityPerUnit": "Quantity Per Unit",
+  "store/quickorder.unitMultiplier": "Unit Multiplier",
+  "store/quickorder.moq": "MOQ"
 }

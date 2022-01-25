@@ -55,5 +55,13 @@
   "store/toaster.cart.error": "Eroare la adaugarea produselor in cos",
   "store/toaster.cart.seeCart": "Vezi cos",
   "store/toaster.cart.success": "Produse adaugate in cos",
-  "store/quickorder.unavailable": "Item not available in the store"
+  "store/quickorder.unavailable": "Item not available in the store",
+  "store/quickorder.inStock": "In Stock",
+  "store/quickorder.customerPart": "Customer Part:",
+  "store/quickorder.goToProductPage": "Go To Product Page",
+  "store/quickorder.unitOfMeasure": "Unit of Measure",
+  "store/quickorder.outOfStock": "Out of Stock",
+  "store/quickorder.quantityPerUnit": "Quantity Per Unit",
+  "store/quickorder.unitMultiplier": "Unit Multiplier",
+  "store/quickorder.moq": "MOQ"
 }
