@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { Functions } from '@gocommerce/utils'
 
 /**
@@ -17,22 +18,16 @@ export const searchEncodeURI = (account: string) => (str: string) => {
       switch (c) {
         case '%':
           return '@perc@'
-
         case '"':
           return '@quo@'
-
         case "'":
           return '@squo@'
-
         case '.':
           return '@dot@'
-
         case '(':
           return '@lpar@'
-
         case ')':
           return '@rpar@'
-
         default: {
           return c
         }

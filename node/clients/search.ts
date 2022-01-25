@@ -1,6 +1,4 @@
-import type { InstanceOptions, IOContext } from '@vtex/api'
-import { ExternalClient } from '@vtex/api'
-import axios from 'axios'
+import { InstanceOptions, IOContext, JanusClient } from '@vtex/api'
 
 interface RefIdArgs {
   refids: any
@@ -13,9 +11,16 @@ interface Items {
   seller: string
 }
 
-export class Search extends ExternalClient {
-  constructor(ctx: IOContext, opts?: InstanceOptions) {
-    super(`http://${ctx.account}.vtexcommercestable.com.br/`, ctx, opts)
+export class Search extends JanusClient {
+  constructor(context: IOContext, options?: InstanceOptions) {
+    super(context, {
+      ...options,
+      headers: {
+        ...options?.headers,
+        VtexIdClientAutCookie: context.authToken,
+      },
+      timeout: 5000,
+    })
   }
 
   private sellersList: any[] | undefined
@@ -26,16 +31,15 @@ export class Search extends ExternalClient {
     }).name
   }
 
-  /**
-   *
-   * @param refids
-   * @param orderFormId
-   */
-  public skuFromRefIds = async ({ refids, orderFormId }: RefIdArgs) => {
+  public skuFromRefIds = async ({
+    refids,
+    orderFormId,
+  }: RefIdArgs): Promise<any> => {
     this.sellersList = await this.sellers()
 
-    const url = `http://${this.context.account}.vtexcommercestable.com.br/api/catalog_system/pub/sku/stockkeepingunitidsbyrefids`
-    const res = await axios.post(url, refids, {
+    const url = `/api/catalog_system/pub/sku/stockkeepingunitidsbyrefids`
+
+    const res: any = await this.http.postRaw(url, refids, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `bearer ${this.context.authToken}`,
@@ -69,28 +73,20 @@ export class Search extends ExternalClient {
       const orderForm = await this.getOrderForm(orderFormId)
       const { items }: any = await this.simulate(result, orderForm)
 
+      items.forEach((item: any) => {
+        items[item.id] = item
+      })
+
       result = result.map((item: any) => {
         return {
           ...item,
-          availability: this.getAvailability(item, items),
+          unitMultiplier: items[item.sku]?.unitMultiplier ?? 1,
+          availability: items[item.sku]?.availability ?? '',
         }
       })
     }
 
     return result
-  }
-
-  /**
-   *
-   * @param item
-   * @param items
-   */
-  private getAvailability = (item: any, items: any) => {
-    const [availabilityItem] = items.filter((curr: any) => {
-      return curr.id === item.sku
-    })
-
-    return availabilityItem?.availability ?? ''
   }
 
   /**
@@ -155,15 +151,13 @@ export class Search extends ExternalClient {
         sellers: null,
       }
     }
-
-    const url = `http://${this.context.account}.vtexcommercestable.com.br/api/catalog_system/pvt/sku/stockkeepingunitbyid/${skuId}`
-    const res = await axios.get(url, {
+    const url = `/api/catalog_system/pvt/sku/stockkeepingunitbyid/${skuId}`
+    const res = await this.http.getRaw(url, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `bearer ${this.context.authToken}`,
       },
     })
-
     return res.data?.SkuSellers
       ? {
           sku: skuId,
@@ -180,13 +174,10 @@ export class Search extends ExternalClient {
       : []
   }
 
-  /**
-   *
-   */
-  public sellers = async () => {
-    const url = `http://${this.context.account}.vtexcommercestable.com.br/api/catalog_system/pvt/seller/list`
+  public sellers = async (): Promise<any> => {
+    const url = `/api/seller-register/pvt/sellers`
 
-    const res = await axios.get(url, {
+    const res = await this.http.getRaw(url, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `bearer ${this.context.authToken}`,
@@ -196,14 +187,14 @@ export class Search extends ExternalClient {
     let result: any = []
 
     if (res.status === 200) {
-      result = res.data
-        .filter(({ IsActive }: any) => {
-          return IsActive === true
+      result = res.data.items
+        .filter((item: any) => {
+          return item.isActive === true
         })
-        .map(({ SellerId, Name }: any) => {
+        .map(({ id, name }: any) => {
           return {
-            id: SellerId,
-            name: Name,
+            id,
+            name,
           }
         })
     }
@@ -218,7 +209,7 @@ export class Search extends ExternalClient {
    */
   public searchProductBySkuId = async (sku: string) => {
     const priceBySkuIdUrl = `http://${this.context.account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search?fq=skuId:${sku}`
-    const res = await axios.get(priceBySkuIdUrl, {
+    const res = await this.http.getRaw(priceBySkuIdUrl, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `bearer ${this.context.authToken}`,
@@ -234,7 +225,7 @@ export class Search extends ExternalClient {
    */
   public getSkusByRefIds = async (refIds: string[]) => {
     const url = `http://${this.context.account}.vtexcommercestable.com.br/api/catalog_system/pub/sku/stockkeepingunitidsbyrefids`
-    const res = await axios.post(url, refIds, {
+    const res = await this.http.postRaw(url, refIds, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `bearer ${this.context.authToken}`,

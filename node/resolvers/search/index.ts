@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { UserInputError } from '@vtex/api'
 
 import { resolvers as refidsResolvers } from './refids'
@@ -22,7 +24,7 @@ export const queries = {
     _: any,
     args: { refids: [string]; orderFormId: string },
     ctx: Context
-  ) => {
+  ): Promise<any> => {
     const {
       clients: { search },
     } = ctx
@@ -41,8 +43,7 @@ export const queries = {
       items,
     }
   },
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  sellers: async (_: any, __: {}, ctx: Context) => {
+  sellers: async (_: any, __: any, ctx: Context): Promise<any> => {
     const {
       clients: { search },
     } = ctx
@@ -70,6 +71,9 @@ export const queries = {
     const {
       clients: { search, masterdata, catalog },
     } = ctx
+
+    // eslint-disable-next-line no-console
+    console.log(JSON.stringify(refIds, null, 2))
 
     const skuIds = await search.getSkusByRefIds(refIds)
     const refIdsFound = Object.getOwnPropertyNames(skuIds)

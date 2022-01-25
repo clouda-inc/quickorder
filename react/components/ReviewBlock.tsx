@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable vtex/prefer-early-return */
-import React, { useEffect, useState } from 'react'
+import React, {useState, FunctionComponent } from 'react'
 import {
   ButtonWithIcon,
   IconDelete,
@@ -10,10 +11,10 @@ import {
 } from 'vtex.styleguide'
 import { defineMessages, injectIntl, WrappedComponentProps } from 'react-intl'
 import PropTypes from 'prop-types'
-import { useApolloClient, useQuery } from 'react-apollo'
+import { useApolloClient } from 'react-apollo'
 import { useCssHandles } from 'vtex.css-handles'
 
-import { validateQuantity } from '../utils' //GetText, ParseText,
+import { GetText, validateQuantity } from '../utils'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 // import getRefIdTranslation from '../queries/refids.gql'
@@ -24,11 +25,11 @@ import { validateQuantity } from '../utils' //GetText, ParseText,
 // @ts-ignore
 import GET_PRODUCT_DATA from '../queries/getPrductAvailability.graphql'
 // import { stubFalse } from 'lodash'
-import GET_ACCOUNT_INFO from '../queries/orderSoldToAccount.graphql'
 
 import './ReviewBlock.css'
 
 const remove = <IconDelete />
+let initialLoad = ''
 
 const messages = defineMessages({
   valid: {
@@ -194,36 +195,28 @@ const CSS_HANDLES = [
   'stockAvailabilityMessage',
 ]
 
-const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
+const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   onReviewItems,
   reviewedItems,
   onRefidLoading,
   intl,
+  soldToAccount,
 }: any) => {
-  const client = useApolloClient()
-  const styles = useCssHandles(CSS_HANDLES)
-
   // const { data: orderFormData } = useQuery<{
   //   orderForm
   // }>(OrderFormQuery, {
   //   ssr: false,
   //   skip: !!orderFormId,
   // })
-
-  const { data: accountData, loading: accountDataLoading } = useQuery(
-    GET_ACCOUNT_INFO,
-    {
-      notifyOnNetworkStatusChange: true,
-      ssr: false,
-    }
-  )
+  const client = useApolloClient()
+  const styles = useCssHandles(CSS_HANDLES)
 
   const customerNumber =
-    accountData?.getOrderSoldToAccount?.customerNumber ?? ''
+    soldToAccount?.getOrderSoldToAccount?.customerNumber ?? ''
 
-  const targetSystem = accountData?.getOrderSoldToAccount?.targetSystem ?? ''
+  const targetSystem = soldToAccount?.getOrderSoldToAccount?.targetSystem ?? ''
   const salesOrganizationCode =
-    accountData?.getOrderSoldToAccount?.salesOrganizationCode ?? ''
+    soldToAccount?.getOrderSoldToAccount?.salesOrganizationCode ?? ''
 
   const [state, setReviewState] = useState<any>({
     reviewItems:
@@ -332,6 +325,14 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         return ret?.price
       }
 
+      const mappedRefId = {}
+
+      if (refidData?.skuFromRefIds?.items) {
+        refidData.skuFromRefIds.items.forEach((item: any) => {
+          mappedRefId[item.refid] = item
+        })
+      }
+
       const getAvailableQuantity = (item: any) => {
         const ret: any = itemsFromQuery.find((curr: any) => {
           return !!item.sku && item.sku === curr.refid
@@ -346,14 +347,6 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
         })
 
         return ret?.availability
-      }
-
-      const getSeller = (item: any) => {
-        const ret: any = itemsFromQuery.find((curr: any) => {
-          return !!item.sku && item.sku === curr.refid
-        })
-
-        return ret?.seller
       }
 
       const getItemFromQuery = (item: any) => {
@@ -404,15 +397,21 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
 
       const items = reviewed.map((item: any) => {
         // const sellers = getSellers(item)
+        const sellers = item.sku ? mappedRefId[item.sku]?.sellers : '1'
         const itm = getItemFromQuery(item)
+
         return {
           ...item,
+          sellers: item.sku ? mappedRefId[item.sku]?.sellers : '1',
+          seller: sellers?.length ? sellers[0].id : '1',
           availableQuantity: getAvailableQuantity(item),
           price: getPrice(item),
           vtexSku: vtexSku(item),
+          totalQuantity:
+            (item.sku ? mappedRefId[item.sku]?.unitMultiplier : '1') *
+            item.quantity,
           error: errorMsg(item),
           availability: getAvailability(item),
-          seller: getSeller(item)?.id,
           productName: itm?.productName,
           skuName: itm?.skuName,
           uom: itm?.uom,
@@ -457,7 +456,7 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     }
 
     try {
-      const { data } = await client.query({
+      const query = {
         query: GET_PRODUCT_DATA,
         variables: {
           refIds: refids as string[],
@@ -465,9 +464,13 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
           targetSystem,
           salesOrganizationCode,
         },
-      })
+      }
 
-      validateRefids(data, reviewed)
+      const { data } = await client.query(query)
+
+      if (data) {
+        validateRefids(data, reviewed)
+      }
     } catch (error) {
       console.error(error)
     }
@@ -497,9 +500,10 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     }
   }
 
-  useEffect(() => {
+  if (initialLoad !== GetText(reviewItems)) {
     checkValidatedItems()
-  })
+    initialLoad = GetText(reviewItems)
+  }
 
   const removeLine = (i: number) => {
     const items: [any] = reviewItems
@@ -696,9 +700,7 @@ const ReviewBlock: StorefrontFunctionComponent<WrappedComponentProps & any> = ({
     },
   }
 
-  return accountDataLoading ? (
-    <div />
-  ) : (
+  return (
     <div>
       <Table
         dynamicRowHeight
