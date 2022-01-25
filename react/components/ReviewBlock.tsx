@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable vtex/prefer-early-return */
-import React, { useState, FunctionComponent } from 'react'
+import React, {useState, FunctionComponent } from 'react'
 import {
   ButtonWithIcon,
   IconDelete,
@@ -11,7 +11,6 @@ import {
 } from 'vtex.styleguide'
 import { defineMessages, injectIntl, WrappedComponentProps } from 'react-intl'
 import PropTypes from 'prop-types'
-import { useApolloClient, useQuery } from 'react-apollo'
 
 import { GetText, ParseText, validateQuantity } from '../utils'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -23,8 +22,8 @@ import { GetText, ParseText, validateQuantity } from '../utils'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import GET_PRODUCT_DATA from '../queries/getPrductAvailability.graphql'
+import { useApolloClient } from 'react-apollo'
 // import { stubFalse } from 'lodash'
-import GET_ACCOUNT_INFO from '../queries/orderSoldToAccount.graphql'
 
 const remove = <IconDelete />
 let initialLoad = ''
@@ -147,30 +146,22 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   reviewedItems,
   onRefidLoading,
   intl,
+                                                                       soldToAccount,
 }: any) => {
-  const client = useApolloClient()
-
   // const { data: orderFormData } = useQuery<{
   //   orderForm
   // }>(OrderFormQuery, {
   //   ssr: false,
   //   skip: !!orderFormId,
   // })
-
-  const { data: accountData, loading: accountDataLoading } = useQuery(
-    GET_ACCOUNT_INFO,
-    {
-      notifyOnNetworkStatusChange: true,
-      ssr: false,
-    }
-  )
+  const client = useApolloClient()
 
   const customerNumber =
-    accountData?.getOrderSoldToAccount?.customerNumber ?? ''
+    soldToAccount?.getOrderSoldToAccount?.customerNumber ?? ''
 
-  const targetSystem = accountData?.getOrderSoldToAccount?.targetSystem ?? ''
+  const targetSystem = soldToAccount?.getOrderSoldToAccount?.targetSystem ?? ''
   const salesOrganizationCode =
-    accountData?.getOrderSoldToAccount?.salesOrganizationCode ?? ''
+    soldToAccount?.getOrderSoldToAccount?.salesOrganizationCode ?? ''
 
   const [state, setReviewState] = useState<any>({
     reviewItems:
@@ -395,7 +386,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     }
 
     try {
-      const { data } = await client.query({
+      const query = {
         query: GET_PRODUCT_DATA,
         variables: {
           refIds: refids as string[],
@@ -403,9 +394,13 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
           targetSystem,
           salesOrganizationCode,
         },
-      })
+      }
 
-      validateRefids(data, reviewed)
+      const { data } = await client.query(query)
+
+      if (data) {
+        validateRefids(data, reviewed)
+      }
     } catch (error) {
       console.error(error)
     }
@@ -555,20 +550,20 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
         }),
         width: 75,
       },
-      unitMultiplier: {
-        type: 'float',
-        title: intl.formatMessage({
-          id: 'store/quickorder.review.label.multiplier',
-        }),
-        width: 100,
-      },
-      totalQuantity: {
-        type: 'float',
-        title: intl.formatMessage({
-          id: 'store/quickorder.review.label.totalQuantity',
-        }),
-        width: 100,
-      },
+      // unitMultiplier: {
+      //   type: 'float',
+      //   title: intl.formatMessage({
+      //     id: 'store/quickorder.review.label.multiplier',
+      //   }),
+      //   width: 100,
+      // },
+      // totalQuantity: {
+      //   type: 'float',
+      //   title: intl.formatMessage({
+      //     id: 'store/quickorder.review.label.totalQuantity',
+      //   }),
+      //   width: 100,
+      // },
       unit: {
         hidden: true,
         type: 'string',
@@ -662,13 +657,9 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     },
   }
 
-  return accountDataLoading ? (
-    <div />
-  ) : (
-    <div>
-      <Table schema={tableSchema} items={reviewItems} fullWidth />
-    </div>
-  )
+  return <div>
+    <Table schema={tableSchema} items={reviewItems} fullWidth />
+  </div>
 }
 
 ReviewBlock.propTypes = {
