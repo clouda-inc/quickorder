@@ -38,7 +38,13 @@
   "store/quickorder.category.loading": "Loading...",
   "store/quickorder.category.noneSelection": "Enter some quantity on the items",
   "store/quickorder.category.multiplier": "La cantidad del artículo se ha redondeado al múltiplo más cercano del multiplicador de unidades.",
+  "store/quickorder.customerPart": "Customer Part:",
+  "store/quickorder.goToProductPage": "Go To Product Page",
+  "store/quickorder.inStock": "In Stock",
   "store/quickorder.invalidPattern": "Formato no válido",
+  "store/quickorder.moq": "MOQ",
+  "store/quickorder.outOfStock": "Out of Stock",
+  "store/quickorder.quantityPerUnit": "Quantity Per Unit",
   "store/quickorder.review.label.content": "Contenido",
   "store/quickorder.review.label.lineNumber": "#",
   "store/quickorder.review.label.quantity": "Cantidad",
@@ -48,6 +54,9 @@
   "store/quickorder.review.label.sku": "SKU",
   "store/quickorder.review.label.status": "Estado",
   "store/quickorder.skuNotFound": "SKU no encontrado",
+  "store/quickorder.unavailable": "Item not available in the store",
+  "store/quickorder.unitMultiplier": "Unit Multiplier",
+  "store/quickorder.unitOfMeasure": "Unit of Measure",
   "store/quickorder.upload.choose": "choose a file",
   "store/quickorder.upload.drop": "Drop here your XLS or",
   "store/quickorder.valid": "Válido",
@@ -57,6 +66,5 @@
   "store/toaster.cart.duplicated": "Elemento duplicado",
   "store/toaster.cart.error": "Error al agregar productos al carrito",
   "store/toaster.cart.seeCart": "Ver el carrito",
-  "store/toaster.cart.success": "Productos agregados correctamente",
-  "store/quickorder.unavailable": "Item not available in the store"
+  "store/toaster.cart.success": "Productos agregados correctamente"
 }

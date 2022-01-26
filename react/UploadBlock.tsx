@@ -12,7 +12,7 @@ import { OrderForm } from 'vtex.order-manager'
 import { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
 import { useCssHandles } from 'vtex.css-handles'
-import {useMutation, useQuery} from 'react-apollo'
+import { useMutation, useQuery } from 'react-apollo'
 import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
 import XLSX from 'xlsx'
@@ -45,14 +45,9 @@ const messages = defineMessages({
   },
 })
 
-const UploadBlock: FunctionComponent<UploadBlockInterface &
-  WrappedComponentProps> = ({
-                              text,
-                              description,
-                              downloadText,
-                              componentOnly,
-                              intl,
-                            }: any) => {
+const UploadBlock: FunctionComponent<
+  UploadBlockInterface & WrappedComponentProps
+> = ({ text, description, downloadText, componentOnly, intl }: any) => {
   let productsArray: any = []
   const [state, setState] = useState<any>({
     reviewItems: [],
@@ -63,10 +58,8 @@ const UploadBlock: FunctionComponent<UploadBlockInterface &
   const [refidLoading, setRefIdLoading] = useState<any>()
   const { reviewItems, reviewState, showAddToCart } = state
 
-  const [
-    addToCart,
-    { error: mutationError, loading: mutationLoading },
-  ] = useMutation<{ addToCart: OrderFormType }, { items: [] }>(ADD_TO_CART)
+  const [addToCart, { error: mutationError, loading: mutationLoading }] =
+    useMutation<{ addToCart: OrderFormType }, { items: [] }>(ADD_TO_CART)
 
   const { push } = usePixel()
   const { settings = {}, showInstallPrompt = undefined } = usePWA() || {}
@@ -96,9 +89,9 @@ const UploadBlock: FunctionComponent<UploadBlockInterface &
   }
 
   const toastMessage = ({
-                          success,
-                          isNewItem,
-                        }: {
+    success,
+    isNewItem,
+  }: {
     success: boolean
     isNewItem: boolean
   }) => {
@@ -106,9 +99,9 @@ const UploadBlock: FunctionComponent<UploadBlockInterface &
 
     const action = success
       ? {
-        label: translateMessage(messages.seeCart),
-        href: '/checkout/#/cart',
-      }
+          label: translateMessage(messages.seeCart),
+          href: '/checkout/#/cart',
+        }
       : undefined
 
     showToast({ message, action })
@@ -160,7 +153,7 @@ const UploadBlock: FunctionComponent<UploadBlockInterface &
   const parseText = () => {
     let textAreaValue = ''
 
-    productsArray.forEach(element => {
+    productsArray.forEach((element: any) => {
       textAreaValue += `${element[0]},${element[1]}\n`
     })
 
@@ -213,8 +206,8 @@ const UploadBlock: FunctionComponent<UploadBlockInterface &
 
       result[sheetName].splice(0, 1)
       productsArray = result[sheetName]
-      productsArray = productsArray.filter(item => item.length)
-      productsArray.forEach(p => {
+      productsArray = productsArray.filter((item: any) => item.length)
+      productsArray.forEach((p: any) => {
         p[0] = (p[0] || '').toString().trim()
         p[1] = (p[1] || '').toString().trim()
       })
@@ -258,7 +251,7 @@ const UploadBlock: FunctionComponent<UploadBlockInterface &
           variables: {
             items: chunk.map((item: ItemType) => {
               const [existsInCurrentOrder] = currentItemsInCart.filter(
-                el => el.id === item.id.toString()
+                (el: any) => el.id === item.id.toString()
               )
 
               if (existsInCurrentOrder) {
@@ -333,10 +326,10 @@ const UploadBlock: FunctionComponent<UploadBlockInterface &
         }
       })
 
-    const merge = internalItems => {
+    const merge = (internalItems: any) => {
       return internalItems.reduce((acc: any, val) => {
         const { id, quantity }: ItemType = val
-        const ind = acc.findIndex(el => el.id === id)
+        const ind = acc.findIndex((el: any) => el.id === id)
 
         if (ind !== -1) {
           acc[ind].quantity += quantity

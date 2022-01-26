@@ -38,7 +38,13 @@
   "store/quickorder.category.loading": "Se incarca...",
   "store/quickorder.category.noneSelection": "Introduceti cantitati",
   "store/quickorder.category.multiplier": "Cantitatea articolului a fost rotunjită la cel mai apropiat multiplu al multiplicatorului unității",
+  "store/quickorder.customerPart": "Customer Part:",
+  "store/quickorder.goToProductPage": "Go To Product Page",
+  "store/quickorder.inStock": "In Stock",
   "store/quickorder.invalidPattern": "Pattern Invalid",
+  "store/quickorder.moq": "MOQ",
+  "store/quickorder.outOfStock": "Out of Stock",
+  "store/quickorder.quantityPerUnit": "Quantity Per Unit",
   "store/quickorder.review.label.content": "Continut",
   "store/quickorder.review.label.lineNumber": "#",
   "store/quickorder.review.label.quantity": "Cantitate",
@@ -48,6 +54,9 @@
   "store/quickorder.review.label.sku": "SKU",
   "store/quickorder.review.label.status": "Stare",
   "store/quickorder.skuNotFound": "SKU negasit",
+  "store/quickorder.unavailable": "Item not available in the store",
+  "store/quickorder.unitMultiplier": "Unit Multiplier",
+  "store/quickorder.unitOfMeasure": "Unit of Measure",
   "store/quickorder.upload.choose": "alege fisier",
   "store/quickorder.upload.drop": "Incarca aici XLS or",
   "store/quickorder.valid": "Valid",
@@ -57,6 +66,5 @@
   "store/toaster.cart.duplicated": "Articol duplicat",
   "store/toaster.cart.error": "Eroare la adaugarea produselor in cos",
   "store/toaster.cart.seeCart": "Vezi cos",
-  "store/toaster.cart.success": "Produse adaugate in cos",
-  "store/quickorder.unavailable": "Item not available in the store"
+  "store/toaster.cart.success": "Produse adaugate in cos"
 }

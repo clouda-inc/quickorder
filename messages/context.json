@@ -38,7 +38,13 @@
   "store/quickorder.category.loading": "store/quickorder.category.loading",
   "store/quickorder.category.noneSelection": "store/quickorder.category.noneSelection",
   "store/quickorder.category.multiplier": "store/quickorder.category.multiplier",
+  "store/quickorder.customerPart": "store/quickorder.customerPart",
+  "store/quickorder.goToProductPage": "store/quickorder.goToProductPage",
+  "store/quickorder.inStock": "store/quickorder.inStock",
   "store/quickorder.invalidPattern": "store/quickorder.invalidPattern",
+  "store/quickorder.moq": "store/quickorder.moq",
+  "store/quickorder.outOfStock": "store/quickorder.outOfStock",
+  "store/quickorder.quantityPerUnit": "store/quickorder.quantityPerUnit",
   "store/quickorder.review.label.content": "store/quickorder.review.label.content",
   "store/quickorder.review.label.lineNumber": "store/quickorder.review.label.lineNumber",
   "store/quickorder.review.label.quantity": "store/quickorder.review.label.quantity",
@@ -48,6 +54,9 @@
   "store/quickorder.review.label.sku": "store/quickorder.review.label.sku",
   "store/quickorder.review.label.status": "store/quickorder.review.label.status",
   "store/quickorder.skuNotFound": "store/quickorder.skuNotFound",
+  "store/quickorder.unavailable": "store/quickorder.unavailable",
+  "store/quickorder.unitMultiplier": "store/quickorder.unitMultiplier",
+  "store/quickorder.unitOfMeasure": "store/quickorder.unitOfMeasure",
   "store/quickorder.upload.choose": "store/quickorder.upload.choose",
   "store/quickorder.upload.drop": "store/quickorder.upload.drop",
   "store/quickorder.valid": "store/quickorder.valid",
@@ -57,6 +66,5 @@
   "store/toaster.cart.duplicated": "store/toaster.cart.duplicated",
   "store/toaster.cart.error": "store/toaster.cart.error",
   "store/toaster.cart.seeCart": "store/toaster.cart.seeCart",
-  "store/toaster.cart.success": "store/toaster.cart.success",
-  "store/quickorder.unavailable": "store/quickorder.unavailable"
+  "store/toaster.cart.success": "store/toaster.cart.success"
 }

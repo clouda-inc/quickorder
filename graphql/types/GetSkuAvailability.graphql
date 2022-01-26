@@ -9,6 +9,10 @@ type AvailableItem {
   seller: ItemsSeller
   availableQuantity: String
   productName: String
+  skuName: String
+  uom: String
+  uomDescription: String
+  linkText: String
   price: Float
   unitMultiplier: Int
   minQty: Int

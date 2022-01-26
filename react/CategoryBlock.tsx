@@ -75,12 +75,8 @@ const CategoryBlock: FunctionComponent<WrappedComponentProps & any> = ({
 
   const client = useApolloClient()
 
-  const {
-    categoryItems,
-    quantitySelected,
-    defaultSeller,
-    unitMultiplierList,
-  } = state
+  const { categoryItems, quantitySelected, defaultSeller, unitMultiplierList } =
+    state
 
   const [addToCart, { error, loading }] = useMutation<
     { addToCart: OrderFormType },
@@ -410,9 +406,9 @@ const CategoryBlock: FunctionComponent<WrappedComponentProps & any> = ({
 
                             const newQtd = quantitySelected
 
-                            quantitySelected[content.itemId] = String(
-                              roundedValue
-                            )
+                            quantitySelected[content.itemId] =
+                              String(roundedValue)
+
                             _setState({
                               quantitySelected: newQtd,
                             })
