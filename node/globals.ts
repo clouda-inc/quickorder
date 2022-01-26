@@ -1,10 +1,10 @@
-import type {
+import {
   IOContext,
+  MetricsAccumulator,
   ParamsContext,
   RecorderState,
   ServiceContext,
 } from '@vtex/api'
-import { MetricsAccumulator } from '@vtex/api'
 
 import type { Clients } from './clients'
 
