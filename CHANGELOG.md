@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Fix linting issues
 - Fixed add to cart button unavailability
 
 ## [0.0.10] - 2022-01-20

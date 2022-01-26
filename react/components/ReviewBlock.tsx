@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable vtex/prefer-early-return */
-import React, {useState, FunctionComponent } from 'react'
+import React, { useState, FunctionComponent } from 'react'
 import {
   ButtonWithIcon,
   IconDelete,
@@ -164,7 +164,7 @@ const messages = defineMessages({
   },
   moq: {
     id: 'store/quickorder.moq',
-  }
+  },
 })
 
 // let orderFormId = ''
@@ -278,13 +278,13 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   const validateRefids = (refidData: any, reviewed: any) => {
     let error = false
 
-    reviewed = reviewed.map(i => {
+    reviewed = reviewed.map((i: any) => {
       const unit = refidData.getSkuAvailability?.items?.find(
-        d => i.sku === d.refid
+        (d: any) => i.sku === d.refid
       )?.unitMultiplier
 
       const minQty = refidData.getSkuAvailability?.items?.find(
-        d => i.sku === d.refid
+        (d: any) => i.sku === d.refid
       )?.minQty
 
       i.quantity = validateQuantity(minQty, unit, i.quantity)
@@ -450,7 +450,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     let refids = {}
 
     if (_refids.length) {
-      _refids.forEach(refid => {
+      _refids.forEach((refid: any) => {
         refids[refid] = true
       })
       refids = Object.getOwnPropertyNames(refids)
@@ -628,6 +628,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                     className={`${styles.productDetailsLink} flex-column`}
                     href={`${rowData?.linkText}/p`}
                     target="_blank"
+                    rel="noreferrer"
                   >
                     {intl.formatMessage(messages.goToProductPage)}
                   </a>
@@ -635,7 +636,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
               </div>
 
               <div className={`${styles.tableCol2} flex w-40 pa3`}>
-                <div className={`${styles.tableCol2Col1} w-40`}></div>
+                <div className={`${styles.tableCol2Col1} w-40`} />
                 <div className={`${styles.tableCol2Col2} w-60`}>
                   <div
                     className={`${styles.itemUom} flex flex-row justify-between`}
@@ -670,7 +671,9 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                   <div
                     className={`${styles.unitMultiplier} flex flex-row justify-between`}
                   >
-                    <div className={`${styles.KeyValueLabel}`}>{intl.formatMessage(messages.moq)}</div>
+                    <div className={`${styles.KeyValueLabel}`}>
+                      {intl.formatMessage(messages.moq)}
+                    </div>
                     <div className={`${styles.KeyValueValue}`}>
                       {rowData.minQty}
                     </div>
