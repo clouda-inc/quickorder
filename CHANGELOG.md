@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix linting issues in catalog.ts file
+
 ## [0.1.1] - 2022-01-25
 
 ## [0.1.0] - 2022-01-25
