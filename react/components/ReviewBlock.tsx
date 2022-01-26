@@ -469,7 +469,6 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
 
       const { data } = await client.query(query)
 
-
       // TODO: Remove this line
       // eslint-disable-next-line no-console
       console.log(
