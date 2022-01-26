@@ -12,7 +12,7 @@ export const GetText = (items: any) => {
 const removeDuplicates = (itemList: any) => {
   const map = new Map()
 
-  itemList.forEach(item => {
+  itemList.forEach((item: any) => {
     const key = item.sku
     const collection = map.get(key)
 
@@ -80,9 +80,9 @@ export const ParseText = (textAreaValue: string) => {
  * @param itemsList
  */
 export const itemsInSystem = (orderFormItems, itemsList) => {
-  return itemsList.filter(item =>
+  return itemsList.filter((item: any) =>
     // eslint-disable-next-line eqeqeq
-    orderFormItems.some(data => data.id == item.id)
+    orderFormItems.some((data: any) => data.id == item.id)
   )
 }
 
@@ -93,9 +93,9 @@ export const itemsInSystem = (orderFormItems, itemsList) => {
  */
 export const getNewItems = (orderFormItems, itemsList) => {
   return itemsList.filter(
-    item =>
+    (item: any) =>
       // eslint-disable-next-line eqeqeq
-      !orderFormItems.some(data => data.id == item.id)
+      !orderFormItems.some((data: any) => data.id == item.id)
   )
 }
 
