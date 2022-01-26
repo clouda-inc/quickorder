@@ -6,7 +6,7 @@ export const keyValuePairsToString = (performanceData: [KeyValue]) => {
   return performanceData.reduce((acc: any, current: KeyValue) => {
     return {
       ...acc,
-      [current.key]: current.value
+      [current.key]: current.value,
     }
   }, {})
 }
