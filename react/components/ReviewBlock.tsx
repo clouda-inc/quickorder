@@ -15,6 +15,7 @@ import { useApolloClient } from 'react-apollo'
 import { useCssHandles } from 'vtex.css-handles'
 
 import { GetText, validateQuantity } from '../utils'
+import { keyValuePairsToString } from '../utils/performanceDataProcessing'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 // import getRefIdTranslation from '../queries/refids.gql'
@@ -467,6 +468,16 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
       }
 
       const { data } = await client.query(query)
+
+      // TODO: Remove this line
+      // eslint-disable-next-line no-console
+      console.log(
+        JSON.stringify(
+          keyValuePairsToString(data?.getSkuAvailability?.performanceData),
+          null,
+          2
+        )
+      )
 
       if (data) {
         validateRefids(data, reviewed)

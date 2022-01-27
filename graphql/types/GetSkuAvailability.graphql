@@ -1,5 +1,6 @@
 type AvailableItems {
   items: [AvailableItem]
+  performanceData: [KeyValue]
 }
 type AvailableItem {
   refid: String
@@ -17,3 +18,9 @@ type AvailableItem {
   unitMultiplier: Int
   minQty: Int
 }
+
+type KeyValue {
+  key: String
+  value: String
+}
+

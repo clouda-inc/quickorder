@@ -29,5 +29,9 @@ query getAvbProduct(
       unitMultiplier
       minQty
     }
+    performanceData {
+      key
+      value
+    }
   }
 }
