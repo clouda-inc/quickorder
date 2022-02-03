@@ -1,4 +1,9 @@
 {
+  "sold-to-validation-wrapper": {
+    "allowed": ["flex-layout.row"],
+    "component":"SoldToValidationWrapper"
+  },
+
   "quickorder-upload": {
     "component": "UploadBlock"
   },
