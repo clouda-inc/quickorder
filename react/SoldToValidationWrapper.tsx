@@ -24,9 +24,9 @@ const SoldToValidationWrapper = () => {
     }
 
 
-if (!soldToAcctData){
+if (!soldToAcctData?.getOrderSoldToAccount){
 
-    console.log('soldToAcctData',soldToAcctData)
+    console.log('soldToAcctData',soldToAcctData?.getOrderSoldToAccount)
 
     return(
         <div>
@@ -34,7 +34,7 @@ if (!soldToAcctData){
     </div>)
 
 }
-    return (<ExtensionPoint id="flex-layout.row"/>)
+    return (<ExtensionPoint id="quick-order-wrapper"/>)
 
 
 }
