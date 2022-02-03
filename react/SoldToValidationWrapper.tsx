@@ -3,8 +3,19 @@ import {useQuery} from "react-apollo";
 import OrderSoldToAccount from './queries/orderSoldToAccount.graphql'
 import {ExtensionPoint} from "vtex.render-runtime";
 
+import {useCssHandles} from "vtex.css-handles";
+import "./sbdsefprod.sold-to-validation.css"
 
 const SoldToValidationWrapper = () => {
+
+
+    const CSS_HANDLES = [
+        'soldToAcctErrorMessage',
+        'errorMessegeContainer'
+    ]
+
+
+    const handles = useCssHandles(CSS_HANDLES)
 
     const {data:soldToAcctData,
         loading:soldToLoading,
@@ -29,9 +40,11 @@ if (!soldToAcctData?.getOrderSoldToAccount){
     console.log('soldToAcctData',soldToAcctData?.getOrderSoldToAccount)
 
     return(
-        <div>
-        Please Select Sold to Account
-    </div>)
+        <div className={handles.errorMessegeContainer}>
+         <div className={handles.soldToAcctErrorMessage}>
+          Please select "Sold to Account"
+        </div>
+       </div>)
 
 }
     return (<ExtensionPoint id="quick-order-wrapper"/>)
