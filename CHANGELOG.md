@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-### Added
+## [0.1.5] - 2022-02-03
 
-- Implement restrict quickorder for Sold to Accounts only
+## [0.1.4] - 2022-02-03
+
+### Fixed
+
+- Fixed the app vendor
 
 ## [0.1.3] - 2022-01-25
 
