@@ -7,7 +7,7 @@
   "maxReplicas": 100,
   "routes": {
     "healthCheck": {
-      "path": "/_v/health",
+      "path": "/_v/bulk-order/health",
       "public": true
     }
   }
