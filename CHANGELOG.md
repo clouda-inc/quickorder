@@ -7,9 +7,78 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.7] - 2022-02-04
+
+### Changed
+
+- Changed health check URL to resolve conflict
+
+## [0.1.6] - 2022-02-04
+
+### Added
+
+- Added health check end-point
+
+## [0.1.5] - 2022-02-03
+
+## [0.1.4] - 2022-02-03
+
 ### Fixed
 
+- Fixed the app vendor
+
+## [0.1.3] - 2022-01-25
+
+## [0.1.2] - 2022-01-25
+
+### Fixed
+
+- Fix linting issues in catalog.ts file
+
+## [0.1.1] - 2022-01-25
+
+## [0.1.0] - 2022-01-25
+
+### Changed
+
+- Release minor version suggested by vtex
+
+## [0.0.15] - 2022-01-25
+
+## [0.0.14] - 2022-01-25
+
+### Changed
+
+- merge linting fixes from new table design
+
+## [0.0.13] - 2022-01-25
+
+## [0.0.12] - 2022-01-25
+
+### Changed
+
+- Release new minor with telemetry changes
+
+## [0.0.11] - 2022-01-25
+
+### Added 
+
+- Added performance telemetry logs
+
+### Changed
+
+- New field mappings for new table design
+- Frontend changes in new table
+
+### Fixed
+
+- Fix linting issues
 - Fixed add to cart button unavailability
+- Fixed linting issues in node folder
+
+## [0.0.10] - 2022-01-20
+
+## [0.0.9] - 2022-01-20
 
 ## [0.0.8] - 2021-11-22
 

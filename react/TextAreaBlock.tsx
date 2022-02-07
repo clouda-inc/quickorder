@@ -12,7 +12,7 @@ import { OrderForm } from 'vtex.order-manager'
 import { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
 import { useCssHandles } from 'vtex.css-handles'
-import {useMutation, useQuery} from 'react-apollo'
+import { useMutation, useQuery } from 'react-apollo'
 import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
 
@@ -44,14 +44,9 @@ interface ItemType {
   quantity: number
 }
 
-const TextAreaBlock: FunctionComponent<TextAreaBlockInterface &
-  WrappedComponentProps> = ({
-                              intl,
-                              value,
-                              text,
-                              description,
-                              componentOnly,
-                            }: any) => {
+const TextAreaBlock: FunctionComponent<
+  TextAreaBlockInterface & WrappedComponentProps
+> = ({ intl, value, text, description, componentOnly }: any) => {
   const [state, setState] = useState<any>({
     reviewState: false,
     showAddToCart: null,
@@ -63,10 +58,8 @@ const TextAreaBlock: FunctionComponent<TextAreaBlockInterface &
 
   const { textAreaValue, reviewItems, reviewState, showAddToCart } = state
 
-  const [
-    addToCart,
-    { error: mutationError, loading: mutationLoading },
-  ] = useMutation<{ addToCart: OrderFormType }, { items: [] }>(ADD_TO_CART)
+  const [addToCart, { error: mutationError, loading: mutationLoading }] =
+    useMutation<{ addToCart: OrderFormType }, { items: [] }>(ADD_TO_CART)
 
   const { push } = usePixel()
   const { settings = {}, showInstallPrompt = undefined } = usePWA() || {}
@@ -96,9 +89,9 @@ const TextAreaBlock: FunctionComponent<TextAreaBlockInterface &
   }
 
   const toastMessage = ({
-                          success,
-                          isNewItem,
-                        }: {
+    success,
+    isNewItem,
+  }: {
     success: boolean
     isNewItem: boolean
   }) => {
@@ -106,9 +99,9 @@ const TextAreaBlock: FunctionComponent<TextAreaBlockInterface &
 
     const action = success
       ? {
-        label: translateMessage(messages.seeCart),
-        href: '/checkout/#/cart',
-      }
+          label: translateMessage(messages.seeCart),
+          href: '/checkout/#/cart',
+        }
       : undefined
 
     showToast({ message, action })
@@ -120,7 +113,7 @@ const TextAreaBlock: FunctionComponent<TextAreaBlockInterface &
       variables: {
         items: items.map((item: ItemType) => {
           const [existsInCurrentOrder] = currentItemsInCart.filter(
-            el => el.id === item.id.toString()
+            (el: any) => el.id === item.id.toString()
           )
 
           if (existsInCurrentOrder) {
@@ -246,10 +239,10 @@ const TextAreaBlock: FunctionComponent<TextAreaBlockInterface &
         }
       })
 
-    const merge = internalItems => {
+    const merge = (internalItems: any) => {
       return internalItems.reduce((acc, val) => {
         const { id, quantity }: ItemType = val
-        const ind = acc.findIndex(el => el.id === id)
+        const ind = acc.findIndex((el: any) => el.id === id)
 
         if (ind !== -1) {
           acc[ind].quantity += quantity

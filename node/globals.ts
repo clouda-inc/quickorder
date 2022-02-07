@@ -1,12 +1,12 @@
-import type {
+import {
   IOContext,
   ParamsContext,
   RecorderState,
   ServiceContext,
+  MetricsAccumulator,
 } from '@vtex/api'
-import { MetricsAccumulator } from '@vtex/api'
 
-import type { Clients } from './clients'
+import { Clients } from './clients'
 
 if (!global.metrics) {
   console.error('No global.metrics at require time')

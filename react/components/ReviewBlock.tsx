@@ -1,18 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable vtex/prefer-early-return */
-import React, {useState, FunctionComponent } from 'react'
+import React, { useState, FunctionComponent } from 'react'
 import {
   ButtonWithIcon,
   IconDelete,
-  IconInfo,
-  Input,
+  // IconInfo,
+  // Input,
   Table,
   Tooltip,
 } from 'vtex.styleguide'
 import { defineMessages, injectIntl, WrappedComponentProps } from 'react-intl'
 import PropTypes from 'prop-types'
+import { useApolloClient } from 'react-apollo'
+import { useCssHandles } from 'vtex.css-handles'
 
-import { GetText, ParseText, validateQuantity } from '../utils'
+import { GetText, validateQuantity } from '../utils'
+import { keyValuePairsToString } from '../utils/performanceDataProcessing'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 // import getRefIdTranslation from '../queries/refids.gql'
@@ -22,8 +25,9 @@ import { GetText, ParseText, validateQuantity } from '../utils'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import GET_PRODUCT_DATA from '../queries/getPrductAvailability.graphql'
-import { useApolloClient } from 'react-apollo'
 // import { stubFalse } from 'lodash'
+
+import './ReviewBlock.css'
 
 const remove = <IconDelete />
 let initialLoad = ''
@@ -137,16 +141,67 @@ const messages = defineMessages({
   ORD031: {
     id: 'store/quickorder.ORD031',
   },
+  customerPart: {
+    id: 'store/quickorder.customerPart',
+  },
+  goToProductPage: {
+    id: 'store/quickorder.goToProductPage',
+  },
+  unitOfMeasure: {
+    id: 'store/quickorder.unitOfMeasure',
+  },
+  quantityPerUnit: {
+    id: 'store/quickorder.quantityPerUnit',
+  },
+  unitMultiplier: {
+    id: 'store/quickorder.unitMultiplier',
+  },
+  inStock: {
+    id: 'store/quickorder.inStock',
+  },
+  outOfStock: {
+    id: 'store/quickorder.outOfStock',
+  },
+  moq: {
+    id: 'store/quickorder.moq',
+  },
 })
 
 // let orderFormId = ''
+
+const CSS_HANDLES = [
+  'quickOrderTable',
+  'tableCol1',
+  'productName',
+  'skuInfoRow',
+  'skuName',
+  'customerPart',
+  'productLink',
+  'productDetailsLink',
+  'tableCol2',
+  'tableCol2Col1',
+  'tableCol2Col2',
+  'itemUom',
+  'KeyValueLabel',
+  'KeyValueValue',
+  'unitMultiplier',
+  'deleteRowBtn',
+  'tableCol3',
+  'lineItemStatus',
+  'customerPartLabel',
+  'customerPartValue',
+  'uomDescription',
+  'inStockMessage',
+  'outOfStockMessage',
+  'stockAvailabilityMessage',
+]
 
 const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   onReviewItems,
   reviewedItems,
   onRefidLoading,
   intl,
-                                                                       soldToAccount,
+  soldToAccount,
 }: any) => {
   // const { data: orderFormData } = useQuery<{
   //   orderForm
@@ -155,6 +210,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   //   skip: !!orderFormId,
   // })
   const client = useApolloClient()
+  const styles = useCssHandles(CSS_HANDLES)
 
   const customerNumber =
     soldToAccount?.getOrderSoldToAccount?.customerNumber ?? ''
@@ -222,13 +278,13 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   const validateRefids = (refidData: any, reviewed: any) => {
     let error = false
 
-    reviewed = reviewed.map(i => {
+    reviewed = reviewed.map((i: any) => {
       const unit = refidData.getSkuAvailability?.items?.find(
-        d => i.sku === d.refid
+        (d: any) => i.sku === d.refid
       )?.unitMultiplier
 
       const minQty = refidData.getSkuAvailability?.items?.find(
-        d => i.sku === d.refid
+        (d: any) => i.sku === d.refid
       )?.minQty
 
       i.quantity = validateQuantity(minQty, unit, i.quantity)
@@ -294,6 +350,14 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
         return ret?.availability
       }
 
+      const getItemFromQuery = (item: any) => {
+        const ret: any = itemsFromQuery.find((curr: any) => {
+          return !!item.sku && item.sku === curr.refid
+        })
+
+        return ret
+      }
+
       // const getSellers = (item: any) => {
       //   let ret: any = []
       //
@@ -333,7 +397,9 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
       }
 
       const items = reviewed.map((item: any) => {
+        // const sellers = getSellers(item)
         const sellers = item.sku ? mappedRefId[item.sku]?.sellers : '1'
+        const itm = getItemFromQuery(item)
 
         return {
           ...item,
@@ -342,14 +408,19 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
           availableQuantity: getAvailableQuantity(item),
           price: getPrice(item),
           vtexSku: vtexSku(item),
-          unitMultiplier: item.sku
-            ? mappedRefId[item.sku]?.unitMultiplier
-            : '1',
           totalQuantity:
             (item.sku ? mappedRefId[item.sku]?.unitMultiplier : '1') *
             item.quantity,
           error: errorMsg(item),
           availability: getAvailability(item),
+          productName: itm?.productName,
+          skuName: itm?.skuName,
+          uom: itm?.uom,
+          uomDescription: itm?.uomDescription,
+          linkText: itm?.linkText,
+          unitMultiplier: itm?.unitMultiplier,
+          minQty: itm?.minQty,
+          refid: itm?.refid,
         }
       })
 
@@ -379,7 +450,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     let refids = {}
 
     if (_refids.length) {
-      _refids.forEach(refid => {
+      _refids.forEach((refid: any) => {
         refids[refid] = true
       })
       refids = Object.getOwnPropertyNames(refids)
@@ -397,6 +468,16 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
       }
 
       const { data } = await client.query(query)
+
+      // TODO: Remove this line
+      // eslint-disable-next-line no-console
+      console.log(
+        JSON.stringify(
+          keyValuePairsToString(data?.getSkuAvailability?.performanceData),
+          null,
+          2
+        )
+      )
 
       if (data) {
         validateRefids(data, reviewed)
@@ -455,21 +536,21 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     })
   }
 
-  const updateLineContent = (index: number, content: string) => {
-    const items = reviewItems.map((item: any) => {
-      return item.index === index
-        ? {
-            ...item,
-            content,
-          }
-        : item
-    })
+  // const updateLineContent = (index: number, content: string) => {
+  //   const items = reviewItems.map((item: any) => {
+  //     return item.index === index
+  //       ? {
+  //           ...item,
+  //           content,
+  //         }
+  //       : item
+  //   })
 
-    setReviewState({
-      ...state,
-      reviewItems: items,
-    })
-  }
+  //   setReviewState({
+  //     ...state,
+  //     reviewItems: items,
+  //   })
+  // }
 
   // const updateLineSeller = (index: number, seller: string) => {
   //   const items = reviewItems.map((item: any) => {
@@ -487,169 +568,145 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   //   })
   // }
 
-  const onBlurField = (line: number) => {
-    const joinLines = GetText(reviewItems)
-    const reviewd: any = ParseText(joinLines)
+  // const onBlurField = (line: number) => {
+  //   const joinLines = GetText(reviewItems)
+  //   const reviewd: any = ParseText(joinLines)
 
-    if (reviewd[line].error === null) {
-      setReviewState({
-        ...state,
-        reviewItems: reviewd,
-      })
-    }
-  }
+  //   if (reviewd[line].error === null) {
+  //     setReviewState({
+  //       ...state,
+  //       reviewItems: reviewd,
+  //     })
+  //   }
+  // }
 
   const tableSchema = {
     properties: {
-      line: {
+      col1: {
         type: 'object',
         title: intl.formatMessage({
           id: 'store/quickorder.review.label.lineNumber',
         }),
-        width: 50,
         // eslint-disable-next-line react/display-name
         cellRenderer: ({ rowData }: any) => {
-          return <div>{parseInt(rowData.line, 10) + 1}</div>
-        },
-      },
-      content: {
-        type: 'object',
-        title: intl.formatMessage({
-          id: 'store/quickorder.review.label.content',
-        }),
-        // eslint-disable-next-line react/display-name
-        cellRenderer: ({ cellData, rowData }: any) => {
-          if (rowData.error) {
-            return (
-              <div>
-                <Input
-                  value={cellData}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateLineContent(rowData.index, e.target.value)
-                  }}
-                  onBlur={() => {
-                    onBlurField(rowData.line)
+          const statusMessage = intl.formatMessage(
+            errorMessage[
+              rowData?.error !== null && rowData?.error !== undefined
+                ? rowData?.error
+                : 'store/quickorder.available'
+            ]
+          )
+
+          return (
+            <div className={`${styles.quickOrderTable} flex w-100 relative`}>
+              <div className={`${styles.tableCol1} flex flex-column w-40 pa3`}>
+                <div className={`${styles.productName}`}>
+                  <Tooltip label={rowData.productName}>
+                    <span className="truncate">{rowData.productName}</span>
+                  </Tooltip>
+                </div>
+                <div
+                  className={`${styles.skuInfoRow} flex flex-row justify-between`}
+                >
+                  <div className={`${styles.skuName} truncate`}>
+                    {rowData.sku}
+                  </div>
+                  <div className={`${styles.customerPart} ml3`}>
+                    <span className={`${styles.customerPartLabel} ttu`}>
+                      {intl.formatMessage(messages.customerPart)}
+                    </span>
+                    <span
+                      className={`${styles.customerPartValue} ml2 truncate`}
+                    >
+                      {rowData.refid}
+                    </span>
+                  </div>
+                </div>
+                <div className={`${styles.productLink} flex justify-end w-100`}>
+                  <a
+                    className={`${styles.productDetailsLink} flex-column`}
+                    href={`${rowData?.linkText}/p`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {intl.formatMessage(messages.goToProductPage)}
+                  </a>
+                </div>
+              </div>
+
+              <div className={`${styles.tableCol2} flex w-40 pa3`}>
+                <div className={`${styles.tableCol2Col1} w-40`} />
+                <div className={`${styles.tableCol2Col2} w-60`}>
+                  <div
+                    className={`${styles.itemUom} flex flex-row justify-between`}
+                  >
+                    <div className={`${styles.KeyValueLabel}`}>
+                      {intl.formatMessage(messages.unitOfMeasure)}
+                    </div>
+                    <div className={`${styles.KeyValueValue}`}>
+                      {rowData.uom}
+                    </div>
+                  </div>
+                  <div
+                    className={`${styles.uomDescription} flex flex-row justify-between`}
+                  >
+                    <div className={`${styles.KeyValueLabel}`}>
+                      {intl.formatMessage(messages.quantityPerUnit)}
+                    </div>
+                    <div className={`${styles.KeyValueValue}`}>
+                      {rowData.uomDescription}
+                    </div>
+                  </div>
+                  <div
+                    className={`${styles.uomDescription} flex flex-row justify-between`}
+                  >
+                    <div className={`${styles.KeyValueLabel}`}>
+                      {intl.formatMessage(messages.unitMultiplier)}
+                    </div>
+                    <div className={`${styles.KeyValueValue}`}>
+                      {rowData.unitMultiplier}
+                    </div>
+                  </div>
+                  <div
+                    className={`${styles.unitMultiplier} flex flex-row justify-between`}
+                  >
+                    <div className={`${styles.KeyValueLabel}`}>
+                      {intl.formatMessage(messages.moq)}
+                    </div>
+                    <div className={`${styles.KeyValueValue}`}>
+                      {rowData.minQty}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className={`${styles.tableCol3} flex flex-column w-20 pa3`}>
+                <div
+                  className={`${styles.stockAvailabilityMessage} flex justify-center w-100`}
+                >
+                  <Tooltip label={statusMessage}>
+                    {rowData?.availability === 'available' ||
+                    statusMessage === null ||
+                    statusMessage === '' ? (
+                      <span className={`${styles.inStockMessage} b ttu`}>
+                        {intl.formatMessage(messages.inStock)}
+                      </span>
+                    ) : (
+                      <span className={`${styles.outOfStockMessage} b ttu`}>
+                        {intl.formatMessage(messages.outOfStock)}
+                      </span>
+                    )}
+                  </Tooltip>
+                </div>
+              </div>
+              <div className={`${styles.deleteRowBtn} absolute right-0 top-0`}>
+                <ButtonWithIcon
+                  icon={remove}
+                  variation="tertiary"
+                  onClick={() => {
+                    removeLine(rowData.index)
                   }}
                 />
               </div>
-            )
-          }
-
-          return <span>{cellData}</span>
-        },
-      },
-      sku: {
-        type: 'string',
-        title: intl.formatMessage({ id: 'store/quickorder.review.label.sku' }),
-        width: 125,
-      },
-      quantity: {
-        type: 'string',
-        title: intl.formatMessage({
-          id: 'store/quickorder.review.label.quantity',
-        }),
-        width: 75,
-      },
-      // unitMultiplier: {
-      //   type: 'float',
-      //   title: intl.formatMessage({
-      //     id: 'store/quickorder.review.label.multiplier',
-      //   }),
-      //   width: 100,
-      // },
-      // totalQuantity: {
-      //   type: 'float',
-      //   title: intl.formatMessage({
-      //     id: 'store/quickorder.review.label.totalQuantity',
-      //   }),
-      //   width: 100,
-      // },
-      unit: {
-        hidden: true,
-        type: 'string',
-        title: 'Unit',
-      },
-      // price: {
-      //   type: 'string',
-      //   title: 'Price',
-      // },
-      // availableQuantity: {
-      //   type: 'string',
-      //   title: 'Available Quantity',
-      // },
-      // seller: {
-      //   type: 'string',
-      //   title: intl.formatMessage({
-      //     id: 'store/quickorder.review.label.seller',
-      //   }),
-      //   cellRenderer: ({ rowData }: any) => {
-      //     if (rowData?.sellers?.length > 1) {
-      //       return (
-      //         <div>
-      //           <Dropdown
-      //             options={rowData.sellers.map((item: any) => {
-      //               return {
-      //                 label: item.name,
-      //                 value: item.id,
-      //               }
-      //             })}
-      //             value={rowData.seller}
-      //             onChange={(_: any, v: any) =>
-      //               updateLineSeller(rowData.index, v)
-      //             }
-      //           />
-      //         </div>
-      //       )
-      //     }
-      //
-      //     return rowData?.sellers?.length ? rowData.sellers[0].name : ''
-      //   },
-      // },
-      error: {
-        type: 'string',
-        title: intl.formatMessage({
-          id: 'store/quickorder.review.label.status',
-        }),
-        width: 75,
-        cellRenderer: ({ cellData, rowData }: any) => {
-          if (rowData.error) {
-            const text = intl.formatMessage(
-              errorMessage[
-                cellData !== null && cellData !== undefined
-                  ? cellData
-                  : 'store/quickorder.valid'
-              ]
-            )
-
-            return (
-              <span className="pa3 br2 dib mr5 mv0">
-                <Tooltip label={text}>
-                  <span className="c-danger pointer">
-                    <IconInfo />
-                  </span>
-                </Tooltip>
-              </span>
-            )
-          }
-
-          return intl.formatMessage({ id: 'store/quickorder.valid' })
-        },
-      },
-      delete: {
-        type: 'object',
-        title: ' ',
-        width: 75,
-        // eslint-disable-next-line react/display-name
-        cellRenderer: ({ rowData }: any) => {
-          return (
-            <div>
-              <ButtonWithIcon
-                icon={remove}
-                variation="tertiary"
-                onClick={() => {
-                  removeLine(rowData.index)
-                }}
-              />
             </div>
           )
         },
@@ -657,9 +714,17 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     },
   }
 
-  return <div>
-    <Table schema={tableSchema} items={reviewItems} fullWidth />
-  </div>
+  return (
+    <div>
+      <Table
+        dynamicRowHeight
+        fullWidth
+        disableHeader
+        schema={tableSchema}
+        items={reviewItems}
+      />
+    </div>
+  )
 }
 
 ReviewBlock.propTypes = {

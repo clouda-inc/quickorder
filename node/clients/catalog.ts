@@ -1,5 +1,4 @@
-import type { InstanceOptions, IOContext } from '@vtex/api'
-import { ExternalClient } from '@vtex/api'
+import { InstanceOptions, IOContext, ExternalClient } from '@vtex/api'
 
 export class Catalog extends ExternalClient {
   constructor(context: IOContext, options?: InstanceOptions) {

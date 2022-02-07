@@ -1,5 +1,6 @@
 type AvailableItems {
   items: [AvailableItem]
+  performanceData: [KeyValue]
 }
 type AvailableItem {
   refid: String
@@ -9,7 +10,17 @@ type AvailableItem {
   seller: ItemsSeller
   availableQuantity: String
   productName: String
+  skuName: String
+  uom: String
+  uomDescription: String
+  linkText: String
   price: Float
   unitMultiplier: Int
   minQty: Int
 }
+
+type KeyValue {
+  key: String
+  value: String
+}
+

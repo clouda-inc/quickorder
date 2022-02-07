@@ -67,12 +67,34 @@ export const queries = {
   ) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
+
+    // TODO: Remove this Line
+    const performanceArray = [] as KeyValue[]
+
+    performanceArray.push({
+      key: 'REQUEST_START',
+      value: Date.now().toString(),
+    })
+
     const { refIds, customerNumber, targetSystem, salesOrganizationCode } = args
     const {
       clients: { search, masterdata, catalog },
     } = ctx
 
+    // TODO: Remove this line
+    performanceArray.push({
+      key: 'START Get Skus by RefIds',
+      value: Date.now().toString(),
+    })
+
     const skuIds = await search.getSkusByRefIds(refIds)
+
+    // TODO: Remove this line
+    performanceArray.push({
+      key: 'START Pre Process SKUs into objects',
+      value: Date.now().toString(),
+    })
+
     const refIdsFound = Object.getOwnPropertyNames(skuIds)
     const skus = refIdsFound
       .map((rfId: any) => ({
@@ -81,9 +103,21 @@ export const queries = {
       }))
       .filter((sku: any) => sku.skuId != null)
 
+    // TODO: Remove this line
+    performanceArray.push({
+      key: 'START Get All Products by sku Ids',
+      value: Date.now().toString(),
+    })
+
     const products = await Promise.all(
       skus.map(async (sku: any) => search.searchProductBySkuId(sku.skuId))
     )
+
+    // TODO: Remove this line
+    performanceArray.push({
+      key: 'START Get All plants for sales organizations',
+      value: Date.now().toString(),
+    })
 
     const plants = await Promise.all(
       refIds.map((refId: string) => {
@@ -103,6 +137,12 @@ export const queries = {
       })
     )
 
+    // TODO: Remove this line
+    performanceArray.push({
+      key: 'START Pre process plants data',
+      value: Date.now().toString(),
+    })
+
     const plantList = refIds.map((refId: string, index: number) => {
       return {
         refId,
@@ -110,24 +150,40 @@ export const queries = {
       }
     })
 
-    const brands =
-      await masterdata.searchDocumentsWithPaginationInfo<BrandForClients>({
-        dataEntity: BRAND_CLIENT_ACRONYM,
-        schema: BRAND_CLIENT_SCHEMA,
-        fields: BRNAD_CLIENT_FIELDS,
-        where: `(user=${customerNumber ?? ''} AND targetSystem=${
-          targetSystem ?? ''
-        })`,
-        pagination: { pageSize: 100, page: 1 },
-      })
+    performanceArray.push({
+      key: 'START Get Brand Info',
+      value: Date.now().toString(),
+    })
+    const brands = await masterdata.searchDocumentsWithPaginationInfo<
+      BrandForClients
+    >({
+      dataEntity: BRAND_CLIENT_ACRONYM,
+      schema: BRAND_CLIENT_SCHEMA,
+      fields: BRNAD_CLIENT_FIELDS,
+      where: `(user=${customerNumber ?? ''} AND targetSystem=${targetSystem ??
+        ''})`,
+      pagination: { pageSize: 100, page: 1 },
+    })
 
     const brandsList = brands?.data ?? []
+
+    // TODO: Remove this line
+    performanceArray.push({
+      key: 'START All Inventory by ItemIds',
+      value: Date.now().toString(),
+    })
 
     const allInventoryByItemIds = await Promise.all(
       ((Object.values(skuIds ?? {}) as string[]) ?? []).map((skuId: string) => {
         return catalog.inventoryBySkuId(skuId)
       })
     )
+
+    // TODO: Remove this line
+    performanceArray.push({
+      key: 'START for each product find availability',
+      value: Date.now().toString(),
+    })
 
     const allSkus = (products ?? [])
       .filter((r: any) => Object.entries(r).length > 0)
@@ -141,11 +197,17 @@ export const queries = {
 
         const { items, productId, productName } = product
 
-        const itemId = items[0]?.itemId
-        const skuRefId = (skus ?? []).find((sku: any) => sku.skuId === itemId)?.refId
+        // One item has one sku
+        const skuItem = items[0]
+        const itemId = skuItem?.itemId
+        const skuRefId = (skus ?? []).find((sku: any) => sku.skuId === itemId)
+          ?.refId
+
         // const refId = (items[0]?.referenceId ?? []).find((ref: any) => ref.Key === 'RefId')?.Value ?? ''
         const { commertialOffer, sellerId, sellerName } = items[0].sellers[0]
-        const minQty = (product['Minimum Order Quantity'] ?? []).find((d: string) => d) ?? '1'
+        const minQty =
+          (product['Minimum Order Quantity'] ?? []).find((d: string) => d) ??
+          '1'
 
         let availableQuantity = 0
         let isAvailable = false
@@ -194,11 +256,23 @@ export const queries = {
           ? commertialOffer.Price
           : commertialOffer.ListPrice
 
+        const uom = (product['Unit of Measure'] ?? []).find(
+          (i: string) => i !== ''
+        )
+
+        const uomDescription = (product.UOM_Description ?? []).find(
+          (i: string) => i !== ''
+        )
+
         return {
           refid: skuRefId,
           sku: itemId,
           productId,
           productName,
+          skuName: skuItem?.name,
+          uom,
+          uomDescription,
+          linkText: product.linkText,
           price,
           availableQuantity,
           seller: {
@@ -211,6 +285,12 @@ export const queries = {
         }
       })
 
+    // TODO: Remove this line
+    performanceArray.push({
+      key: 'START Processed SKU Item mappings',
+      value: Date.now().toString(),
+    })
+
     const itemsRequested = (refIds ?? []).map((refId: string) => {
       const existing = allSkus.find((s: any) => s.refid === refId)
 
@@ -220,6 +300,10 @@ export const queries = {
           sku: null,
           productId: null,
           productName: null,
+          skuName: null,
+          uom: null,
+          uomDescription: null,
+          linkText: null,
           price: null,
           availableQuantity: null,
           seller: null,
@@ -228,8 +312,15 @@ export const queries = {
       )
     })
 
+    // TODO: Remove this line
+    performanceArray.push({
+      key: 'BEFORE Sending Response',
+      value: Date.now().toString(),
+    })
+
     return {
       items: itemsRequested,
+      performanceData: performanceArray,
     }
   },
 }
