@@ -8,6 +8,26 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Added
+## [0.1.11] - 2022-02-09
+
+### Fixed
+
+- Read `UO` documents in health check
+
+## [0.1.10] - 2022-02-09
+
+### Fixed
+
+- Added timestamp to logs
+
+## [0.1.9] - 2022-02-08
+
+### Fixed
+
+- Increased TTL of service
+
+## [0.1.8] - 2022-02-07
+
 ## [0.1.7] - 2022-02-04
 
 ### Changed
