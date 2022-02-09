@@ -16,6 +16,8 @@ import { useCssHandles } from 'vtex.css-handles'
 
 import { GetText, validateQuantity } from '../utils'
 import { keyValuePairsToString } from '../utils/performanceDataProcessing'
+import ItemPricing from './ItemPricing'
+import StockAvailability from './StockAvailability'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 // import getRefIdTranslation from '../queries/refids.gql'
@@ -194,6 +196,7 @@ const CSS_HANDLES = [
   'inStockMessage',
   'outOfStockMessage',
   'stockAvailabilityMessage',
+  'stockAvailabilityValue'
 ]
 
 const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
@@ -635,7 +638,13 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
               </div>
 
               <div className={`${styles.tableCol2} flex w-40 pa3`}>
-                <div className={`${styles.tableCol2Col1} w-40`} />
+                <div className={`${styles.tableCol2Col1} w-40`}>
+                  {targetSystem === 'JDE' ? (
+                    <ItemPricing itemNumber={rowData?.sku} customerNumber={customerNumber}/>
+                  ) : (
+                    <div />
+                  )}
+                </div>
                 <div className={`${styles.tableCol2Col2} w-60`}>
                   <div
                     className={`${styles.itemUom} flex flex-row justify-between`}
@@ -681,7 +690,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
               </div>
               <div className={`${styles.tableCol3} flex flex-column w-20 pa3`}>
                 <div
-                  className={`${styles.stockAvailabilityMessage} flex justify-center w-100`}
+                  className={`${styles.stockAvailabilityMessage} flex w-100`}
                 >
                   <Tooltip label={statusMessage}>
                     {rowData?.availability === 'available' ||
@@ -696,6 +705,13 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                       </span>
                     )}
                   </Tooltip>
+                </div>
+                <div className={`${styles.stockAvailabilityValue} w-40`}>
+                  {targetSystem === 'JDE' ? (
+                    <StockAvailability itemNumber={rowData?.sku} customerNumber={customerNumber}/>
+                  ) : (
+                    <div />
+                  )}
                 </div>
               </div>
               <div className={`${styles.deleteRowBtn} absolute right-0 top-0`}>

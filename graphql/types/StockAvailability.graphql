@@ -1,0 +1,12 @@
+type StockAvailability {
+  itemNumber: String
+  customer: String
+  thruDate: String
+  primaryUoM: String
+  pricingUoM: String
+  branchPlant: String
+  demand: String
+  supply: String
+  promiseDate: String
+  qtyAvailable: String
+}

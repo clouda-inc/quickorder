@@ -18,6 +18,7 @@ declare module 'vtex.styleguide' {
   export const AutocompleteInput: ComponentType<InputProps>
   export const Collapsible: ComponentType<InputProps>
   export const NumericStepper: ComponentType<NumericStepperProps>
+  export const Modal: ComponentType<InputProps>
 
   interface InputProps {
     [key: string]: any

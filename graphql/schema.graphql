@@ -7,4 +7,8 @@ type Query {
     @withSegment
 
   getSkuAvailability(refIds: [String], customerNumber: String, targetSystem: String, salesOrganizationCode: String): AvailableItems
+
+  getItemPricing(itemNumber: String!, customer: String, effectiveDate: String): ItemPrices
+
+  getStockAvailability(itemNumber: String!, customer: String, thruDate: String): StockAvailability
 }

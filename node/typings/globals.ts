@@ -45,3 +45,8 @@ interface KeyValue {
   key: string
   value: string
 }
+
+interface AppSettings {
+  agoraBaseUrl: string
+  agoraSubscriptionKey: string
+}
