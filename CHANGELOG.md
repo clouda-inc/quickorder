@@ -8,6 +8,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Added
+## [0.1.7] - 2022-02-04
+
+### Changed
+
+- Changed health check URL to resolve conflict
+
+## [0.1.6] - 2022-02-04
+
+### Added
+
+- Added health check end-point
+
+## [0.1.5] - 2022-02-03
+
+## [0.1.4] - 2022-02-03
 
 - Implement restrict quickorder for Sold to Accounts only
 
