@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.9] - 2022-02-08
+
+### Fixed
+
+- Increased TTL of service
+
+## [0.1.8] - 2022-02-07
+
+## [0.1.7] - 2022-02-04
+
+### Changed
+
+- Changed health check URL to resolve conflict
+
+## [0.1.6] - 2022-02-04
+
+### Added
+
+- Added health check end-point
+
+## [0.1.5] - 2022-02-03
+
+## [0.1.4] - 2022-02-03
+
+### Fixed
+
+- Fixed the app vendor
+
 ## [0.1.3] - 2022-01-25
 
 ## [0.1.2] - 2022-01-25
