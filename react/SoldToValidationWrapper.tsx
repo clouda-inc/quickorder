@@ -8,7 +8,12 @@ import OrderSoldToAccount from './queries/orderSoldToAccount.graphql'
 import './sbdsefprod.sold-to-validation.css'
 
 const SoldToValidationWrapper = () => {
-  const CSS_HANDLES = ['soldToAcctErrorMessage', 'errorMessegeContainer']
+  const CSS_HANDLES = [
+    'soldToAcctErrorMessage',
+    'errorMessegeContainer',
+    'quickOrderLoading',
+    'quickOrderSpinnerContainer',
+  ]
 
   const handles = useCssHandles(CSS_HANDLES)
 
@@ -19,7 +24,13 @@ const SoldToValidationWrapper = () => {
   } = useQuery(OrderSoldToAccount, { ssr: false })
 
   if (soldToLoading) {
-    return <Spinner />
+    return (
+      <div className={handles.quickOrderSpinnerContainer}>
+        <div className={handles.quickOrderLoading}>
+          <Spinner />
+        </div>
+      </div>
+    )
   }
 
   if (soldToError) {
