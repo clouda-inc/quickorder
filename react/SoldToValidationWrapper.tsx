@@ -2,6 +2,7 @@ import React from 'react'
 import { useQuery } from 'react-apollo'
 import { ExtensionPoint } from 'vtex.render-runtime'
 import { useCssHandles } from 'vtex.css-handles'
+import { Spinner } from 'vtex.styleguide'
 
 import OrderSoldToAccount from './queries/orderSoldToAccount.graphql'
 import './sbdsefprod.sold-to-validation.css'
@@ -18,11 +19,11 @@ const SoldToValidationWrapper = () => {
   } = useQuery(OrderSoldToAccount, { ssr: false })
 
   if (soldToLoading) {
-    console.info('soldToLoading', soldToLoading)
+    return <Spinner />
   }
 
   if (soldToError) {
-    console.info('soldToError', soldToError)
+    console.info('ERROR LOADING...', soldToError)
   }
 
   if (!soldToAcctData?.getOrderSoldToAccount) {
