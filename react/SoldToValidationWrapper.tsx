@@ -2,12 +2,18 @@ import React from 'react'
 import { useQuery } from 'react-apollo'
 import { ExtensionPoint } from 'vtex.render-runtime'
 import { useCssHandles } from 'vtex.css-handles'
+import { Spinner } from 'vtex.styleguide'
 
 import OrderSoldToAccount from './queries/orderSoldToAccount.graphql'
 import './sbdsefprod.sold-to-validation.css'
 
 const SoldToValidationWrapper = () => {
-  const CSS_HANDLES = ['soldToAcctErrorMessage', 'errorMessegeContainer']
+  const CSS_HANDLES = [
+    'soldToAcctErrorMessage',
+    'errorMessegeContainer',
+    'quickOrderLoading',
+    'quickOrderSpinnerContainer',
+  ]
 
   const handles = useCssHandles(CSS_HANDLES)
 
@@ -18,11 +24,17 @@ const SoldToValidationWrapper = () => {
   } = useQuery(OrderSoldToAccount, { ssr: false })
 
   if (soldToLoading) {
-    console.info('soldToLoading', soldToLoading)
+    return (
+      <div className={handles.quickOrderSpinnerContainer}>
+        <div className={handles.quickOrderLoading}>
+          <Spinner />
+        </div>
+      </div>
+    )
   }
 
   if (soldToError) {
-    console.info('soldToError', soldToError)
+    console.info('ERROR LOADING...', soldToError)
   }
 
   if (!soldToAcctData?.getOrderSoldToAccount) {

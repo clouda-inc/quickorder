@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Added
+
+- Added spinner to indicate loading state of quickorders
+
 ## [0.1.11] - 2022-02-09
 
 ### Fixed
