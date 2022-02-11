@@ -1,4 +1,15 @@
 {
+  "sold-to-validation-wrapper": {
+    "allowed": ["quick-order-wrapper"],
+    "component": "SoldToValidationWrapper"
+  },
+
+  "quick-order-wrapper": {
+    "allowed": "*",
+    "component": "QuickOrderWrapper",
+    "composition": "children"
+  },
+
   "quickorder-upload": {
     "component": "UploadBlock"
   },

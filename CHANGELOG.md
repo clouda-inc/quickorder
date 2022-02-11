@@ -17,6 +17,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add JDE available quantity
 - Add quantity ordered to the table
 
+## [0.1.12] - 2022-02-10
+
+### Added
+
+- Added spinner to indicate loading state of quickorders
+
+## [0.1.11] - 2022-02-09
+
+### Fixed
+
+- Read `UO` documents in health check
+
+## [0.1.10] - 2022-02-09
+
+### Fixed
+
+- Added timestamp to logs
+
 ## [0.1.9] - 2022-02-08
 
 ### Fixed
@@ -41,9 +59,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.1.4] - 2022-02-03
 
-### Fixed
-
-- Fixed the app vendor
+- Implement restrict quickorder for Sold to Accounts only
 
 ## [0.1.3] - 2022-01-25
 
