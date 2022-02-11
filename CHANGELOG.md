@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Add to cart quantity not correct issue
+
+### Added
+
+- Add JDE pricing table
+- Add JDE available quantity
+- Add quantity ordered to the table
+
 ## [0.1.12] - 2022-02-10
 
 ### Added

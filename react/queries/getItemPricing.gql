@@ -1,0 +1,16 @@
+query getItemPricing($itemNumber: String!, $customer: String, $effectiveDate: String) {
+  getItemPricing(itemNumber: $itemNumber, customer: $customer, effectiveDate: $effectiveDate) {
+   	itemPrices {
+    	adjustment
+      cB
+      currency
+      customerGroup
+      customer
+      effectiveDate
+      itemNumber
+      price
+      quantity
+      uom
+  	}
+  }
+}

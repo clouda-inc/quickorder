@@ -1,10 +1,10 @@
 {
   "sold-to-validation-wrapper": {
     "allowed": ["quick-order-wrapper"],
-    "component":"SoldToValidationWrapper"
+    "component": "SoldToValidationWrapper"
   },
 
-  "quick-order-wrapper" : {
+  "quick-order-wrapper": {
     "allowed": "*",
     "component": "QuickOrderWrapper",
     "composition": "children"

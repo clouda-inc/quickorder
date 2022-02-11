@@ -1,0 +1,16 @@
+type ItemPrices {
+  itemPrices: [ItemPrice]
+}
+
+type ItemPrice {
+  adjustment: String
+  cB: String
+  currency: String
+  customerGroup: String
+  customer: String
+  effectiveDate: String
+  itemNumber: String
+  price: String
+  quantity: String
+  uom: String
+}
