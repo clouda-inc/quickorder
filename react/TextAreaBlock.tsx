@@ -224,6 +224,7 @@ const TextAreaBlock: FunctionComponent<
     'buttonsBlock',
     'textContainerTitle',
     'textContainerDescription',
+    'textContainerMain',
   ] as const
 
   const handles = useCssHandles(CSS_HANDLES)
@@ -231,10 +232,10 @@ const TextAreaBlock: FunctionComponent<
   const addToCartCopyNPaste = () => {
     const items: any = reviewItems
       .filter((item: any) => item.error === null && item.vtexSku !== null)
-      .map(({ vtexSku, quantity, seller }: any) => {
+      .map(({ vtexSku, quantity, seller, unit }: any) => {
         return {
           id: parseInt(vtexSku, 10),
-          quantity: parseFloat(quantity),
+          quantity: parseFloat(quantity) / unit,
           seller,
         }
       })
@@ -275,9 +276,9 @@ const TextAreaBlock: FunctionComponent<
   }
 
   return (
-    <div>
+    <div className={`${handles.textContainerMain} flex flex-column`}>
       {!componentOnly && (
-        <div className={`${handles.textContainer} w-20-l w-100-ns fl-l`}>
+        <div className={`${handles.textContainer} w-100 fl-l`}>
           <h2
             className={`t-heading-3 mb3 ml5 ml3-ns mt4 ${handles.textContainerTitle}`}
           >
@@ -293,12 +294,12 @@ const TextAreaBlock: FunctionComponent<
 
       <div
         className={`${handles.componentContainer} ${
-          !componentOnly ? 'w-80-l w-100-ns fr-l pb6' : ''
+          !componentOnly ? 'w-100 fr-l pb6' : ''
         }`}
       >
         {!reviewState && (
           <div className="w-100 mb5">
-            <div className="bg-base t-body c-on-base ph6 br3 b--muted-4">
+            <div className="bg-base t-body c-on-base ph3 br3 b--muted-4">
               <Textarea
                 value={textAreaValue}
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>

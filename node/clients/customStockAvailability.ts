@@ -15,7 +15,7 @@ export class CustomStockAvailability extends ExternalClient {
     super('', context, {
       ...options,
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Content-Type': 'application/json',
         'x-vtex-use-https': 'true',
       },
@@ -24,12 +24,10 @@ export class CustomStockAvailability extends ExternalClient {
 
   public getStockAvailability(
     data: StockAvailabilityInput,
-    settings: AppSettings,
+    settings: AppSettings
   ): Promise<any> {
     return this.http.post(
-      `${
-        settings.agoraBaseUrl
-      }/smartOrder/VTEX/v1/material/stockavailability`,
+      `${settings.agoraBaseUrl}/smartOrder/VTEX/v1/material/stockavailability`,
       data,
       {
         headers: {
@@ -43,6 +41,4 @@ export class CustomStockAvailability extends ExternalClient {
   protected post = <T>(url: string, data?: any, config?: RequestConfig) => {
     return this.http.post<T>(url, data, config).catch(statusToError)
   }
-
 }
-

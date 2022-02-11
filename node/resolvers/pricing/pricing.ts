@@ -1,7 +1,7 @@
 import { UserInputError } from '@vtex/api'
 
 const stringToNumber = (numberToFormat: string, decimalPoints: number) => {
-  return numberToFormat != null
+  return numberToFormat != null && numberToFormat !== ''
     ? parseFloat(numberToFormat).toFixed(decimalPoints).toString()
     : '0.00'
 }
@@ -33,12 +33,11 @@ export const queries = {
       settings
     )
 
-    console.log(priceResponse)
+    // TODO: Remove these commented lines
+    // const jsonRes = `{"items": [{"Adjustment" : "CSA","C/B" :"","Curr" : "USD","CustGrp" : "126","Customer" : "20061","Effective" : "2021-12-15","Item": "AD42BS","Price": "11.462706","Quantity": "1000","UoM": "M"},{"Adjustment" : "CSA","C/B" :"","Curr" : "USD","CustGrp" : "126","Customer" : "20061","Effective" : "2021-12-15","Item": "AD42BS","Price": "10.316078","Quantity": "250000","UoM": "M"},{"Adjustment" : "CSA","C/B" :"","Curr" : "USD","CustGrp" : "126","Customer" : "20061","Effective" : "2021-12-15","Item": "AD42BS","Price": "10.057431","Quantity": "500000","UoM": "M"},{"Adjustment" : "CSA","C/B" :"","Curr" : "USD","CustGrp" : "126","Customer" : "20061","Effective" : "2021-12-15","Item": "AD42BS","Price": "9.628339","Quantity": "1000000","UoM": "M"}]}`
+    // const pricingInfo = JSON.parse(jsonRes)
 
-    const jsonRes = `{"items": [{"Adjustment" : "CSA","C/B" :"","Curr" : "USD","CustGrp" : "126","Customer" : "20061","Effective" : "2021-12-15","Item": "AD42BS","Price": "11.462706","Quantity": "1000","UoM": "M"},{"Adjustment" : "CSA","C/B" :"","Curr" : "USD","CustGrp" : "126","Customer" : "20061","Effective" : "2021-12-15","Item": "AD42BS","Price": "10.316078","Quantity": "250000","UoM": "M"},{"Adjustment" : "CSA","C/B" :"","Curr" : "USD","CustGrp" : "126","Customer" : "20061","Effective" : "2021-12-15","Item": "AD42BS","Price": "10.057431","Quantity": "500000","UoM": "M"},{"Adjustment" : "CSA","C/B" :"","Curr" : "USD","CustGrp" : "126","Customer" : "20061","Effective" : "2021-12-15","Item": "AD42BS","Price": "9.628339","Quantity": "1000000","UoM": "M"}]}`
-    const pricingInfo = JSON.parse(jsonRes)
-
-    const prices = (pricingInfo?.items ?? ([] as any)).map((item: any) => ({
+    const prices = (priceResponse?.items ?? ([] as any)).map((item: any) => ({
       adjustment: item?.Adjustment,
       cB: item ? item['C/B'] : '',
       currency: item?.Curr,

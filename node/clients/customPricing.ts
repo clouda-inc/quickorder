@@ -24,12 +24,10 @@ export class CustomPricing extends ExternalClient {
 
   public getItemPricing(
     data: ItemPricingInput,
-    settings: AppSettings,
+    settings: AppSettings
   ): Promise<any> {
     return this.http.post(
-      `${
-        settings.agoraBaseUrl
-      }/smartOrder/VTEX/v1/material/price`,
+      `${settings.agoraBaseUrl}/smartOrder/VTEX/v1/material/price`,
       data,
       {
         headers: {
@@ -43,6 +41,4 @@ export class CustomPricing extends ExternalClient {
   protected post = <T>(url: string, data?: any, config?: RequestConfig) => {
     return this.http.post<T>(url, data, config).catch(statusToError)
   }
-
 }
-

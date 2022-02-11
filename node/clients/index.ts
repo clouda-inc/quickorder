@@ -14,11 +14,11 @@ export class Clients extends IOClients {
     return this.getOrSet('catalog', Catalog)
   }
 
-  public get customPricing () {
+  public get customPricing() {
     return this.getOrSet('customPricing', CustomPricing)
   }
 
-  public get customStockAvailability () {
+  public get customStockAvailability() {
     return this.getOrSet('customStockAvailability', CustomStockAvailability)
   }
 }

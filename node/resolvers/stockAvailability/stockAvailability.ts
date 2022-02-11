@@ -1,5 +1,11 @@
 import { UserInputError } from '@vtex/api'
 
+const stringToNumber = (numberToFormat: string, decimalPoints: number) => {
+  return numberToFormat != null && numberToFormat !== ''
+    ? parseFloat(numberToFormat).toFixed(decimalPoints).toString()
+    : '0.00'
+}
+
 export const queries = {
   getStockAvailability: async (
     _: any,
@@ -18,14 +24,15 @@ export const queries = {
       process.env.VTEX_APP_ID ?? ''
     )
 
-    const availabilityResponse = await customStockAvailability.getStockAvailability(
-      {
-        Customer: args.customer,
-        ItemNumber: args.itemNumber,
-        Thru_Date: args.thruDate,
-      },
-      settings
-    )
+    const availabilityResponse =
+      await customStockAvailability.getStockAvailability(
+        {
+          Customer: args.customer,
+          ItemNumber: args.itemNumber,
+          Thru_Date: args.thruDate,
+        },
+        settings
+      )
 
     return {
       itemNumber: availabilityResponse?.ItemNumber,
@@ -37,7 +44,7 @@ export const queries = {
       demand: availabilityResponse?.Demand,
       supply: availabilityResponse?.Supply,
       promiseDate: availabilityResponse?.PromiseDate,
-      qtyAvailable: availabilityResponse?.QtyAvailable,
+      qtyAvailable: stringToNumber(availabilityResponse?.QtyAvailable, 0),
     }
   },
 }

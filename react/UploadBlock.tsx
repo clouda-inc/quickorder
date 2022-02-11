@@ -358,6 +358,7 @@ const UploadBlock: FunctionComponent<
     'buttonsBlock',
     'textContainerTitle',
     'textContainerDescription',
+    'textContainerMain',
   ] as const
 
   const handles = useCssHandles(CSS_HANDLES)
@@ -367,9 +368,9 @@ const UploadBlock: FunctionComponent<
   }
 
   return (
-    <div>
+    <div className={`${handles.textContainerMain}`}>
       {!componentOnly && (
-        <div className={`${handles.textContainer} w-20-l w-100-ns fl-l`}>
+        <div className={`${handles.textContainer} w-100 fl-l`}>
           <h2
             className={`t-heading-3 mb3 ml5 ml3-ns mt4 ${handles.textContainerTitle}`}
           >
@@ -394,13 +395,13 @@ const UploadBlock: FunctionComponent<
       )}
       <div
         className={`${handles.componentContainer} ${
-          !componentOnly ? 'w-80-l w-100-ns fr-l' : ''
+          !componentOnly ? 'w-100 fr-l' : ''
         }`}
       >
         {!reviewState && (
           <div className="w-100 mb5">
             <div
-              className={`bg-base t-body c-on-base ph6 pb6 br3 b--muted-4 ${handles.dropzoneContainer}`}
+              className={`bg-base t-body c-on-base ph3 pb6 br3 b--muted-4 ${handles.dropzoneContainer}`}
             >
               <Dropzone
                 onDropAccepted={handleFile}

@@ -196,7 +196,11 @@ const CSS_HANDLES = [
   'inStockMessage',
   'outOfStockMessage',
   'stockAvailabilityMessage',
-  'stockAvailabilityValue'
+  'stockAvailabilityValue',
+  'productPageLink',
+  'orderedQuantity',
+  'orderedQuantityLabel',
+  'orderedQuantityValue',
 ]
 
 const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
@@ -411,9 +415,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
           availableQuantity: getAvailableQuantity(item),
           price: getPrice(item),
           vtexSku: vtexSku(item),
-          totalQuantity:
-            (item.sku ? mappedRefId[item.sku]?.unitMultiplier : '1') *
-            item.quantity,
+          totalQuantity: item.quantity,
           error: errorMsg(item),
           availability: getAvailability(item),
           productName: itm?.productName,
@@ -625,22 +627,37 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                     </span>
                   </div>
                 </div>
-                <div className={`${styles.productLink} flex justify-end w-100`}>
-                  <a
-                    className={`${styles.productDetailsLink} flex-column`}
-                    href={`${rowData?.linkText}/p`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {intl.formatMessage(messages.goToProductPage)}
-                  </a>
+                <div
+                  className={`${styles.productLink} flex justify-between w-100`}
+                >
+                  <div className={`${styles.orderedQuantity} truncate`}>
+                    <span className={`${styles.orderedQuantityLabel} mr3`}>
+                      Ordered Quantity:
+                    </span>
+                    <span className={`${styles.orderedQuantityValue}`}>
+                      {rowData.quantity}
+                    </span>
+                  </div>
+                  <div className={`${styles.productPageLink} ml3`}>
+                    <a
+                      className={`${styles.productDetailsLink} flex-column`}
+                      href={`${rowData?.linkText}/p`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {intl.formatMessage(messages.goToProductPage)}
+                    </a>
+                  </div>
                 </div>
               </div>
 
               <div className={`${styles.tableCol2} flex w-40 pa3`}>
                 <div className={`${styles.tableCol2Col1} w-40`}>
                   {targetSystem === 'JDE' ? (
-                    <ItemPricing itemNumber={rowData?.sku} customerNumber={customerNumber}/>
+                    <ItemPricing
+                      itemNumber={rowData?.sku}
+                      customerNumber={customerNumber}
+                    />
                   ) : (
                     <div />
                   )}
@@ -708,7 +725,10 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                 </div>
                 <div className={`${styles.stockAvailabilityValue} w-40`}>
                   {targetSystem === 'JDE' ? (
-                    <StockAvailability itemNumber={rowData?.sku} customerNumber={customerNumber}/>
+                    <StockAvailability
+                      itemNumber={rowData?.sku}
+                      customerNumber={customerNumber}
+                    />
                   ) : (
                     <div />
                   )}
