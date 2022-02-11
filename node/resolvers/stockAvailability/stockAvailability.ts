@@ -2,7 +2,9 @@ import { UserInputError } from '@vtex/api'
 
 const stringToNumber = (numberToFormat: string, decimalPoints: number) => {
   return numberToFormat != null && numberToFormat !== ''
-    ? parseFloat(numberToFormat).toFixed(decimalPoints).toString()
+    ? parseFloat(numberToFormat)
+        .toFixed(decimalPoints)
+        .toString()
     : '0.00'
 }
 
@@ -24,15 +26,14 @@ export const queries = {
       process.env.VTEX_APP_ID ?? ''
     )
 
-    const availabilityResponse =
-      await customStockAvailability.getStockAvailability(
-        {
-          Customer: args.customer,
-          ItemNumber: args.itemNumber,
-          Thru_Date: args.thruDate,
-        },
-        settings
-      )
+    const availabilityResponse = await customStockAvailability.getStockAvailability(
+      {
+        Customer: args.customer,
+        ItemNumber: args.itemNumber,
+        Thru_Date: args.thruDate,
+      },
+      settings
+    )
 
     return {
       itemNumber: availabilityResponse?.ItemNumber,

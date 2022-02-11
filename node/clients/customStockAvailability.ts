@@ -1,6 +1,10 @@
 /* eslint-disable max-params */
-import type { InstanceOptions, IOContext, RequestConfig } from '@vtex/api'
-import { ExternalClient } from '@vtex/api'
+import {
+  InstanceOptions,
+  IOContext,
+  RequestConfig,
+  ExternalClient,
+} from '@vtex/api'
 
 import { statusToError } from '../utils'
 

@@ -2,7 +2,9 @@ import { UserInputError } from '@vtex/api'
 
 const stringToNumber = (numberToFormat: string, decimalPoints: number) => {
   return numberToFormat != null && numberToFormat !== ''
-    ? parseFloat(numberToFormat).toFixed(decimalPoints).toString()
+    ? parseFloat(numberToFormat)
+        .toFixed(decimalPoints)
+        .toString()
     : '0.00'
 }
 
