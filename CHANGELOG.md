@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.13] - 2022-02-11
+
 ### Fixed
 
 - Add to cart quantity not correct issue
