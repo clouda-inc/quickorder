@@ -609,7 +609,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                   className={`${styles.skuInfoRow} flex flex-row justify-between`}
                 >
                   <div className={`${styles.skuName} truncate`}>
-                    {rowData.sku}
+                    {rowData.sku !== 'NaN' ? rowData.sku : 'Product Not Found'}
                   </div>
                   <div className={`${styles.customerPart} ml3`}>
                     <span className={`${styles.customerPartLabel} ttu`}>
@@ -625,7 +625,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                 <div className={`${styles.productLink} flex justify-end w-100`}>
                   <a
                     className={`${styles.productDetailsLink} flex-column`}
-                    href={`${rowData?.linkText}/p`}
+                    href={`${rowData.sku !== 'NaN' ? rowData?.linkText : ''}/p`}
                     target="_blank"
                     rel="noreferrer"
                   >
