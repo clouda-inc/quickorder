@@ -234,62 +234,97 @@ const UploadBlock: FunctionComponent<
   }
 
   const callAddToCart = async (items: any) => {
-    const splitBy = 10
-    const tempItems = items
-    const loopCount = Math.floor(items.length / splitBy) + 1
+    // TODO: Remove comments
 
-    const promises: any = []
+    // const splitBy = 10
+    // const tempItems = items
+    // const loopCount = Math.floor(items.length / splitBy) + 1
+
+    // const promises: any = []
     // let orderFormData = []
 
-    for (let i = 0; i < loopCount; i++) {
-      const chunk = tempItems.splice(0, splitBy)
+    // for (let i = 0; i < loopCount; i++) {
+    //   const chunk = tempItems.splice(0, splitBy)
 
-      if (chunk.length) {
-        const currentItemsInCart = orderForm.orderForm.items
+    //   if (chunk.length) {
+    //     const currentItemsInCart = orderForm.orderForm.items
 
-        const mutationChunk = addToCart({
-          variables: {
-            items: chunk.map((item: ItemType) => {
-              const [existsInCurrentOrder] = currentItemsInCart.filter(
-                (el: any) => el.id === item.id.toString()
-              )
+    //     const mutationChunk = addToCart({
+    //       variables: {
+    //         items: chunk.map((item: ItemType) => {
+    //           const [existsInCurrentOrder] = currentItemsInCart.filter(
+    //             (el: any) => el.id === item.id.toString()
+    //           )
 
-              if (existsInCurrentOrder) {
-                item.quantity += parseInt(existsInCurrentOrder.quantity, 10)
-              }
+    //           if (existsInCurrentOrder) {
+    //             item.quantity += parseInt(existsInCurrentOrder.quantity, 10)
+    //           }
 
-              return {
-                ...item,
-              }
-            }),
-          },
-        }).then((data: any) => {
-          data && setOrderForm(data.addToCart)
+    //           return {
+    //             ...item,
+    //           }
+    //         }),
+    //       },
+    //     }).then((data: any) => {
+    //       data && setOrderForm(data.addToCart)
 
-          if (
-            data?.addToCart?.messages?.generalMessages &&
-            data.addToCart.messages.generalMessages.length
-          ) {
-            data.addToCart.messages.generalMessages.map((msg: any) => {
-              return showToast({
-                message: msg.text,
-                action: undefined,
-                duration: 30000,
-              })
-            })
-          } else {
-            toastMessage({ success: true, isNewItem: true })
+    //       if (
+    //         data?.addToCart?.messages?.generalMessages &&
+    //         data.addToCart.messages.generalMessages.length
+    //       ) {
+    //         data.addToCart.messages.generalMessages.map((msg: any) => {
+    //           return showToast({
+    //             message: msg.text,
+    //             action: undefined,
+    //             duration: 30000,
+    //           })
+    //         })
+    //       } else {
+    //         toastMessage({ success: true, isNewItem: true })
+    //       }
+    //     })
+
+    //     promises.push(mutationChunk)
+    //   }
+    // }
+
+    // await Promise.all(promises).catch(() => {
+    //   console.error(mutationError)
+    //   toastMessage({ success: false, isNewItem: false })
+    // })
+
+    // //// START: Fix for add to card not working issue
+
+    const currentItemsInCart = orderForm.orderForm.items
+    const mutationResult = await addToCart({
+      variables: {
+        items: items.map((item: ItemType) => {
+          const [existsInCurrentOrder] = currentItemsInCart.filter(
+            (el: any) => el.id === item.id.toString()
+          )
+
+          if (existsInCurrentOrder) {
+            item.quantity += parseInt(existsInCurrentOrder.quantity, 10)
           }
-        })
 
-        promises.push(mutationChunk)
-      }
-    }
+          return {
+            ...item,
+          }
+        }),
+      },
+    })
 
-    Promise.all(promises).catch(() => {
+    if (mutationError) {
       console.error(mutationError)
       toastMessage({ success: false, isNewItem: false })
-    })
+
+      return
+    }
+
+    // Update OrderForm from the context
+    mutationResult.data && setOrderForm(mutationResult.data.addToCart)
+
+    // //// END: Fix for add to card not working issue
 
     // Update OrderForm from the context
 
@@ -318,10 +353,10 @@ const UploadBlock: FunctionComponent<
   const addToCartUpload = () => {
     const items: any = reviewItems
       .filter((item: any) => item.error === null && item.vtexSku !== null)
-      .map(({ vtexSku, quantity, seller }: any) => {
+      .map(({ vtexSku, quantity, seller, unit }: any) => {
         return {
           id: parseInt(vtexSku, 10),
-          quantity: parseFloat(quantity),
+          quantity: parseFloat(quantity) / unit,
           seller,
         }
       })
