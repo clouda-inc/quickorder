@@ -1,5 +1,5 @@
 {
-  "vendor": "sbdsefuat",
+  "vendor": "sbdsefprod",
   "name": "bulk-order",
   "version": "0.1.16",
   "title": "Quickorder",
@@ -36,7 +36,7 @@
     "vtex.store-resources": "0.x",
     "vtex.css-handles": "0.x",
     "vtex.store-icons": "0.x",
-    "sbdsefuat.checkout-simulation": "1.x"
+    "sbdsefprod.checkout-simulation": "1.x"
   },
   "policies": [
     {
@@ -154,9 +154,7 @@
     },
     "free": true,
     "type": "free",
-    "availableCountries": [
-      "*"
-    ]
+    "availableCountries": ["*"]
   },
   "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"
 }
