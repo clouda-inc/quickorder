@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Disable add to cart when out of stock
+
 ## [0.1.17] - 2022-02-24
 
 ### Fixed
