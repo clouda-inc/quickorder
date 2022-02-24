@@ -635,7 +635,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                       Ordered Quantity:
                     </span>
                     <span className={`${styles.orderedQuantityValue}`}>
-                      {rowData.quantity}
+                      {!Number.isNaN(rowData.quantity) ? rowData.quantity : ''}
                     </span>
                   </div>
                   <div className={`${styles.productPageLink} ml3`}>

@@ -394,6 +394,8 @@ const UploadBlock: FunctionComponent<
     'textContainerTitle',
     'textContainerDescription',
     'textContainerMain',
+    'addToCartDisabled',
+    'addToCartBtn',
   ] as const
 
   const handles = useCssHandles(CSS_HANDLES)
@@ -481,7 +483,13 @@ const UploadBlock: FunctionComponent<
               soldToAccount={accountData}
             />
             <div
-              className={`mb4 mt4 flex justify-between ${handles.buttonsBlock}`}
+              className={`mb4 mt4 flex justify-between ${
+                handles.buttonsBlock
+              } ${
+                !showAddToCart
+                  ? handles.addToCartDisabled
+                  : handles.addToCartBtn
+              }`}
             >
               <Button
                 variation="tertiary"
@@ -493,18 +501,17 @@ const UploadBlock: FunctionComponent<
                 <FormattedMessage id="store/quickorder.back" />
               </Button>
               {refidLoading && <Spinner />}
-              {showAddToCart && (
-                <Button
-                  variation="primary"
-                  size="small"
-                  isLoading={mutationLoading}
-                  onClick={() => {
-                    addToCartUpload()
-                  }}
-                >
-                  <FormattedMessage id="store/quickorder.addToCart" />
-                </Button>
-              )}
+              <Button
+                variation="primary"
+                size="small"
+                isLoading={mutationLoading}
+                onClick={() => {
+                  addToCartUpload()
+                }}
+                disabled={!showAddToCart}
+              >
+                <FormattedMessage id="store/quickorder.addToCart" />
+              </Button>
             </div>
           </div>
         )}
