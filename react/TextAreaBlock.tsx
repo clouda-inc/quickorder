@@ -324,7 +324,7 @@ const TextAreaBlock: FunctionComponent<
         )}
 
         {reviewState && (
-          <div className={`w-100 ph6 ${handles.reviewBlock}`}>
+          <div className={`w-100 ph4 ${handles.reviewBlock}`}>
             <ReviewBlock
               reviewedItems={reviewItems}
               onReviewItems={onReviewItems}

@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable vtex/prefer-early-return */
-import React, { useState, FunctionComponent } from 'react'
+import React, {
+  useState,
+  FunctionComponent,
+  useCallback,
+  useEffect,
+} from 'react'
 import {
   ButtonWithIcon,
   IconDelete,
@@ -15,24 +20,14 @@ import { useApolloClient } from 'react-apollo'
 import { useCssHandles } from 'vtex.css-handles'
 
 import { GetText, validateQuantity } from '../utils'
+import { TARGET_SYSTEM } from '../utils/const'
 import { keyValuePairsToString } from '../utils/performanceDataProcessing'
 import ItemPricing from './ItemPricing'
 import StockAvailability from './StockAvailability'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-// import getRefIdTranslation from '../queries/refids.gql'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-// import OrderFormQuery from '../queries/orderForm.gql'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import GET_PRODUCT_DATA from '../queries/getPrductAvailability.graphql'
-// import { stubFalse } from 'lodash'
-
 import './ReviewBlock.css'
 
 const remove = <IconDelete />
-let initialLoad = ''
 
 const messages = defineMessages({
   valid: {
@@ -509,7 +504,12 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     getRefIds(refids, items)
   }
 
-  const checkValidatedItems = () => {
+  // Purpose is to avoid un necessary re renderings
+  // get review items basic info
+  const revItemStr = GetText(reviewItems)
+
+  // recreate validate function only if reviewItem basic info changed
+  const checkValidatedItems = useCallback(() => {
     const items: [any] = reviewItems.filter((item: any) => {
       return item.sku !== null && item.error === null && !item.vtexSku
     })
@@ -517,12 +517,13 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     if (items.length) {
       convertRefIds(items)
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [revItemStr])
 
-  if (initialLoad !== GetText(reviewItems)) {
+  // execute if validate function recreated
+  useEffect(() => {
     checkValidatedItems()
-    initialLoad = GetText(reviewItems)
-  }
+  }, [checkValidatedItems])
 
   const removeLine = (i: number) => {
     const items: [any] = reviewItems
@@ -544,50 +545,6 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     })
   }
 
-  // const updateLineContent = (index: number, content: string) => {
-  //   const items = reviewItems.map((item: any) => {
-  //     return item.index === index
-  //       ? {
-  //           ...item,
-  //           content,
-  //         }
-  //       : item
-  //   })
-
-  //   setReviewState({
-  //     ...state,
-  //     reviewItems: items,
-  //   })
-  // }
-
-  // const updateLineSeller = (index: number, seller: string) => {
-  //   const items = reviewItems.map((item: any) => {
-  //     return item.index === index
-  //       ? {
-  //           ...item,
-  //           seller,
-  //         }
-  //       : item
-  //   })
-  //
-  //   setReviewState({
-  //     ...state,
-  //     reviewItems: items,
-  //   })
-  // }
-
-  // const onBlurField = (line: number) => {
-  //   const joinLines = GetText(reviewItems)
-  //   const reviewd: any = ParseText(joinLines)
-
-  //   if (reviewd[line].error === null) {
-  //     setReviewState({
-  //       ...state,
-  //       reviewItems: reviewd,
-  //     })
-  //   }
-  // }
-
   const tableSchema = {
     properties: {
       col1: {
@@ -604,9 +561,14 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                 : 'store/quickorder.available'
             ]
           )
+
           return (
             <div className={`${styles.quickOrderTable} flex w-100 relative`}>
-              <div className={`${styles.tableCol1} flex flex-column w-40 pa3`}>
+              <div
+                className={`${styles.tableCol1} flex flex-column ${
+                  targetSystem === TARGET_SYSTEM.JDE ? 'w-40' : 'w-50'
+                } pa3`}
+              >
                 <div className={`${styles.productName}`}>
                   <Tooltip label={rowData.productName}>
                     <span className="truncate">{rowData.productName}</span>
@@ -637,7 +599,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                       Ordered Quantity:
                     </span>
                     <span className={`${styles.orderedQuantityValue}`}>
-                      {isNaN(rowData.quantity)
+                      {Number.isNaN(rowData.quantity)
                         ? intl.formatMessage(messages.prodnotfound)
                         : rowData.quantity}
                     </span>
@@ -649,7 +611,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                       target="_blank"
                       rel="noreferrer"
                     >
-                      {isNaN(rowData.quantity)
+                      {Number.isNaN(rowData.quantity)
                         ? ''
                         : intl.formatMessage(messages.goToProductPage)}
                     </a>
@@ -657,18 +619,26 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                 </div>
               </div>
 
-              <div className={`${styles.tableCol2} flex w-40 pa3`}>
-                <div className={`${styles.tableCol2Col1} w-40`}>
-                  {targetSystem === 'JDE' ? (
+              <div
+                className={`${styles.tableCol2} flex pa3 ${
+                  targetSystem === TARGET_SYSTEM.JDE ? 'w-40' : 'w-30'
+                }`}
+              >
+                {targetSystem === TARGET_SYSTEM.JDE ? (
+                  <div className={`${styles.tableCol2Col1} w-40`}>
                     <ItemPricing
                       itemNumber={rowData?.sku}
                       customerNumber={customerNumber}
                     />
-                  ) : (
-                    <div />
-                  )}
-                </div>
-                <div className={`${styles.tableCol2Col2} w-60`}>
+                  </div>
+                ) : (
+                  <div />
+                )}
+                <div
+                  className={`${styles.tableCol2Col2} ${
+                    targetSystem === TARGET_SYSTEM.JDE ? 'w-60' : 'w-100'
+                  }`}
+                >
                   <div
                     className={`${styles.itemUom} flex flex-row justify-between`}
                   >
@@ -730,7 +700,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                   </Tooltip>
                 </div>
                 <div className={`${styles.stockAvailabilityValue} w-40`}>
-                  {targetSystem === 'JDE' ? (
+                  {targetSystem === TARGET_SYSTEM.JDE ? (
                     <StockAvailability
                       itemNumber={rowData?.sku}
                       customerNumber={customerNumber}
