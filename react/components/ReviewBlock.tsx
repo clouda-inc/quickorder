@@ -38,6 +38,9 @@ const messages = defineMessages({
   valid: {
     id: 'store/quickorder.valid',
   },
+  prodnotfound: {
+    id: 'store/quickorder.productNotFound',
+  },
   available: {
     id: 'store/quickorder.available',
   },
@@ -241,9 +244,9 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   // if (orderFormData?.orderForm?.orderFormId) {
   //   orderFormId = orderFormData.orderForm.orderFormId
   // }
-
   const errorMessage = {
     'store/quickorder.valid': messages.valid,
+    'store/quickorder.productNotFound': messages.prodnotfound,
     'store/quickorder.available': messages.available,
     'store/quickorder.unavailable': messages.unavailable,
     'store/quickorder.invalidPattern': messages.invalidPattern,
@@ -601,7 +604,6 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                 : 'store/quickorder.available'
             ]
           )
-
           return (
             <div className={`${styles.quickOrderTable} flex w-100 relative`}>
               <div className={`${styles.tableCol1} flex flex-column w-40 pa3`}>
@@ -635,7 +637,9 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                       Ordered Quantity:
                     </span>
                     <span className={`${styles.orderedQuantityValue}`}>
-                      {!Number.isNaN(rowData.quantity) ? rowData.quantity : ''}
+                      {isNaN(rowData.quantity)
+                        ? intl.formatMessage(messages.prodnotfound)
+                        : rowData.quantity}
                     </span>
                   </div>
                   <div className={`${styles.productPageLink} ml3`}>
@@ -645,7 +649,9 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                       target="_blank"
                       rel="noreferrer"
                     >
-                      {intl.formatMessage(messages.goToProductPage)}
+                      {isNaN(rowData.quantity)
+                        ? ''
+                        : intl.formatMessage(messages.goToProductPage)}
                     </a>
                   </div>
                 </div>
