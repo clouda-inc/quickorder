@@ -63,6 +63,7 @@
   "store/quickorder.validate": "Validate",
   "store/quickorder.withoutPriceFulfillment": "Product without price",
   "store/quickorder.withoutStock": "Without stock",
+  "store/quickorder.productNotFound": "Product Not Available Online",
   "store/toaster.cart.duplicated": "Item duplicated",
   "store/toaster.cart.error": "Error adding products to the cart",
   "store/toaster.cart.seeCart": "See cart",
