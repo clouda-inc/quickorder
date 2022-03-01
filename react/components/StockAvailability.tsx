@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useQuery } from 'react-apollo'
 import { useCssHandles } from 'vtex.css-handles'
 
 import GET_STOCK_AVAILABILITY from '../queries/getStockAvailability.gql'
 import { getFormattedDate } from '../utils'
+import ItemListContext from '../ItemListContext'
 
 import './ItemPricing.css'
 
@@ -15,12 +16,20 @@ const CSS_HANDLES = [
 ]
 
 interface Props {
+  itemIndex: number
   itemNumber: string
   customerNumber: string
 }
 
-const StockAvailability = ({ itemNumber, customerNumber }: Props) => {
+const StockAvailability = ({
+  itemIndex,
+  itemNumber,
+  customerNumber,
+}: Props) => {
   const styles = useCssHandles(CSS_HANDLES)
+  const { useItemListDispatch } = ItemListContext
+
+  const dispatch = useItemListDispatch()
 
   const { data: stockAvailabilityInfo, loading } = useQuery(
     GET_STOCK_AVAILABILITY,
@@ -38,6 +47,22 @@ const StockAvailability = ({ itemNumber, customerNumber }: Props) => {
     stockAvailabilityInfo?.getStockAvailability?.qtyAvailable ?? '0',
     10
   )
+
+  useEffect(() => {
+    dispatch({
+      type: 'SET_ITEM_AVAILABILITY',
+      args: {
+        itemStatus: {
+          index: itemIndex,
+          sku: itemNumber,
+          error: '',
+          availability: '',
+          availableQuantity: stockAvailability,
+        },
+      },
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stockAvailability])
 
   const primaryUoM =
     stockAvailabilityInfo?.getStockAvailability?.primaryUoM ?? ''

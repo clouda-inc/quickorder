@@ -12,14 +12,14 @@ import { OrderForm } from 'vtex.order-manager'
 import { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
 import { useCssHandles } from 'vtex.css-handles'
-import { useMutation, useQuery } from 'react-apollo'
+import { useMutation } from 'react-apollo'
 import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
 import XLSX from 'xlsx'
 
 import { ParseText, GetText } from './utils'
 import ReviewBlock from './components/ReviewBlock'
-import GET_ACCOUNT_INFO from './queries/orderSoldToAccount.graphql'
+import ItemListContext from './ItemListContext'
 
 interface ItemType {
   id: string
@@ -56,7 +56,12 @@ const UploadBlock: FunctionComponent<
   })
 
   const [refidLoading, setRefIdLoading] = useState<any>()
-  const { reviewItems, reviewState, showAddToCart } = state
+  const { reviewItems, reviewState } = state
+
+  const { useItemListState, useItemListDispatch } = ItemListContext
+  const { isLoadingCustomerInfo, showAddToCart } = useItemListState()
+
+  const dispatch = useItemListDispatch()
 
   const [addToCart, { error: mutationError, loading: mutationLoading }] =
     useMutation<{ addToCart: OrderFormType }, { items: [] }>(ADD_TO_CART)
@@ -68,14 +73,6 @@ const UploadBlock: FunctionComponent<
   const { setOrderForm }: OrderFormContext = OrderForm.useOrderForm()
   const orderForm = OrderForm.useOrderForm()
   const { showToast } = useContext(ToastContext)
-
-  const { data: accountData, loading: accountDataLoading } = useQuery(
-    GET_ACCOUNT_INFO,
-    {
-      notifyOnNetworkStatusChange: true,
-      ssr: false,
-    }
-  )
 
   const translateMessage = (message: MessageDescriptor) => {
     return intl.formatMessage(message)
@@ -145,6 +142,21 @@ const UploadBlock: FunctionComponent<
         showAddToCart: show,
         textAreaValue: GetText(items),
       })
+
+      dispatch({
+        type: 'UPDATE_ALL_STATUSES',
+        args: {
+          itemStatuses: items.map((item: any) => ({
+            index: item.index,
+            availability: item.availability,
+            error: item.error,
+            sku: item.sku,
+            availableQuantity: !Number.isNaN(item.availableQuantity)
+              ? parseInt(item.availableQuantity, 10)
+              : 0,
+          })),
+        },
+      })
     }
 
     return true
@@ -166,8 +178,21 @@ const UploadBlock: FunctionComponent<
       ...state,
       reviewItems: items,
       hasError: error,
+      reviewState: true,
+      textAreaValue: GetText(items),
     })
-    onReviewItems(items)
+
+    dispatch({
+      type: 'ADD_STATUSES',
+      args: {
+        itemStatuses: items.map((item: any, index: number) => ({
+          index,
+          error: item.error,
+          sku: item.sku,
+        })),
+      },
+    })
+    // onReviewItems(items)
   }
 
   const processWb = (() => {
@@ -400,7 +425,7 @@ const UploadBlock: FunctionComponent<
 
   const handles = useCssHandles(CSS_HANDLES)
 
-  if (accountDataLoading) {
+  if (isLoadingCustomerInfo) {
     return <p>Loading sold to..</p>
   }
 
@@ -480,7 +505,6 @@ const UploadBlock: FunctionComponent<
               reviewedItems={reviewItems}
               onReviewItems={onReviewItems}
               onRefidLoading={onRefidLoading}
-              soldToAccount={accountData}
             />
             <div
               className={`mb4 mt4 flex justify-between ${

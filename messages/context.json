@@ -32,6 +32,8 @@
   "store/quickorder.autocomplete.placeholder": "store/quickorder.autocomplete.placeholder",
   "store/quickorder.autocomplete.selectSku": "store/quickorder.autocomplete.selectSku",
   "store/quickorder.available": "store/quickorder.available",
+  "store/quickorder.unauthorized": "store/quickorder.unauthorized",
+  "store/quickorder.unauthorizedError": "store/quickorder.unauthorizedError",
   "store/quickorder.back": "store/quickorder.back",
   "store/quickorder.cannotBeDelivered": "store/quickorder.cannotBeDelivered",
   "store/quickorder.category.addButton": "store/quickorder.category.addButton",

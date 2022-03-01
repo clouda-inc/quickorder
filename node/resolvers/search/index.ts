@@ -154,16 +154,16 @@ export const queries = {
       key: 'START Get Brand Info',
       value: Date.now().toString(),
     })
-    const brands = await masterdata.searchDocumentsWithPaginationInfo<
-      BrandForClients
-    >({
-      dataEntity: BRAND_CLIENT_ACRONYM,
-      schema: BRAND_CLIENT_SCHEMA,
-      fields: BRNAD_CLIENT_FIELDS,
-      where: `(user=${customerNumber ?? ''} AND targetSystem=${targetSystem ??
-        ''})`,
-      pagination: { pageSize: 100, page: 1 },
-    })
+    const brands =
+      await masterdata.searchDocumentsWithPaginationInfo<BrandForClients>({
+        dataEntity: BRAND_CLIENT_ACRONYM,
+        schema: BRAND_CLIENT_SCHEMA,
+        fields: BRNAD_CLIENT_FIELDS,
+        where: `(user=${customerNumber ?? ''} AND targetSystem=${
+          targetSystem ?? ''
+        })`,
+        pagination: { pageSize: 100, page: 1 },
+      })
 
     const brandsList = brands?.data ?? []
 
@@ -200,8 +200,9 @@ export const queries = {
         // One item has one sku
         const skuItem = items[0]
         const itemId = skuItem?.itemId
-        const skuRefId = (skus ?? []).find((sku: any) => sku.skuId === itemId)
-          ?.refId
+        const skuRefId = (skus ?? []).find(
+          (sku: any) => sku.skuId === itemId
+        )?.refId
 
         // const refId = (items[0]?.referenceId ?? []).find((ref: any) => ref.Key === 'RefId')?.Value ?? ''
         const { commertialOffer, sellerId, sellerName } = items[0].sellers[0]
@@ -210,7 +211,7 @@ export const queries = {
           '1'
 
         let availableQuantity = 0
-        let isAvailable = false
+        let isAuthorized = false
         const unitMultiplier =
           (items ?? []).find((item: any) => item)?.unitMultiplier ?? 1
 
@@ -235,7 +236,7 @@ export const queries = {
               partialSum + current?.totalQuantity ?? 0,
             0
           )
-          isAvailable = selectedProductWearhouses.length > 0
+          isAuthorized = selectedProductWearhouses.length > 0
         } else if (targetSystem.toUpperCase() === 'JDE') {
           const { AvailableQuantity } = commertialOffer
 
@@ -247,7 +248,7 @@ export const queries = {
 
           availableQuantity =
             brandDataMatch?.trade === productBrand ? AvailableQuantity : 0
-          isAvailable = brandDataMatch?.trade === productBrand
+          isAuthorized = brandDataMatch?.trade === productBrand
         }
 
         const price = commertialOffer.SellingPrice
@@ -279,7 +280,7 @@ export const queries = {
             id: sellerId,
             name: sellerName,
           },
-          availability: isAvailable ? 'available' : 'unavailable',
+          availability: isAuthorized ? 'authorized' : 'unauthorized',
           unitMultiplier,
           minQty,
         }

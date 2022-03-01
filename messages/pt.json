@@ -32,6 +32,8 @@
   "store/quickorder.autocomplete.placeholder": "Busque um produto...",
   "store/quickorder.autocomplete.selectSku": "Por favor, selecione um SKU",
   "store/quickorder.available": "Disponível",
+  "store/quickorder.unauthorized": "Un Authorized",
+  "store/quickorder.unauthorizedError": "Unauthorized to purchase this product",
   "store/quickorder.back": "Voltar",
   "store/quickorder.cannotBeDelivered": "Não pode ser entregue",
   "store/quickorder.category.addButton": "Adicionar itens ao carrinho",

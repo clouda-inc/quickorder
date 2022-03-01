@@ -12,13 +12,13 @@ import { OrderForm } from 'vtex.order-manager'
 import { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
 import { useCssHandles } from 'vtex.css-handles'
-import { useMutation, useQuery } from 'react-apollo'
+import { useMutation } from 'react-apollo'
 import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
 
 import ReviewBlock from './components/ReviewBlock'
 import { ParseText, GetText } from './utils'
-import GET_ACCOUNT_INFO from './queries/orderSoldToAccount.graphql'
+import ItemListContext from './ItemListContext'
 
 const messages = defineMessages({
   success: {
@@ -49,14 +49,13 @@ const TextAreaBlock: FunctionComponent<
 > = ({ intl, value, text, description, componentOnly }: any) => {
   const [state, setState] = useState<any>({
     reviewState: false,
-    showAddToCart: null,
     textAreaValue: value || '',
     reviewItems: [],
   })
 
   const [refidLoading, setRefIdLoading] = useState<any>()
 
-  const { textAreaValue, reviewItems, reviewState, showAddToCart } = state
+  const { textAreaValue, reviewItems, reviewState } = state
 
   const [addToCart, { error: mutationError, loading: mutationLoading }] =
     useMutation<{ addToCart: OrderFormType }, { items: [] }>(ADD_TO_CART)
@@ -69,13 +68,10 @@ const TextAreaBlock: FunctionComponent<
   const orderForm = OrderForm.useOrderForm()
   const { showToast } = useContext(ToastContext)
 
-  const { data: accountData, loading: accountDataLoading } = useQuery(
-    GET_ACCOUNT_INFO,
-    {
-      notifyOnNetworkStatusChange: true,
-      ssr: false,
-    }
-  )
+  const { useItemListState, useItemListDispatch } = ItemListContext
+  const { isLoadingCustomerInfo, showAddToCart } = useItemListState()
+
+  const dispatch = useItemListDispatch()
 
   const translateMessage = (message: MessageDescriptor) => {
     return intl.formatMessage(message)
@@ -188,6 +184,21 @@ const TextAreaBlock: FunctionComponent<
         showAddToCart: show,
         textAreaValue: GetText(items),
       })
+
+      dispatch({
+        type: 'UPDATE_ALL_STATUSES',
+        args: {
+          itemStatuses: items.map((item: any) => ({
+            index: item.index,
+            availability: item.availability,
+            error: item.error,
+            sku: item.sku,
+            availableQuantity: !Number.isNaN(item.availableQuantity)
+              ? parseInt(item.availableQuantity, 10)
+              : 0,
+          })),
+        },
+      })
     }
 
     return true
@@ -205,8 +216,19 @@ const TextAreaBlock: FunctionComponent<
       reviewState: true,
       hasError: error,
       toValidate: true,
+      textAreaValue: GetText(items),
     })
-    onReviewItems(items)
+
+    dispatch({
+      type: 'ADD_STATUSES',
+      args: {
+        itemStatuses: items.map((item: any, index: number) => ({
+          index,
+          error: item.error,
+          sku: item.sku,
+        })),
+      },
+    })
   }
 
   const setTextareaValue = ($textAreaValue: string) => {
@@ -273,7 +295,7 @@ const TextAreaBlock: FunctionComponent<
     })
   }
 
-  if (accountDataLoading) {
+  if (isLoadingCustomerInfo) {
     return <p>Loading sold to..</p>
   }
 
@@ -329,7 +351,6 @@ const TextAreaBlock: FunctionComponent<
               reviewedItems={reviewItems}
               onReviewItems={onReviewItems}
               onRefidLoading={onRefidLoading}
-              soldToAccount={accountData}
             />
             <div
               className={`mb4 mt4 flex justify-between ${

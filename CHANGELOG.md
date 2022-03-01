@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixes
+
+- Stock status changed to `Unauthorized`, `In Stock` and `Out of Stock`
+- Highlight on errors
+- Show meaningful error message
+
 ## [0.1.18] - 2022-02-24
 
 ### Fixed

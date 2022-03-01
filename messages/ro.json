@@ -32,6 +32,8 @@
   "store/quickorder.autocomplete.placeholder": "Căutați un produs...",
   "store/quickorder.autocomplete.selectSku": "Selecteaza un SKU",
   "store/quickorder.available": "Disponibil",
+  "store/quickorder.unauthorized": "Un Authorized",
+  "store/quickorder.unauthorizedError": "Unauthorized to purchase this product",
   "store/quickorder.back": "Inapoi",
   "store/quickorder.cannotBeDelivered": "Nu poate fi livrat",
   "store/quickorder.category.addButton": "Adauga articole in carucior",

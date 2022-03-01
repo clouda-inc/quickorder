@@ -23,6 +23,10 @@
 }
 
 .outOfStockMessage {
+  color: #f88b13;
+}
+
+.unAuthorizedMessage {
   color: #e7040f;
 }
 
@@ -30,6 +34,6 @@
   background: #f6f7f2;
 }
 
-.deleteRowBtn :global(.vtex-button__label) {
-  padding-right: 0;
+.quickOrderTableRowWithIssues {
+  background-color: #ffd6d6;
 }
