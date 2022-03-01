@@ -98,8 +98,7 @@ const categoryReducer = (state: State, action: ReducerActions): State => {
       return {
         ...state,
         itemStatuses,
-        showAddToCart:
-          itemStatuses.filter((item: ItemStatus) => !!item.error).length === 0,
+        showAddToCart: false,
       }
     }
 
