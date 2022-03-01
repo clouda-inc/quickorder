@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.21] - 2022-03-01
+
 ### Fixed
 
 - Add to cart button disabled before validation completes
