@@ -59,7 +59,7 @@ const ItemPricing = ({ itemNumber, customerNumber }: Props) => {
       {priceList.map((item: ItemPrices, index: number) => {
         return index < 3 ? (
           <div
-            key={item?.itemNumber}
+          key={`${item?.itemNumber}-${index}-${item.price}`}
             className={`${styles.priceTableRow} flex w-100`}
           >
             <div className={`${styles.priceTableRowQty} flex mr3 w-60`}>
@@ -69,7 +69,7 @@ const ItemPricing = ({ itemNumber, customerNumber }: Props) => {
               {`${getSymbolFromCurrency(item?.currency)}${item.price}`}
             </div>
           </div>
-        ) : (
+        ) :  index === 3 && (
           <div
             role="button"
             className={`${styles.priceTableMoreLink} b f7 pointer`}
