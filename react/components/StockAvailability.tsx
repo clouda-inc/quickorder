@@ -58,18 +58,18 @@ const StockAvailability = ({
           error: '',
           availability: '',
           availableQuantity: stockAvailability,
+          isQuantityLoading: loading,
         },
       },
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stockAvailability])
+  }, [stockAvailability, itemIndex, itemNumber, loading, dispatch])
 
   const primaryUoM =
     stockAvailabilityInfo?.getStockAvailability?.primaryUoM ?? ''
 
   return loading ? (
     <div className={`${styles.itemAvailability}`}>Loading...</div>
-  ) : (
+  ) : stockAvailability > 0 ? (
     <div className={`${styles.itemAvailability}`}>
       <span className={`${styles.availableQuantity} f3 mr2`}>
         {stockAvailability}
@@ -77,6 +77,8 @@ const StockAvailability = ({
       <span className={`${styles.availableQuantity} f3 mr3`}>{primaryUoM}</span>
       <span className={`${styles.availableLabel} f6 ttu`}>Available</span>
     </div>
+  ) : (
+    <div />
   )
 }
 

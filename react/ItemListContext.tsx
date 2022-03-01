@@ -13,6 +13,7 @@ interface ItemStatus {
   error: string
   availability: string
   availableQuantity: number
+  isQuantityLoading: boolean
 }
 
 export interface State {
@@ -71,9 +72,12 @@ export type Dispatch = (action: ReducerActions) => void
 const categoryReducer = (state: State, action: ReducerActions): State => {
   const getProductAvailability = (
     availability?: string,
-    availableQuantity = 0
+    availableQuantity = 0,
+    isLoading = false
   ) => {
-    return availability === 'unauthorized'
+    return isLoading
+      ? ''
+      : availability === 'unauthorized'
       ? 'unauthorized'
       : availableQuantity > 0
       ? 'available'
@@ -113,7 +117,8 @@ const categoryReducer = (state: State, action: ReducerActions): State => {
 
         const availability = getProductAvailability(
           selected?.availability,
-          availableQuantity
+          availableQuantity,
+          item?.isQuantityLoading
         )
 
         return {
@@ -175,12 +180,14 @@ const categoryReducer = (state: State, action: ReducerActions): State => {
         if (item.index === action?.args?.itemStatus.index) {
           const availability = getProductAvailability(
             item?.availability,
-            action?.args?.itemStatus.availableQuantity
+            action?.args?.itemStatus.availableQuantity,
+            action?.args?.itemStatus.isQuantityLoading
           )
 
           return {
             ...item,
             availableQuantity: action?.args?.itemStatus.availableQuantity,
+            isQuantityLoading: action?.args?.itemStatus.isQuantityLoading,
             availability,
           }
         }
