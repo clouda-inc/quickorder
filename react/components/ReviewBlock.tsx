@@ -246,7 +246,6 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   // }
   const errorMessage = {
     'store/quickorder.valid': messages.valid,
-    'store/quickorder.productNotFound': messages.prodnotfound,
     'store/quickorder.available': messages.available,
     'store/quickorder.unavailable': messages.unavailable,
     'store/quickorder.invalidPattern': messages.invalidPattern,
