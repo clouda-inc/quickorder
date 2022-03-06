@@ -44,6 +44,7 @@
   "store/quickorder.goToProductPage": "Go To Product Page",
   "store/quickorder.inStock": "In Stock",
   "store/quickorder.invalidPattern": "Formato inválido",
+  "store/quickorder.leadTime": "Lead Time",
   "store/quickorder.moq": "MOQ",
   "store/quickorder.outOfStock": "Out of Stock",
   "store/quickorder.quantityPerUnit": "Quantity Per Unit",

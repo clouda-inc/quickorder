@@ -44,6 +44,7 @@
   "store/quickorder.goToProductPage": "store/quickorder.goToProductPage",
   "store/quickorder.inStock": "store/quickorder.inStock",
   "store/quickorder.invalidPattern": "store/quickorder.invalidPattern",
+  "store/quickorder.leadTime": "store/quickorder.leadTime",
   "store/quickorder.moq": "store/quickorder.moq",
   "store/quickorder.outOfStock": "store/quickorder.outOfStock",
   "store/quickorder.quantityPerUnit": "store/quickorder.quantityPerUnit",

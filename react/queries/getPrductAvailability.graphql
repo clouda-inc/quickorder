@@ -17,6 +17,8 @@ query getAvbProduct(
       skuName
       uom
       uomDescription
+      moq
+      leadTime
       linkText
       availability
       seller {
@@ -27,7 +29,6 @@ query getAvbProduct(
       productName
       price
       unitMultiplier
-      minQty
     }
     performanceData {
       key

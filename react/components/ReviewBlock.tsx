@@ -170,6 +170,9 @@ const messages = defineMessages({
   moq: {
     id: 'store/quickorder.moq',
   },
+  leadTime: {
+    id: 'store/quickorder.leadTime',
+  },
 })
 
 // let orderFormId = ''
@@ -206,6 +209,8 @@ const CSS_HANDLES = [
   'orderedQuantityValue',
   'quickOrderTableRowWithIssues',
   'unAuthorizedMessage',
+  'leadTime',
+  'moq',
 ]
 
 const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
@@ -301,7 +306,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
 
       const minQty = refidData.getSkuAvailability?.items?.find(
         (d: any) => i.sku === d.refid
-      )?.minQty
+      )?.moq
 
       i.quantity = validateQuantity(minQty, unit, i.quantity)
 
@@ -414,10 +419,11 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
           productName: itm?.productName,
           skuName: itm?.skuName,
           uom: itm?.uom,
+          leadTime: item?.leadTime,
           uomDescription: itm?.uomDescription,
           linkText: itm?.linkText,
           unitMultiplier: itm?.unitMultiplier,
-          minQty: itm?.minQty,
+          moq: itm?.moq,
           refid: itm?.refid,
         }
       })
@@ -653,46 +659,67 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                     targetSystem === TARGET_SYSTEM.JDE ? 'w-60' : 'w-100'
                   }`}
                 >
-                  <div
-                    className={`${styles.itemUom} flex flex-row justify-between`}
-                  >
-                    <div className={`${styles.KeyValueLabel}`}>
-                      {intl.formatMessage(messages.unitOfMeasure)}
+                  {rowData.uom && (
+                    <div
+                      className={`${styles.itemUom} flex flex-row justify-between`}
+                    >
+                      <div className={`${styles.KeyValueLabel}`}>
+                        {intl.formatMessage(messages.unitOfMeasure)}
+                      </div>
+                      <div className={`${styles.KeyValueValue}`}>
+                        {rowData.uom}
+                      </div>
                     </div>
-                    <div className={`${styles.KeyValueValue}`}>
-                      {rowData.uom}
+                  )}
+                  {rowData.uomDescription && (
+                    <div
+                      className={`${styles.uomDescription} flex flex-row justify-between`}
+                    >
+                      <div className={`${styles.KeyValueLabel}`}>
+                        {intl.formatMessage(messages.quantityPerUnit)}
+                      </div>
+                      <div className={`${styles.KeyValueValue}`}>
+                        {rowData.uomDescription}
+                      </div>
                     </div>
-                  </div>
-                  <div
-                    className={`${styles.uomDescription} flex flex-row justify-between`}
-                  >
-                    <div className={`${styles.KeyValueLabel}`}>
-                      {intl.formatMessage(messages.quantityPerUnit)}
+                  )}
+                  {rowData.unitMultiplier && (
+                    <div
+                      className={`${styles.uomDescription} flex flex-row justify-between`}
+                    >
+                      <div className={`${styles.KeyValueLabel}`}>
+                        {intl.formatMessage(messages.unitMultiplier)}
+                      </div>
+                      <div className={`${styles.KeyValueValue}`}>
+                        {rowData.unitMultiplier}
+                      </div>
                     </div>
-                    <div className={`${styles.KeyValueValue}`}>
-                      {rowData.uomDescription}
+                  )}
+                  {rowData.moq && (
+                    <div
+                      className={`${styles.moq} flex flex-row justify-between`}
+                    >
+                      <div className={`${styles.KeyValueLabel}`}>
+                        {intl.formatMessage(messages.moq)}
+                      </div>
+                      <div className={`${styles.KeyValueValue}`}>
+                        {rowData.moq}
+                      </div>
                     </div>
-                  </div>
-                  <div
-                    className={`${styles.uomDescription} flex flex-row justify-between`}
-                  >
-                    <div className={`${styles.KeyValueLabel}`}>
-                      {intl.formatMessage(messages.unitMultiplier)}
+                  )}
+
+                  {rowData.leadTime && (
+                    <div
+                      className={`${styles.leadTime} flex flex-row justify-between`}
+                    >
+                      <div className={`${styles.KeyValueLabel}`}>
+                        {intl.formatMessage(messages.leadTime)}
+                      </div>
+                      <div className={`${styles.KeyValueValue}`}>
+                        {rowData.leadTime}
+                      </div>
                     </div>
-                    <div className={`${styles.KeyValueValue}`}>
-                      {rowData.unitMultiplier}
-                    </div>
-                  </div>
-                  <div
-                    className={`${styles.unitMultiplier} flex flex-row justify-between`}
-                  >
-                    <div className={`${styles.KeyValueLabel}`}>
-                      {intl.formatMessage(messages.moq)}
-                    </div>
-                    <div className={`${styles.KeyValueValue}`}>
-                      {rowData.minQty}
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
               <div className={`${styles.tableCol3} flex flex-column w-20 pa3`}>

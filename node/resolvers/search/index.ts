@@ -154,16 +154,16 @@ export const queries = {
       key: 'START Get Brand Info',
       value: Date.now().toString(),
     })
-    const brands = await masterdata.searchDocumentsWithPaginationInfo<
-      BrandForClients
-    >({
-      dataEntity: BRAND_CLIENT_ACRONYM,
-      schema: BRAND_CLIENT_SCHEMA,
-      fields: BRNAD_CLIENT_FIELDS,
-      where: `(user=${customerNumber ?? ''} AND targetSystem=${targetSystem ??
-        ''})`,
-      pagination: { pageSize: 100, page: 1 },
-    })
+    const brands =
+      await masterdata.searchDocumentsWithPaginationInfo<BrandForClients>({
+        dataEntity: BRAND_CLIENT_ACRONYM,
+        schema: BRAND_CLIENT_SCHEMA,
+        fields: BRNAD_CLIENT_FIELDS,
+        where: `(user=${customerNumber ?? ''} AND targetSystem=${
+          targetSystem ?? ''
+        })`,
+        pagination: { pageSize: 100, page: 1 },
+      })
 
     const brandsList = brands?.data ?? []
 
@@ -200,19 +200,15 @@ export const queries = {
         // One item has one sku
         const skuItem = items[0]
         const itemId = skuItem?.itemId
-        const skuRefId = (skus ?? []).find((sku: any) => sku.skuId === itemId)
-          ?.refId
+        const skuRefId = (skus ?? []).find(
+          (sku: any) => sku.skuId === itemId
+        )?.refId
 
         // const refId = (items[0]?.referenceId ?? []).find((ref: any) => ref.Key === 'RefId')?.Value ?? ''
         const { commertialOffer, sellerId, sellerName } = items[0].sellers[0]
-        const minQty =
-          (product['Minimum Order Quantity'] ?? []).find((d: string) => d) ??
-          '1'
 
         let availableQuantity = 0
         let isAuthorized = false
-        const unitMultiplier =
-          (items ?? []).find((item: any) => item)?.unitMultiplier ?? 1
 
         if (targetSystem.toUpperCase() === 'SAP') {
           const productPlants =
@@ -256,13 +252,40 @@ export const queries = {
           ? commertialOffer.Price
           : commertialOffer.ListPrice
 
-        const uom = (product['Unit of Measure'] ?? []).find(
-          (i: string) => i !== ''
+        const uomKey =
+          targetSystem.toUpperCase() === 'SAP'
+            ? 'Unit of Measure'
+            : 'JDE Unit of measure'
+
+        const uomDescriptionKey =
+          targetSystem.toUpperCase() === 'SAP'
+            ? 'UOM_Description'
+            : 'JDE Unit of Measure Description'
+
+        const moqKey =
+          targetSystem.toUpperCase() === 'SAP'
+            ? 'MOQ'
+            : 'JDE Minimum Order Quantity'
+
+        const leadTimeKey =
+          targetSystem.toUpperCase() === 'SAP'
+            ? 'Material_Master_Lead_Time'
+            : 'JDE_LeadTime_Desc'
+
+        const uom = (product[uomKey] ?? []).find((i: string) => i && i !== '')
+
+        const uomDescription = (product[uomDescriptionKey] ?? []).find(
+          (i: string) => i && i !== ''
         )
 
-        const uomDescription = (product.UOM_Description ?? []).find(
-          (i: string) => i !== ''
+        const moq =
+          (product[moqKey] ?? []).find((i: string) => i && i !== '') ?? '1'
+
+        const leadTime = (product[leadTimeKey] ?? []).find(
+          (i: string) => i && i !== ''
         )
+
+        const unitMultiplier = skuItem?.unitMultiplier ?? 1
 
         return {
           refid: skuRefId,
@@ -272,6 +295,8 @@ export const queries = {
           skuName: skuItem?.name,
           uom,
           uomDescription,
+          moq,
+          leadTime,
           linkText: product.linkText,
           price,
           availableQuantity,
@@ -281,7 +306,6 @@ export const queries = {
           },
           availability: isAuthorized ? 'authorized' : 'unauthorized',
           unitMultiplier,
-          minQty,
         }
       })
 
@@ -303,6 +327,8 @@ export const queries = {
           skuName: null,
           uom: null,
           uomDescription: null,
+          moq: null,
+          leadTime: null,
           linkText: null,
           price: null,
           availableQuantity: null,
