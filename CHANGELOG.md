@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.22] - 2022-03-06
+
 ### Changed
 
 - Get MOQ, UOM and Lead Time from specifications for JDE and SAP
