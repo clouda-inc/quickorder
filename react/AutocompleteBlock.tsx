@@ -322,14 +322,18 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
   return (
     <div className={`${handles.textContainerMain} flex flex-column`}>
       {!componentOnly && (
-        <div className={`${handles.textContainer} w-100 fl-l`}>
+        <div
+          className={`${handles.textContainer} w-100 fl-l`}
+          style={{ display: 'none' }}
+        >
           <h2
             className={`${handles.textContainerTitle} t-heading-3 mb3 ml5 ml3-ns mt4`}
           >
             {text}
           </h2>
           <div
-            className={`${handles.textContainerDescription} t-body lh-copy c-muted-1 mb7 ml3 false`}
+            className={`${handles.textContainerDescription}  t-body lh-copy c-muted-1 mb7 ml3 false`}
+            style={{ display: 'none' }}
           >
             {description}
           </div>
@@ -340,7 +344,7 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
           !componentOnly ? 'w-100 fr-l' : ''
         }`}
       >
-        <div className="w-100 mb5">
+        <div className="w-100 mb5" style={{ display: 'none' }}>
           <div className="bg-base t-body c-on-base ph3 br3 b--muted-4">
             {!selectedItem && <QuickOrderAutocomplete onSelect={onSelect} />}
             {!!selectedItem && (
