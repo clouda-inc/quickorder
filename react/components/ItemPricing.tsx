@@ -5,7 +5,6 @@ import getSymbolFromCurrency from 'currency-symbol-map'
 import { Modal } from 'vtex.styleguide'
 
 import GET_ITEM_PRICING from '../queries/getItemPricing.gql'
-
 import { getFormattedDate } from '../utils'
 
 import './ItemPricing.css'
@@ -32,7 +31,7 @@ const ItemPricing = ({ itemNumber, customerNumber }: Props) => {
   const { data: itemPricingInfo, loading } = useQuery(GET_ITEM_PRICING, {
     skip: !itemNumber || itemNumber === '',
     variables: {
-      itemNumber: itemNumber,
+      itemNumber,
       customer: customerNumber,
       effectiveDate: getFormattedDate(new Date()),
     },
@@ -59,7 +58,7 @@ const ItemPricing = ({ itemNumber, customerNumber }: Props) => {
       {priceList.map((item: ItemPrices, index: number) => {
         return index < 3 ? (
           <div
-          key={`${item?.itemNumber}-${index}-${item.price}`}
+            key={`${item?.itemNumber}-${index}-${item.price}`}
             className={`${styles.priceTableRow} flex w-100`}
           >
             <div className={`${styles.priceTableRowQty} flex mr3 w-60`}>
@@ -69,23 +68,25 @@ const ItemPricing = ({ itemNumber, customerNumber }: Props) => {
               {`${getSymbolFromCurrency(item?.currency)}${item.price}`}
             </div>
           </div>
-        ) :  index === 3 && (
-          <div
-            role="button"
-            className={`${styles.priceTableMoreLink} b f7 pointer`}
-            onClick={openModal}
-            onKeyDown={openModal}
-            tabIndex={0}
-          >
-            more...
-          </div>
+        ) : (
+          index === 3 && (
+            <div
+              role="button"
+              className={`${styles.priceTableMoreLink} b f7 pointer`}
+              onClick={openModal}
+              onKeyDown={openModal}
+              tabIndex={0}
+            >
+              more...
+            </div>
+          )
         )
       })}
 
       <Modal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        title={`Complete Pricing`}
+        title="Complete Pricing"
       >
         <div className={`${styles.priceTableModal}`}>
           <div className={`${styles.priceTableHeader} flex w-100`}>

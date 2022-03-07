@@ -1,6 +1,10 @@
+.tableCol2Col2 {
+  min-height: 110px;
+}
+
 .productName {
-  font-size: 1.85rem;
-  line-height: 1.85rem;
+  font-size: 1.5rem;
+  line-height: 1.5rem;
   padding-bottom: 0.75rem;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -23,6 +27,10 @@
 }
 
 .outOfStockMessage {
+  color: #f88b13;
+}
+
+.unAuthorizedMessage {
   color: #e7040f;
 }
 
@@ -30,6 +38,6 @@
   background: #f6f7f2;
 }
 
-.deleteRowBtn :global(.vtex-button__label) {
-  padding-right: 0;
+.quickOrderTableRowWithIssues {
+  background-color: #ffd6d6;
 }

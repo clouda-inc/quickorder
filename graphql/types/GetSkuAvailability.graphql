@@ -13,14 +13,14 @@ type AvailableItem {
   skuName: String
   uom: String
   uomDescription: String
+  moq: Int
+  leadTime: String
   linkText: String
   price: Float
   unitMultiplier: Int
-  minQty: Int
 }
 
 type KeyValue {
   key: String
   value: String
 }
-

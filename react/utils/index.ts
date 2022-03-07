@@ -104,19 +104,22 @@ export const validateQuantity = (minQty: number, unit: number, qty: number) => {
 
   const actualQty = qty * unit
 
-  return minQty % unit === 0
-    ? actualQty < minQty
-      ? minQty
+  const quantity =
+    minQty % unit === 0
+      ? actualQty < minQty
+        ? minQty
+        : actualQty
+      : actualQty < minQty
+      ? minQty + (unit - (minQty % unit))
       : actualQty
-    : actualQty < minQty
-    ? minQty + (unit - (minQty % unit))
-    : actualQty
+
+  return quantity
 }
 
 export const getFormattedDate = (date: Date) => {
-  let year = date.getFullYear();
-  let month = (1 + date.getMonth()).toString().padStart(2, '0');
-  let day = date.getDate().toString().padStart(2, '0');
+  const year = date.getFullYear()
+  const month = (1 + date.getMonth()).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
 
-  return month + '/' + day + '/' + year;
+  return `${month}/${day}/${year}`
 }
