@@ -7,7 +7,56 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+<<<<<<< HEAD
 ## [0.1.15] - 2022-02-18
+=======
+## [0.1.23] - 2022-03-06
+
+## [0.1.22] - 2022-03-06
+
+### Changed
+
+- Get MOQ, UOM and Lead Time from specifications for JDE and SAP
+
+## [0.1.21] - 2022-03-01
+
+### Fixed
+
+- Add to cart button disabled before validation completes
+
+## [0.1.20] - 2022-03-01
+
+## [0.1.19] - 2022-03-01
+
+### Fixes
+
+- Stock status changed to `Unauthorized`, `In Stock` and `Out of Stock`
+- Highlight on errors
+- Show meaningful error message
+- Quick order table style fixes
+
+## [0.1.18] - 2022-02-24
+
+### Fixed
+
+- Disable add to cart when out of stock
+- fixed more buttons not showing issue
+
+## [0.1.17] - 2022-02-24
+
+### Fixed
+
+- Fixed vendor name
+
+## [0.1.16] - 2022-02-23
+
+## [0.1.15] - 2022-02-15
+
+### Changed
+
+- Add to cart not working in upload file
+- Add to cart quantity is incorrect
+>>>>>>> 818c9c5295c4a8a3980a84c9a6745d0d6a82d781
 
 ## [0.1.14] - 2022-02-11
 
