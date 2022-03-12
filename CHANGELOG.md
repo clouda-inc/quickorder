@@ -7,9 +7,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-<<<<<<< HEAD
-## [0.1.15] - 2022-02-18
-=======
 ## [0.1.23] - 2022-03-06
 
 ## [0.1.22] - 2022-03-06
@@ -56,7 +53,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Add to cart not working in upload file
 - Add to cart quantity is incorrect
->>>>>>> 818c9c5295c4a8a3980a84c9a6745d0d6a82d781
 
 ## [0.1.14] - 2022-02-11
 
