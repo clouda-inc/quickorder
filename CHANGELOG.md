@@ -11,11 +11,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Adding spread sheet download link in quick order
 
-<<<<<<< HEAD
+## [0.1.25] - 2022-03-13
 
-## [0.1.15] - 2022-02-18
+## [0.1.24] - 2022-03-13
 
-=======
+### Fixed
+
+- Fix linting issues
+- Upper case unit of measure field name
+- Lead time field name changed to `JDE_Lead_Time`
 
 ## [0.1.23] - 2022-03-06
 
@@ -63,7 +67,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Add to cart not working in upload file
 - Add to cart quantity is incorrect
-  > > > > > > > 818c9c5295c4a8a3980a84c9a6745d0d6a82d781
 
 ## [0.1.14] - 2022-02-11
 

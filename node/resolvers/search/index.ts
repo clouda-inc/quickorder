@@ -154,16 +154,16 @@ export const queries = {
       key: 'START Get Brand Info',
       value: Date.now().toString(),
     })
-    const brands = await masterdata.searchDocumentsWithPaginationInfo<
-      BrandForClients
-    >({
-      dataEntity: BRAND_CLIENT_ACRONYM,
-      schema: BRAND_CLIENT_SCHEMA,
-      fields: BRNAD_CLIENT_FIELDS,
-      where: `(user=${customerNumber ?? ''} AND targetSystem=${targetSystem ??
-        ''})`,
-      pagination: { pageSize: 100, page: 1 },
-    })
+    const brands =
+      await masterdata.searchDocumentsWithPaginationInfo<BrandForClients>({
+        dataEntity: BRAND_CLIENT_ACRONYM,
+        schema: BRAND_CLIENT_SCHEMA,
+        fields: BRNAD_CLIENT_FIELDS,
+        where: `(user=${customerNumber ?? ''} AND targetSystem=${
+          targetSystem ?? ''
+        })`,
+        pagination: { pageSize: 100, page: 1 },
+      })
 
     const brandsList = brands?.data ?? []
 
@@ -200,8 +200,9 @@ export const queries = {
         // One item has one sku
         const skuItem = items[0]
         const itemId = skuItem?.itemId
-        const skuRefId = (skus ?? []).find((sku: any) => sku.skuId === itemId)
-          ?.refId
+        const skuRefId = (skus ?? []).find(
+          (sku: any) => sku.skuId === itemId
+        )?.refId
 
         // const refId = (items[0]?.referenceId ?? []).find((ref: any) => ref.Key === 'RefId')?.Value ?? ''
         const { commertialOffer, sellerId, sellerName } = items[0].sellers[0]
@@ -254,7 +255,7 @@ export const queries = {
         const uomKey =
           targetSystem.toUpperCase() === 'SAP'
             ? 'Unit of Measure'
-            : 'JDE Unit of measure'
+            : 'JDE Unit of Measure'
 
         const uomDescriptionKey =
           targetSystem.toUpperCase() === 'SAP'
@@ -263,13 +264,13 @@ export const queries = {
 
         const moqKey =
           targetSystem.toUpperCase() === 'SAP'
-            ? 'MOQ'
+            ? 'Minimum Order Quantity'
             : 'JDE Minimum Order Quantity'
 
         const leadTimeKey =
           targetSystem.toUpperCase() === 'SAP'
             ? 'Material_Master_Lead_Time'
-            : 'JDE_LeadTime_Desc'
+            : 'JDE_Lead_Time'
 
         const uom = (product[uomKey] ?? []).find((i: string) => i && i !== '')
 
