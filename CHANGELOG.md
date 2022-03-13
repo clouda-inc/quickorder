@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - Lead time mapping issue fixed
+- Adding spread sheet download link in quick order
 
 ## [0.1.25] - 2022-03-13
 
@@ -160,7 +161,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.0.11] - 2022-01-25
 
-### Added 
+### Added
 
 - Added performance telemetry logs
 
@@ -203,7 +204,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix numeric stepper.
 - Fix the quantity validation against MOQ and UM.
 - Fix the add to cart quantity.
-- Fix the add to cart behaviour in pdp search. 
+- Fix the add to cart behaviour in pdp search.
 
 ## [0.0.4] - 2021-11-01
 

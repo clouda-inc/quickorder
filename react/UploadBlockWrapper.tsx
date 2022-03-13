@@ -12,10 +12,11 @@ interface UploadBlockInterface {
   downloadText?: string
 }
 
-const UploadBlockBlockWrapper = ({
+const UploadBlockWrapper = ({
   text,
   description,
   componentOnly,
+  downloadText,
 }: UploadBlockInterface) => {
   const { ItemListProvider } = ItemListContext
 
@@ -32,9 +33,9 @@ const UploadBlockBlockWrapper = ({
       accountData={accountData}
       accountDataLoading={accountDataLoading}
     >
-      <UploadBlock {...{ text, description, componentOnly }} />
+      <UploadBlock {...{ text, description, componentOnly, downloadText }} />
     </ItemListProvider>
   )
 }
 
-export default UploadBlockBlockWrapper
+export default UploadBlockWrapper
