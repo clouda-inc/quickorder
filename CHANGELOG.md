@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Upper case unit of measure field name
+- Lead time field name changed to `JDE_Lead_Time`
+
 ## [0.1.23] - 2022-03-06
 
 ## [0.1.22] - 2022-03-06
