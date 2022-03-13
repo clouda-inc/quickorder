@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+- Lead time mapping issue fixed
 - Adding spread sheet download link in quick order
 
 ## [0.1.25] - 2022-03-13

@@ -419,7 +419,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
           productName: itm?.productName,
           skuName: itm?.skuName,
           uom: itm?.uom,
-          leadTime: item?.leadTime,
+          leadTime: itm?.leadTime,
           uomDescription: itm?.uomDescription,
           linkText: itm?.linkText,
           unitMultiplier: itm?.unitMultiplier,
