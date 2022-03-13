@@ -11,7 +11,7 @@
   },
 
   "quickorder-upload": {
-    "component": "UploadBlockBlockWrapper"
+    "component": "UploadBlockWrapper"
   },
   "quickorder-categories": {
     "component": "CategoryBlock"
