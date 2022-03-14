@@ -64,7 +64,8 @@
       "componentOnly": false,
       "text": "One by One",
       "description": "Type the product name, select, enter quantity, add to the cart"
-    }
+    },
+    "blocks":["custom-product-quantity"]
   },
 
   "flex-layout.row#categories": {

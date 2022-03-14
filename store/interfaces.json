@@ -17,7 +17,8 @@
     "component": "CategoryBlock"
   },
   "quickorder-autocomplete": {
-    "component": "AutocompleteBlock"
+    "component": "AutocompleteBlock",
+    "allowed": ["custom-product-quantity"]
   },
   "quickorder-textarea": {
     "component": "TextAreaBlock"
