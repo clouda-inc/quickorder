@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Add csv file type to the quickorder
+- Add toast to display any invalid file is selected
+
 ## [0.1.26] - 2022-03-13
 
 ### Fixed

@@ -246,10 +246,22 @@ const UploadBlock: FunctionComponent<
   }
 
   const handleFile = (files: any) => {
-    doFile(files)
+    const extension = files[0].path.split('.')[1]
+
+    if (
+      extension.toLowerCase() === 'xls' ||
+      extension.toLowerCase() === 'xlsx' ||
+      extension.toLowerCase() === 'csv'
+    ) {
+      doFile(files)
+    }
   }
 
   const handleReset = () => {}
+
+  const handleOnDropRejected = () => {
+    showToast(`Invalid File Type`)
+  }
 
   const backList = () => {
     setState({
@@ -468,7 +480,8 @@ const UploadBlock: FunctionComponent<
               <Dropzone
                 onDropAccepted={handleFile}
                 onFileReset={handleReset}
-                accept=".xls,.xlsx"
+                onDropRejected={handleOnDropRejected}
+                accept=".xls,.xlsx,.csv"
               >
                 <div className="pt7">
                   <div>
