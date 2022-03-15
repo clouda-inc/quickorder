@@ -4,8 +4,6 @@ import React, {
   useState,
   useContext,
   FunctionComponent,
-  useEffect,
-  // useCallback
 } from 'react'
 import {
   FormattedMessage,
@@ -18,15 +16,13 @@ import {
   Tag,
   ToastContext,
   IconClear,
-  // Input,
-  // NumericStepper,
+  NumericStepper,
 } from 'vtex.styleguide'
 import { OrderForm } from 'vtex.order-manager'
 import { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
 import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
-import { useProductDispatch } from 'vtex.product-context/ProductDispatchContext'
 import PropTypes from 'prop-types'
 import { useCssHandles } from 'vtex.css-handles'
 import { useApolloClient, useMutation, useQuery } from 'react-apollo'
@@ -35,9 +31,6 @@ import QuickOrderAutocomplete from './components/QuickOrderAutocomplete'
 import productQuery from './queries/product.gql'
 import ORDER_SOLD_TO_ACCOUNT from './queries/orderSoldToAccount.graphql'
 import './global.css'
-// import StepperProductQuantity from './components/StepperProductQuantity'
-// import BaseProductQuantity from './components/BaseProductQuantity'
-import { ExtensionPoint } from 'vtex.render-runtime'
 
 const messages = defineMessages({
   success: {
@@ -73,8 +66,6 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
   description,
   componentOnly,
   intl,
-  // size = 'small',
-  // showUnit = true,
 }) => {
   const client = useApolloClient()
   const { showToast } = useContext(ToastContext)
@@ -90,10 +81,6 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
     data: userSoldToAccount,
     error: soldToAccntError,
   } = useQuery(ORDER_SOLD_TO_ACCOUNT)
-  const dispatch = useProductDispatch()
-
-  console.log('___dispatch', dispatch)
-  console.log('__useProductDispatch', useProductDispatch)
 
   const targetSystem = (
     userSoldToAccount?.getOrderSoldToAccount?.targetSystem ?? ''
@@ -156,31 +143,18 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
       selectedItem: null,
       quantitySelected: 0,
       unitMultiplier: 1,
-      // minOrderQnt: 0,
-      // adjustedQty: 0
+      minOrderQnt: 0,
     })
   }
 
-  // type OnChangeCallback = {
-  //   value: number
-  // }
+  const { selectedItem, quantitySelected, unitMultiplier, minOrderQnt } = state
+  interface ItemType {
+    id: string
+    quantity: number
+  }
 
-  // const onChange = useCallback(
-  //   (e: OnChangeCallback) => {
-  //     dispatch({ type: 'SET_QUANTITY', args: { quantity: e.value } })
-  //   },
-  //   [dispatch]
-  // )
-
-  const { selectedItem, quantitySelected, unitMultiplier, minOrderQnt, adjustedQty } = state
-
-  useEffect(() => {
-    if (!quantitySelected || !dispatch) {
-      return
-    }
-
-    const actualQty = quantitySelected
-
+  const adjustTheQuantity = (quantity: number) => {
+    const actualQty = quantity * unitMultiplier
     const _adjustedQty =
       minOrderQnt % unitMultiplier === 0
         ? actualQty < minOrderQnt
@@ -189,19 +163,7 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
         : actualQty < minOrderQnt
           ? minOrderQnt + (unitMultiplier - (minOrderQnt % unitMultiplier))
           : actualQty
-
-    dispatch({
-      type: 'SET_QUANTITY',
-      args: { quantity: adjustedQty / unitMultiplier },
-    })
-    console.log('useEffect _adjustedQty: ', _adjustedQty)
-    console.log('adjustedQty', adjustedQty)
-
-  }, [minOrderQnt, quantitySelected, unitMultiplier, dispatch])
-
-  interface ItemType {
-    id: string
-    quantity: number
+    return _adjustedQty / unitMultiplier
   }
 
   const callAddToCart = async (items: any) => {
@@ -312,7 +274,6 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
       }
 
       const { data } = await client.query(query)
-      // console.log('product details:', data)
       const selectedSku =
         data.product.items.length === 1 ? data.product.items[0].itemId : null
 
@@ -335,14 +296,13 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
             ? { ...product[0], value: selectedSku, seller, data }
             : null,
         unitMultiplier: multiplier,
-        quantitySelected: getMinOrderQty(data.product),
+        quantitySelected: adjustTheQuantity(getMinOrderQty(data.product) / multiplier),
         minOrderQnt: getMinOrderQty(data.product),
       })
     }
     return true
   }
 
-  // !this one is not calling
   const selectSku = (value: string) => {
     const seller = selectedItem.data.product.items
       .find((item: any) => {
@@ -362,10 +322,6 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
       (item: any) => item.itemId === value
     )
 
-    console.log('selectedItem: ', selectedItem)
-    console.log('targetSystem: ', targetSystem)
-    // getMinOrderQty(selectedItem.data.product)
-
     setState({
       ...state,
       selectedItem: newSelected,
@@ -377,23 +333,12 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
     return url.replace('25-25', `50-50`)
   }
 
-  const calculateDivisible = (quantity: number, multiplier: number) => {
-    if (multiplier) {
-      return quantity / multiplier
-    }
-
-    return quantity
-  }
-
   const callAddUnitToCart = () => {
     if (selectedItem?.value) {
       const items = [
         {
           id: parseInt(selectedItem.value, 10),
-          quantity: calculateDivisible(
-            parseFloat(quantitySelected),
-            unitMultiplier
-          ),
+          quantity: parseFloat(quantitySelected),
           seller: selectedItem.seller,
         },
       ]
@@ -403,16 +348,6 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
       toastMessage('selectSku')
     }
   }
-
-  // const roundToNearestMultiple = (quantity: number, multiplier: number) => {
-  //   if (multiplier) {
-  //     toastMessage('multiplier')
-
-  //     return Math.round(quantity / multiplier) * multiplier
-  //   }
-
-  //   return quantity
-  // }
 
   const CSS_HANDLES = [
     'skuSelection',
@@ -431,8 +366,6 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
   ] as const
 
   const handles = useCssHandles(CSS_HANDLES)
-
-  console.log('selectedItem', selectedItem)
 
   return (
     <div className={`${handles.textContainerMain} flex flex-column`}>
@@ -521,16 +454,21 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
                   <div
                     className={`flex flex-column w-40 ph5-l ph2 p fl ${handles.inputQuantity}`}
                   >
-
-                    {/* <p>before</p>
-                    <ExtensionPoint id="custom-product-quantity" />
-                    <p>after</p> */}
-                    {/* <BaseProductQuantity
-                      size={size}
-                      dispatch={dispatch}
-                      selectedItem={selectedItem}
-                      selectedQuantity={quantitySelected}
-                    /> */}
+                    <NumericStepper
+                      size={'small'}
+                      value={quantitySelected}
+                      minValue={1}
+                      maxValue={10000000}
+                      unitMultiplier={unitMultiplier}
+                      onChange={(e: any) => {
+                        let qnt = adjustTheQuantity(e.value)
+                        setState({
+                          ...state,
+                          quantitySelected: qnt
+                        })
+                      }
+                      }
+                    />
                   </div>
                   <div
                     className={`flex flex-column w-40 fl ${handles.buttonAdd}`}
@@ -545,9 +483,7 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
                     >
                       <FormattedMessage id="store/quickorder.autocomplete.addButton" />
                     </Button>
-                    <p>before</p>
-                    <ExtensionPoint id="custom-product-quantity" />
-                    <p>after</p>
+
                   </div>
                   <div
                     className={`flex flex-column w-20 fl ${handles.buttonClear}`}

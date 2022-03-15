@@ -328,96 +328,96 @@ const CategoryBlock: FunctionComponent<WrappedComponentProps & any> = ({
           <div key={`ifany_${i}`}>
             {b.items.length
               ? b.items.map((content: any) => {
-                  const [referenceId] = content.referenceId
-                  const [image] = content.images
+                const [referenceId] = content.referenceId
+                const [image] = content.images
 
-                  return (
+                return (
+                  <div
+                    className="flex flex-row pa2 pl4 bg-white hover-bg-near-white"
+                    key={`prod_${i}_${content.itemId}`}
+                  >
                     <div
-                      className="flex flex-row pa2 pl4 bg-white hover-bg-near-white"
-                      key={`prod_${i}_${content.itemId}`}
+                      className={`flex flex-row w-90 fl ${handles.categoryProductLabel}`}
                     >
-                      <div
-                        className={`flex flex-row w-90 fl ${handles.categoryProductLabel}`}
-                      >
-                        {image?.imageUrl && (
-                          <img
-                            src={thumb(image.imageUrl)}
-                            title={image.imageLabel}
-                            alt={image.imageLabel}
-                            width="50"
-                            height="50"
-                            className={`pr5 ${handles.categoryProductThumb}`}
-                          />
-                        )}
-                        <span className={handles.categoryProductTitle}>
-                          {content.nameComplete}
-                        </span>
-                        {referenceId && (
-                          <span
-                            className={`pl5 ${handles.categoryProductReference}`}
-                          >
-                            {referenceId.Value}
-                          </span>
-                        )}
-                        {content.itemId in unitMultiplierList && (
-                          <span className="pl5 mr4">
-                            <Tag type="warning" variation="low">
-                              Unit Multiplier of{' '}
-                              {
-                                unitMultiplierList[content.itemId]
-                                  .unitMultiplier
-                              }
-                            </Tag>
-                          </span>
-                        )}
-                      </div>
-                      <div
-                        className={`flex flex-column w-10 ph5-l ph2 p fl ${handles.categoryInputQuantity}`}
-                      >
-                        <Input
-                          value={quantitySelected[content.itemId] || 0}
-                          size="small"
-                          disabled={loading}
-                          onChange={(e: any) => {
-                            const newQtd = quantitySelected
-
-                            newQtd[content.itemId] = e.target.value
-                            const newSeller = defaultSeller
-                            const seller = content.sellers.find((s: any) => {
-                              return s.sellerDefault === true
-                            })
-
-                            newSeller[content.itemId] =
-                              seller?.sellerId ||
-                              (content.sellers.length
-                                ? content.sellers[0].sellerId
-                                : '1')
-
-                            _setState({
-                              quantitySelected: newQtd,
-                              defaultSeller: newSeller,
-                            })
-                          }}
-                          onBlur={() => {
-                            const roundedValue = roundToNearestMultiple(
-                              quantitySelected[content.itemId] || 0,
-                              content.itemId
-                            )
-
-                            const newQtd = quantitySelected
-
-                            quantitySelected[content.itemId] =
-                              String(roundedValue)
-
-                            _setState({
-                              quantitySelected: newQtd,
-                            })
-                          }}
+                      {image?.imageUrl && (
+                        <img
+                          src={thumb(image.imageUrl)}
+                          title={image.imageLabel}
+                          alt={image.imageLabel}
+                          width="50"
+                          height="50"
+                          className={`pr5 ${handles.categoryProductThumb}`}
                         />
-                      </div>
+                      )}
+                      <span className={handles.categoryProductTitle}>
+                        {content.nameComplete}
+                      </span>
+                      {referenceId && (
+                        <span
+                          className={`pl5 ${handles.categoryProductReference}`}
+                        >
+                          {referenceId.Value}
+                        </span>
+                      )}
+                      {content.itemId in unitMultiplierList && (
+                        <span className="pl5 mr4">
+                          <Tag type="warning" variation="low">
+                            Unit Multiplier of{' '}
+                            {
+                              unitMultiplierList[content.itemId]
+                                .unitMultiplier
+                            }
+                          </Tag>
+                        </span>
+                      )}
                     </div>
-                  )
-                })
+                    <div
+                      className={`flex flex-column w-10 ph5-l ph2 p fl ${handles.categoryInputQuantity}`}
+                    >
+                      <Input
+                        value={quantitySelected[content.itemId] || 0}
+                        size="small"
+                        disabled={loading}
+                        onChange={(e: any) => {
+                          const newQtd = quantitySelected
+
+                          newQtd[content.itemId] = e.target.value
+                          const newSeller = defaultSeller
+                          const seller = content.sellers.find((s: any) => {
+                            return s.sellerDefault === true
+                          })
+
+                          newSeller[content.itemId] =
+                            seller?.sellerId ||
+                            (content.sellers.length
+                              ? content.sellers[0].sellerId
+                              : '1')
+
+                          _setState({
+                            quantitySelected: newQtd,
+                            defaultSeller: newSeller,
+                          })
+                        }}
+                        onBlur={() => {
+                          const roundedValue = roundToNearestMultiple(
+                            quantitySelected[content.itemId] || 0,
+                            content.itemId
+                          )
+
+                          const newQtd = quantitySelected
+
+                          quantitySelected[content.itemId] =
+                            String(roundedValue)
+
+                          _setState({
+                            quantitySelected: newQtd,
+                          })
+                        }}
+                      />
+                    </div>
+                  </div>
+                )
+              })
               : ''}
           </div>
         )
@@ -507,9 +507,8 @@ const CategoryBlock: FunctionComponent<WrappedComponentProps & any> = ({
         </div>
       )}
       <div
-        className={`${handles.componentContainer} ${
-          !componentOnly ? 'w-two-thirds-l w-100-ns fr-l' : ''
-        }`}
+        className={`${handles.componentContainer} ${!componentOnly ? 'w-two-thirds-l w-100-ns fr-l' : ''
+          }`}
       >
         {!categories && (
           <div>
