@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.27] - 2022-03-15
+
 ### Changed
 
 - Lead time attribute name changed in JDE
