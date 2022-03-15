@@ -43,6 +43,11 @@ const messages = defineMessages({
     defaultMessage: '',
     label: '',
   },
+  ondroprejected: {
+    id: 'store/toaster.cart.ondroprejected',
+    defaultMessage: '',
+    label: '',
+  },
 })
 
 const UploadBlock: FunctionComponent<
@@ -246,21 +251,13 @@ const UploadBlock: FunctionComponent<
   }
 
   const handleFile = (files: any) => {
-    const extension = files[0].path.split('.')[1]
-
-    if (
-      extension.toLowerCase() === 'xls' ||
-      extension.toLowerCase() === 'xlsx' ||
-      extension.toLowerCase() === 'csv'
-    ) {
-      doFile(files)
-    }
+    doFile(files)
   }
 
   const handleReset = () => {}
 
   const handleOnDropRejected = () => {
-    showToast(`Invalid File Type`)
+    showToast(translateMessage(messages.ondroprejected))
   }
 
   const backList = () => {
