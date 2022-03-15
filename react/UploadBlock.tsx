@@ -468,7 +468,7 @@ const UploadBlock: FunctionComponent<
               <Dropzone
                 onDropAccepted={handleFile}
                 onFileReset={handleReset}
-                accept=".xls,.xlsx,.csv"
+                accept=".xls,.xlsx"
               >
                 <div className="pt7">
                   <div>
