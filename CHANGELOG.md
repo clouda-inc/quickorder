@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Corrected some messages to required strings ("Product Not Found")
+
 ## [0.1.28] - 2022-03-15
 
 ## [0.1.27] - 2022-03-15
