@@ -11,7 +11,7 @@
   },
 
   "quickorder-upload": {
-    "component": "UploadBlock"
+    "component": "UploadBlockWrapper"
   },
   "quickorder-categories": {
     "component": "CategoryBlock"
@@ -21,7 +21,7 @@
     "allowed": ["custom-product-quantity"]
   },
   "quickorder-textarea": {
-    "component": "TextAreaBlock"
+    "component": "TextAreaBlockWrapper"
   },
   "store.quickorder": {}
 }

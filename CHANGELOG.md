@@ -7,6 +7,48 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.26] - 2022-03-13
+
+### Fixed
+
+- Lead time mapping issue fixed
+- Adding spread sheet download link in quick order
+
+## [0.1.25] - 2022-03-13
+
+## [0.1.24] - 2022-03-13
+
+### Fixed
+
+- Fix linting issues
+- Upper case unit of measure field name
+- Lead time field name changed to `JDE_Lead_Time`
+
+## [0.1.23] - 2022-03-06
+
+## [0.1.22] - 2022-03-06
+
+### Changed
+
+- Get MOQ, UOM and Lead Time from specifications for JDE and SAP
+
+## [0.1.21] - 2022-03-01
+
+### Fixed
+
+- Add to cart button disabled before validation completes
+
+## [0.1.20] - 2022-03-01
+
+## [0.1.19] - 2022-03-01
+
+### Fixes
+
+- Stock status changed to `Unauthorized`, `In Stock` and `Out of Stock`
+- Highlight on errors
+- Show meaningful error message
+- Quick order table style fixes
+
 ## [0.1.18] - 2022-02-24
 
 ### Fixed
@@ -121,7 +163,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.0.11] - 2022-01-25
 
-### Added 
+### Added
 
 - Added performance telemetry logs
 
@@ -164,7 +206,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix numeric stepper.
 - Fix the quantity validation against MOQ and UM.
 - Fix the add to cart quantity.
-- Fix the add to cart behaviour in pdp search. 
+- Fix the add to cart behaviour in pdp search.
 
 ## [0.0.4] - 2021-11-01
 

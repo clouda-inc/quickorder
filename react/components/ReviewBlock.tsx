@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable vtex/prefer-early-return */
-import React, { useState, FunctionComponent } from 'react'
+/* eslint no-shadow: "error" */
+import React, {
+  useState,
+  FunctionComponent,
+  useCallback,
+  useEffect,
+} from 'react'
 import {
   ButtonWithIcon,
   IconDelete,
@@ -15,37 +21,31 @@ import { useApolloClient } from 'react-apollo'
 import { useCssHandles } from 'vtex.css-handles'
 
 import { GetText, validateQuantity } from '../utils'
+import { TARGET_SYSTEM } from '../utils/const'
 import { keyValuePairsToString } from '../utils/performanceDataProcessing'
 import ItemPricing from './ItemPricing'
 import StockAvailability from './StockAvailability'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-// import getRefIdTranslation from '../queries/refids.gql'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-// import OrderFormQuery from '../queries/orderForm.gql'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+import ItemListContext from '../ItemListContext'
 import GET_PRODUCT_DATA from '../queries/getPrductAvailability.graphql'
-// import { stubFalse } from 'lodash'
-
 import './ReviewBlock.css'
 
 const remove = <IconDelete />
-let initialLoad = ''
 
 const messages = defineMessages({
   valid: {
     id: 'store/quickorder.valid',
-  },
-  prodnotfound: {
-    id: 'store/quickorder.productNotFound',
   },
   available: {
     id: 'store/quickorder.available',
   },
   unavailable: {
     id: 'store/quickorder.unavailable',
+  },
+  unAuthorized: {
+    id: 'store/quickorder.unauthorized',
+  },
+  unAuthorizedError: {
+    id: 'store/quickorder.unauthorizedError',
   },
   invalidPattern: {
     id: 'store/quickorder.invalidPattern',
@@ -170,6 +170,9 @@ const messages = defineMessages({
   moq: {
     id: 'store/quickorder.moq',
   },
+  leadTime: {
+    id: 'store/quickorder.leadTime',
+  },
 })
 
 // let orderFormId = ''
@@ -204,6 +207,10 @@ const CSS_HANDLES = [
   'orderedQuantity',
   'orderedQuantityLabel',
   'orderedQuantityValue',
+  'quickOrderTableRowWithIssues',
+  'unAuthorizedMessage',
+  'leadTime',
+  'moq',
 ]
 
 const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
@@ -211,7 +218,6 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   reviewedItems,
   onRefidLoading,
   intl,
-  soldToAccount,
 }: any) => {
   // const { data: orderFormData } = useQuery<{
   //   orderForm
@@ -222,12 +228,16 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   const client = useApolloClient()
   const styles = useCssHandles(CSS_HANDLES)
 
-  const customerNumber =
-    soldToAccount?.getOrderSoldToAccount?.customerNumber ?? ''
+  // const customerNumber =
+  //   soldToAccount?.getOrderSoldToAccount?.customerNumber ?? ''
 
-  const targetSystem = soldToAccount?.getOrderSoldToAccount?.targetSystem ?? ''
-  const salesOrganizationCode =
-    soldToAccount?.getOrderSoldToAccount?.salesOrganizationCode ?? ''
+  // const targetSystem = soldToAccount?.getOrderSoldToAccount?.targetSystem ?? ''
+  // const salesOrganizationCode =
+  //   soldToAccount?.getOrderSoldToAccount?.salesOrganizationCode ?? ''
+
+  const { useItemListState } = ItemListContext
+  const { customerNumber, targetSystem, salesOrganizationCode, itemStatuses } =
+    useItemListState()
 
   const [state, setReviewState] = useState<any>({
     reviewItems:
@@ -246,9 +256,10 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   // }
   const errorMessage = {
     'store/quickorder.valid': messages.valid,
-    'store/quickorder.productNotFound': messages.prodnotfound,
     'store/quickorder.available': messages.available,
     'store/quickorder.unavailable': messages.unavailable,
+    'store/quickorder.unauthorized': messages.unAuthorized,
+    'store/quickorder.unauthorizedError': messages.unAuthorizedError,
     'store/quickorder.invalidPattern': messages.invalidPattern,
     'store/quickorder.skuNotFound': messages.skuNotFound,
     'store/quickorder.withoutStock': messages.withoutStock,
@@ -295,7 +306,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
 
       const minQty = refidData.getSkuAvailability?.items?.find(
         (d: any) => i.sku === d.refid
-      )?.minQty
+      )?.moq
 
       i.quantity = validateQuantity(minQty, unit, i.quantity)
 
@@ -316,8 +327,8 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
         return item.sku !== null
       })
 
-      const refNotAvailable = itemsFromQuery.filter((item: any) => {
-        return item.availability !== 'available'
+      const refNotAuthorized = itemsFromQuery.filter((item: any) => {
+        return item.availability !== 'authorized'
       })
 
       const vtexSku = (item: any) => {
@@ -368,21 +379,6 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
         return ret
       }
 
-      // const getSellers = (item: any) => {
-      //   let ret: any = []
-      //
-      //   if (!!refidData && !!refidData.getSkuAvailability.items) {
-      //     ret = refidData.getSkuAvailability.items.find((curr: any) => {
-      //       return !!item.sku && item.sku === curr.refid
-      //     })
-      //     if (!!ret && !!ret.sellers) {
-      //       ret = ret.sellers
-      //     }
-      //   }
-      //
-      //   return ret
-      // }
-
       const errorMsg = (item: any) => {
         let ret: any = null
         const notfound = refIdNotFound.find((curr: any) => {
@@ -395,19 +391,18 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
 
         ret = notfound
           ? 'store/quickorder.skuNotFound'
-          : found?.availability && found.availability !== 'available'
-          ? `store/quickorder.${found.availability}`
-          : null
+          : found?.availability && found.availability === 'unauthorized'
+          ? 'store/quickorder.unauthorizedError'
+          : item.error
 
         return ret
       }
 
-      if (refIdNotFound.length || refNotAvailable.length) {
+      if (refIdNotFound.length || refNotAuthorized.length) {
         error = true
       }
 
       const items = reviewed.map((item: any) => {
-        // const sellers = getSellers(item)
         const sellers = item.sku ? mappedRefId[item.sku]?.sellers : '1'
         const itm = getItemFromQuery(item)
 
@@ -424,10 +419,11 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
           productName: itm?.productName,
           skuName: itm?.skuName,
           uom: itm?.uom,
+          leadTime: itm?.leadTime,
           uomDescription: itm?.uomDescription,
           linkText: itm?.linkText,
           unitMultiplier: itm?.unitMultiplier,
-          minQty: itm?.minQty,
+          moq: itm?.moq,
           refid: itm?.refid,
         }
       })
@@ -445,6 +441,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
       })
 
       onReviewItems(updated)
+
       setReviewState({
         ...state,
         reviewItems: updated,
@@ -509,7 +506,12 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     getRefIds(refids, items)
   }
 
-  const checkValidatedItems = () => {
+  // Purpose is to avoid un necessary re renderings
+  // get review items basic info
+  const revItemStr = GetText(reviewItems)
+
+  // recreate validate function only if reviewItem basic info changed
+  const checkValidatedItems = useCallback(() => {
     const items: [any] = reviewItems.filter((item: any) => {
       return item.sku !== null && item.error === null && !item.vtexSku
     })
@@ -517,12 +519,13 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     if (items.length) {
       convertRefIds(items)
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [revItemStr])
 
-  if (initialLoad !== GetText(reviewItems)) {
+  // execute if validate function recreated
+  useEffect(() => {
     checkValidatedItems()
-    initialLoad = GetText(reviewItems)
-  }
+  }, [checkValidatedItems])
 
   const removeLine = (i: number) => {
     const items: [any] = reviewItems
@@ -544,49 +547,19 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     })
   }
 
-  // const updateLineContent = (index: number, content: string) => {
-  //   const items = reviewItems.map((item: any) => {
-  //     return item.index === index
-  //       ? {
-  //           ...item,
-  //           content,
-  //         }
-  //       : item
-  //   })
+  const getLineError = (lineItem: any) => {
+    const item = itemStatuses.find((itm: any) => itm.index === lineItem.index)
 
-  //   setReviewState({
-  //     ...state,
-  //     reviewItems: items,
-  //   })
-  // }
+    return item?.error ? intl.formatMessage(errorMessage[item.error]) : null
+  }
 
-  // const updateLineSeller = (index: number, seller: string) => {
-  //   const items = reviewItems.map((item: any) => {
-  //     return item.index === index
-  //       ? {
-  //           ...item,
-  //           seller,
-  //         }
-  //       : item
-  //   })
-  //
-  //   setReviewState({
-  //     ...state,
-  //     reviewItems: items,
-  //   })
-  // }
+  const getLineItemStatus = (lineItem: any) => {
+    const item = itemStatuses.find((itm: any) => itm.index === lineItem.index)
 
-  // const onBlurField = (line: number) => {
-  //   const joinLines = GetText(reviewItems)
-  //   const reviewd: any = ParseText(joinLines)
+    return item?.availability
+  }
 
-  //   if (reviewd[line].error === null) {
-  //     setReviewState({
-  //       ...state,
-  //       reviewItems: reviewd,
-  //     })
-  //   }
-  // }
+  const tableStyles = `.ReactVirtualized__Grid__innerScrollContainer>div {padding: 0;}`
 
   const tableSchema = {
     properties: {
@@ -597,16 +570,22 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
         }),
         // eslint-disable-next-line react/display-name
         cellRenderer: ({ rowData }: any) => {
-          const statusMessage = intl.formatMessage(
-            errorMessage[
-              rowData?.error !== null && rowData?.error !== undefined
-                ? rowData?.error
-                : 'store/quickorder.available'
-            ]
-          )
+          const itemError = getLineError(rowData)
+          const itemAvailability = getLineItemStatus(rowData)
+
           return (
-            <div className={`${styles.quickOrderTable} flex w-100 relative`}>
-              <div className={`${styles.tableCol1} flex flex-column w-40 pa3`}>
+            <div
+              className={`${styles.quickOrderTable} ${
+                itemError ? styles.quickOrderTableRowWithIssues : ''
+              } flex w-100 relative`}
+            >
+              <style>{tableStyles}</style>
+
+              <div
+                className={`${styles.tableCol1} flex flex-column ${
+                  targetSystem === TARGET_SYSTEM.JDE ? 'w-40' : 'w-50'
+                } pa3`}
+              >
                 <div className={`${styles.productName}`}>
                   <Tooltip label={rowData.productName}>
                     <span className="truncate">{rowData.productName}</span>
@@ -637,101 +616,136 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                       Ordered Quantity:
                     </span>
                     <span className={`${styles.orderedQuantityValue}`}>
-                      {isNaN(rowData.quantity)
-                        ? intl.formatMessage(messages.prodnotfound)
-                        : rowData.quantity}
+                      {!Number.isNaN(rowData.quantity) ? rowData.quantity : ''}
                     </span>
                   </div>
                   <div className={`${styles.productPageLink} ml3`}>
-                    <a
-                      className={`${styles.productDetailsLink} flex-column`}
-                      href={`${rowData?.linkText}/p`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {isNaN(rowData.quantity)
-                        ? ''
-                        : intl.formatMessage(messages.goToProductPage)}
-                    </a>
+                    {!Number.isNaN(rowData.quantity) && rowData?.linkText && (
+                      <a
+                        className={`${styles.productDetailsLink} flex-column`}
+                        href={`${rowData?.linkText}/p`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {intl.formatMessage(messages.goToProductPage)}
+                      </a>
+                    )}
                   </div>
+                </div>
+                <div>
+                  <span className="red">{itemError}</span>
                 </div>
               </div>
 
-              <div className={`${styles.tableCol2} flex w-40 pa3`}>
-                <div className={`${styles.tableCol2Col1} w-40`}>
-                  {targetSystem === 'JDE' ? (
+              <div
+                className={`${
+                  itemError ? styles.quickOrderTableRowWithIssues : ''
+                } ${styles.tableCol2} flex pa3 ${
+                  targetSystem === TARGET_SYSTEM.JDE ? 'w-40' : 'w-30'
+                }`}
+              >
+                {targetSystem === TARGET_SYSTEM.JDE ? (
+                  <div className={`${styles.tableCol2Col1} w-40`}>
                     <ItemPricing
                       itemNumber={rowData?.sku}
                       customerNumber={customerNumber}
                     />
-                  ) : (
-                    <div />
+                  </div>
+                ) : (
+                  <div />
+                )}
+                <div
+                  className={`${styles.tableCol2Col2} ${
+                    targetSystem === TARGET_SYSTEM.JDE ? 'w-60' : 'w-100'
+                  }`}
+                >
+                  {rowData.uom && (
+                    <div
+                      className={`${styles.itemUom} flex flex-row justify-between`}
+                    >
+                      <div className={`${styles.KeyValueLabel}`}>
+                        {intl.formatMessage(messages.unitOfMeasure)}
+                      </div>
+                      <div className={`${styles.KeyValueValue}`}>
+                        {rowData.uom}
+                      </div>
+                    </div>
                   )}
-                </div>
-                <div className={`${styles.tableCol2Col2} w-60`}>
-                  <div
-                    className={`${styles.itemUom} flex flex-row justify-between`}
-                  >
-                    <div className={`${styles.KeyValueLabel}`}>
-                      {intl.formatMessage(messages.unitOfMeasure)}
+                  {rowData.uomDescription && (
+                    <div
+                      className={`${styles.uomDescription} flex flex-row justify-between`}
+                    >
+                      <div className={`${styles.KeyValueLabel}`}>
+                        {intl.formatMessage(messages.quantityPerUnit)}
+                      </div>
+                      <div className={`${styles.KeyValueValue}`}>
+                        {rowData.uomDescription}
+                      </div>
                     </div>
-                    <div className={`${styles.KeyValueValue}`}>
-                      {rowData.uom}
+                  )}
+                  {rowData.unitMultiplier && (
+                    <div
+                      className={`${styles.uomDescription} flex flex-row justify-between`}
+                    >
+                      <div className={`${styles.KeyValueLabel}`}>
+                        {intl.formatMessage(messages.unitMultiplier)}
+                      </div>
+                      <div className={`${styles.KeyValueValue}`}>
+                        {rowData.unitMultiplier}
+                      </div>
                     </div>
-                  </div>
-                  <div
-                    className={`${styles.uomDescription} flex flex-row justify-between`}
-                  >
-                    <div className={`${styles.KeyValueLabel}`}>
-                      {intl.formatMessage(messages.quantityPerUnit)}
+                  )}
+                  {rowData.moq && (
+                    <div
+                      className={`${styles.moq} flex flex-row justify-between`}
+                    >
+                      <div className={`${styles.KeyValueLabel}`}>
+                        {intl.formatMessage(messages.moq)}
+                      </div>
+                      <div className={`${styles.KeyValueValue}`}>
+                        {rowData.moq}
+                      </div>
                     </div>
-                    <div className={`${styles.KeyValueValue}`}>
-                      {rowData.uomDescription}
+                  )}
+
+                  {rowData.leadTime && (
+                    <div
+                      className={`${styles.leadTime} flex flex-row justify-between`}
+                    >
+                      <div className={`${styles.KeyValueLabel}`}>
+                        {intl.formatMessage(messages.leadTime)}
+                      </div>
+                      <div className={`${styles.KeyValueValue}`}>
+                        {rowData.leadTime}
+                      </div>
                     </div>
-                  </div>
-                  <div
-                    className={`${styles.uomDescription} flex flex-row justify-between`}
-                  >
-                    <div className={`${styles.KeyValueLabel}`}>
-                      {intl.formatMessage(messages.unitMultiplier)}
-                    </div>
-                    <div className={`${styles.KeyValueValue}`}>
-                      {rowData.unitMultiplier}
-                    </div>
-                  </div>
-                  <div
-                    className={`${styles.unitMultiplier} flex flex-row justify-between`}
-                  >
-                    <div className={`${styles.KeyValueLabel}`}>
-                      {intl.formatMessage(messages.moq)}
-                    </div>
-                    <div className={`${styles.KeyValueValue}`}>
-                      {rowData.minQty}
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
               <div className={`${styles.tableCol3} flex flex-column w-20 pa3`}>
                 <div
                   className={`${styles.stockAvailabilityMessage} flex w-100`}
                 >
-                  <Tooltip label={statusMessage}>
-                    {rowData?.availability === 'available' ||
-                    statusMessage === null ||
-                    statusMessage === '' ? (
-                      <span className={`${styles.inStockMessage} b ttu`}>
-                        {intl.formatMessage(messages.inStock)}
+                  {itemAvailability === 'available' ? (
+                    <span className={`${styles.inStockMessage} b ttu`}>
+                      {intl.formatMessage(messages.inStock)}
+                    </span>
+                  ) : itemAvailability === 'unavailable' && !itemError ? (
+                    <span className={`${styles.outOfStockMessage} b ttu`}>
+                      {intl.formatMessage(messages.outOfStock)}
+                    </span>
+                  ) : (
+                    itemAvailability === 'unauthorized' && (
+                      <span className={`${styles.unAuthorizedMessage} b ttu`}>
+                        {intl.formatMessage(messages.unAuthorized)}
                       </span>
-                    ) : (
-                      <span className={`${styles.outOfStockMessage} b ttu`}>
-                        {intl.formatMessage(messages.outOfStock)}
-                      </span>
-                    )}
-                  </Tooltip>
+                    )
+                  )}
                 </div>
                 <div className={`${styles.stockAvailabilityValue} w-40`}>
-                  {targetSystem === 'JDE' ? (
+                  {targetSystem === TARGET_SYSTEM.JDE ? (
                     <StockAvailability
+                      itemIndex={rowData?.index}
                       itemNumber={rowData?.sku}
                       customerNumber={customerNumber}
                     />
