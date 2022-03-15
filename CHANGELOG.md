@@ -11,6 +11,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Add csv file type to the quickorder
 - Add toast to display any invalid file is selected
+- Corrected some messages to required strings ("Product Not Found")
+
+## [0.1.28] - 2022-03-15
+
+## [0.1.27] - 2022-03-15
+
+### Changed
+
+- Lead time attribute name changed in JDE
 
 ## [0.1.26] - 2022-03-13
 

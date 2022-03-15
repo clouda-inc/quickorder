@@ -154,16 +154,16 @@ export const queries = {
       key: 'START Get Brand Info',
       value: Date.now().toString(),
     })
-    const brands = await masterdata.searchDocumentsWithPaginationInfo<
-      BrandForClients
-    >({
-      dataEntity: BRAND_CLIENT_ACRONYM,
-      schema: BRAND_CLIENT_SCHEMA,
-      fields: BRNAD_CLIENT_FIELDS,
-      where: `(user=${customerNumber ?? ''} AND targetSystem=${targetSystem ??
-        ''})`,
-      pagination: { pageSize: 100, page: 1 },
-    })
+    const brands =
+      await masterdata.searchDocumentsWithPaginationInfo<BrandForClients>({
+        dataEntity: BRAND_CLIENT_ACRONYM,
+        schema: BRAND_CLIENT_SCHEMA,
+        fields: BRNAD_CLIENT_FIELDS,
+        where: `(user=${customerNumber ?? ''} AND targetSystem=${
+          targetSystem ?? ''
+        })`,
+        pagination: { pageSize: 100, page: 1 },
+      })
 
     const brandsList = brands?.data ?? []
 
@@ -200,8 +200,9 @@ export const queries = {
         // One item has one sku
         const skuItem = items[0]
         const itemId = skuItem?.itemId
-        const skuRefId = (skus ?? []).find((sku: any) => sku.skuId === itemId)
-          ?.refId
+        const skuRefId = (skus ?? []).find(
+          (sku: any) => sku.skuId === itemId
+        )?.refId
 
         // const refId = (items[0]?.referenceId ?? []).find((ref: any) => ref.Key === 'RefId')?.Value ?? ''
         const { commertialOffer, sellerId, sellerName } = items[0].sellers[0]
@@ -269,7 +270,7 @@ export const queries = {
         const leadTimeKey =
           targetSystem.toUpperCase() === 'SAP'
             ? 'Material_Master_Lead_Time'
-            : 'JDE_Lead_Time'
+            : 'JDE_LeadTime_Desc'
 
         const uom = (product[uomKey] ?? []).find((i: string) => i && i !== '')
 
