@@ -36,8 +36,6 @@
     "vtex.store-resources": "0.x",
     "vtex.css-handles": "0.x",
     "vtex.store-icons": "0.x",
-    "vtex.product-context": "0.x",
-    "sbdsefprod.product-quantity": "0.x",
     "sbdsefprod.checkout-simulation": "1.x"
   },
   "policies": [
