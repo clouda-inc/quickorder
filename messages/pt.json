@@ -70,5 +70,6 @@
   "store/toaster.cart.duplicated": "Item duplicado",
   "store/toaster.cart.error": "Erro adicionando produtos ao carrinho",
   "store/toaster.cart.seeCart": "Ver o carrinho",
-  "store/toaster.cart.success": "Produtos adicionados com sucesso"
+  "store/toaster.cart.success": "Produtos adicionados com sucesso",
+  "store/toaster.cart.ondroprejected": "Tipo de arquivo inválido"
 }
