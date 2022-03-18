@@ -12,7 +12,7 @@ export const GetText = (items: any) => {
 const removeDuplicates = (itemList: any) => {
   const map = new Map()
 
-  itemList.forEach(item => {
+  itemList.forEach((item: any) => {
     const key = item.sku
     const collection = map.get(key)
 
@@ -28,6 +28,11 @@ const removeDuplicates = (itemList: any) => {
   return Array.from(map, ([, value]) => value)
 }
 
+/**
+ *
+ * @param textAreaValue
+ * @constructor
+ */
 export const ParseText = (textAreaValue: string) => {
   const rawText: any = String(textAreaValue || '')
   const arrText = String(rawText).split(/[\n\r]/)
@@ -67,4 +72,54 @@ export const ParseText = (textAreaValue: string) => {
     })
 
   return removeDuplicates(items)
+}
+
+/**
+ *
+ * @param orderFormItems
+ * @param itemsList
+ */
+export const itemsInSystem = (orderFormItems, itemsList) => {
+  return itemsList.filter((item: any) =>
+    // eslint-disable-next-line eqeqeq
+    orderFormItems.some((data: any) => data.id == item.id)
+  )
+}
+
+/**
+ *
+ * @param orderFormItems
+ * @param itemsList
+ */
+export const getNewItems = (orderFormItems, itemsList) => {
+  return itemsList.filter(
+    (item: any) =>
+      // eslint-disable-next-line eqeqeq
+      !orderFormItems.some((data: any) => data.id == item.id)
+  )
+}
+
+export const validateQuantity = (minQty: number, unit: number, qty: number) => {
+  qty = Math.round(qty / unit)
+
+  const actualQty = qty * unit
+
+  const quantity =
+    minQty % unit === 0
+      ? actualQty < minQty
+        ? minQty
+        : actualQty
+      : actualQty < minQty
+      ? minQty + (unit - (minQty % unit))
+      : actualQty
+
+  return quantity
+}
+
+export const getFormattedDate = (date: Date) => {
+  const year = date.getFullYear()
+  const month = (1 + date.getMonth()).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
+
+  return `${month}/${day}/${year}`
 }

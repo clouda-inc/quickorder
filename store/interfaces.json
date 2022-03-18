@@ -1,6 +1,17 @@
 {
+  "sold-to-validation-wrapper": {
+    "allowed": ["quick-order-wrapper"],
+    "component": "SoldToValidationWrapper"
+  },
+
+  "quick-order-wrapper": {
+    "allowed": "*",
+    "component": "QuickOrderWrapper",
+    "composition": "children"
+  },
+
   "quickorder-upload": {
-    "component": "UploadBlock"
+    "component": "UploadBlockWrapper"
   },
   "quickorder-categories": {
     "component": "CategoryBlock"
@@ -9,7 +20,7 @@
     "component": "AutocompleteBlock"
   },
   "quickorder-textarea": {
-    "component": "TextAreaBlock"
+    "component": "TextAreaBlockWrapper"
   },
   "store.quickorder": {}
 }

@@ -1,17 +1,38 @@
-query getAvbProduct($refIds: [String]) {
-  getSkuAvailability(refIds: $refIds) @context(provider: "vtex.quickorder") {
+query getAvbProduct(
+  $refIds: [String]
+  $customerNumber: String
+  $targetSystem: String
+  $salesOrganizationCode: String
+) {
+  getSkuAvailability(
+    refIds: $refIds
+    customerNumber: $customerNumber
+    targetSystem: $targetSystem
+    salesOrganizationCode: $salesOrganizationCode
+  ) @context(provider: "sbdsefprod.bulk-order") {
     items {
       refid
       sku
       productId
+      skuName
+      uom
+      uomDescription
+      moq
+      leadTime
+      linkText
       availability
-      sellers {
+      seller {
         id
         name
       }
       availableQuantity
       productName
       price
+      unitMultiplier
+    }
+    performanceData {
+      key
+      value
     }
   }
 }

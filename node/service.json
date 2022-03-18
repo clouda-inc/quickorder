@@ -1,8 +1,14 @@
 {
   "stack": "nodejs",
   "memory": 1536,
-  "ttl": 30,
+  "ttl": 60,
   "timeout": 12,
   "minReplicas": 2,
-  "maxReplicas": 100
+  "maxReplicas": 100,
+  "routes": {
+    "healthCheck": {
+      "path": "/_v/bulk-order/health",
+      "public": true
+    }
+  }
 }

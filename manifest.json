@@ -1,7 +1,7 @@
 {
-  "vendor": "vtex",
-  "name": "quickorder",
-  "version": "3.5.1",
+  "vendor": "sbdsefprod",
+  "name": "bulk-order",
+  "version": "0.1.31",
   "title": "Quickorder",
   "description": "Allow users to add multiple products to the cart at once",
   "defaultLocale": "en-US",
@@ -35,7 +35,8 @@
     "vtex.pixel-manager": "1.x",
     "vtex.store-resources": "0.x",
     "vtex.css-handles": "0.x",
-    "vtex.store-icons": "0.x"
+    "vtex.store-icons": "0.x",
+    "sbdsefprod.checkout-simulation": "1.x"
   },
   "policies": [
     {
@@ -96,10 +97,56 @@
       }
     },
     {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "api.vtex.com",
+        "path": "/api/dataentities/*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "{{account}}.vtexcommercestable.com.br",
+        "path": "/api/logistics/pvt/inventory/skus/*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "u-api.sbdinc.com",
+        "path": "*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "api.sbdinc.com",
+        "path": "*"
+      }
+    },
+    {
       "name": "POWER_USER_DS"
+    },
+    {
+      "name": "LogisticsAdmin"
     }
   ],
-  "settingsSchema": {},
+  "settingsSchema": {
+    "title": "Bulk Order",
+    "type": "object",
+    "properties": {
+      "agoraBaseUrl": {
+        "title": "Agora endpoint base Url",
+        "description": "Endpoint url to query agora apis",
+        "type": "string"
+      },
+      "agoraSubscriptionKey": {
+        "title": "Agora Subscription Key",
+        "description": "Agora subscription key",
+        "type": "string"
+      }
+    }
+  },
   "billingOptions": {
     "termsURL": "https://compliance.vtex.com/gdpr/policies/vtex-privacy-policy",
     "support": {
@@ -107,9 +154,7 @@
     },
     "free": true,
     "type": "free",
-    "availableCountries": [
-      "*"
-    ]
+    "availableCountries": ["*"]
   },
   "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"
 }

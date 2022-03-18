@@ -16,9 +16,22 @@ declare module 'vtex.styleguide' {
   export const Textarea: ComponentType<InputProps>
   export const Dropzone: ComponentType<InputProps>
   export const AutocompleteInput: ComponentType<InputProps>
+  export const Collapsible: ComponentType<InputProps>
+  export const NumericStepper: ComponentType<NumericStepperProps>
+  export const Modal: ComponentType<InputProps>
 
   interface InputProps {
     [key: string]: any
+  }
+
+  interface NumericStepperProps {
+    size: NumericSize
+    value: number
+    minValue: number
+    maxValue?: number
+    unitMultiplier: number
+    suffix?: string
+    onChange: (e: any) => void
   }
 
   export const Button

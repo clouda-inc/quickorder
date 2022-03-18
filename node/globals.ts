@@ -1,9 +1,9 @@
 import {
   IOContext,
-  MetricsAccumulator,
   ParamsContext,
   RecorderState,
   ServiceContext,
+  MetricsAccumulator,
 } from '@vtex/api'
 
 import { Clients } from './clients'
@@ -21,7 +21,6 @@ declare global {
     originalPath: string
     vtex: IOContext
   }
-
 
   interface Property {
     name: string

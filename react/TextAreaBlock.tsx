@@ -18,6 +18,7 @@ import { usePixel } from 'vtex.pixel-manager/PixelContext'
 
 import ReviewBlock from './components/ReviewBlock'
 import { ParseText, GetText } from './utils'
+import ItemListContext from './ItemListContext'
 
 const messages = defineMessages({
   success: {
@@ -43,29 +44,21 @@ interface ItemType {
   quantity: number
 }
 
-const TextAreaBlock: FunctionComponent<TextAreaBlockInterface &
-  WrappedComponentProps> = ({
-                              intl,
-                              value,
-                              text,
-                              description,
-                              componentOnly,
-                            }: any) => {
+const TextAreaBlock: FunctionComponent<
+  TextAreaBlockInterface & WrappedComponentProps
+> = ({ intl, value, text, description, componentOnly }: any) => {
   const [state, setState] = useState<any>({
     reviewState: false,
-    showAddToCart: null,
     textAreaValue: value || '',
     reviewItems: [],
   })
 
   const [refidLoading, setRefIdLoading] = useState<any>()
 
-  const { textAreaValue, reviewItems, reviewState, showAddToCart } = state
+  const { textAreaValue, reviewItems, reviewState } = state
 
-  const [
-    addToCart,
-    { error: mutationError, loading: mutationLoading },
-  ] = useMutation<{ addToCart: OrderFormType }, { items: [] }>(ADD_TO_CART)
+  const [addToCart, { error: mutationError, loading: mutationLoading }] =
+    useMutation<{ addToCart: OrderFormType }, { items: [] }>(ADD_TO_CART)
 
   const { push } = usePixel()
   const { settings = {}, showInstallPrompt = undefined } = usePWA() || {}
@@ -74,6 +67,11 @@ const TextAreaBlock: FunctionComponent<TextAreaBlockInterface &
   const { setOrderForm }: OrderFormContext = OrderForm.useOrderForm()
   const orderForm = OrderForm.useOrderForm()
   const { showToast } = useContext(ToastContext)
+
+  const { useItemListState, useItemListDispatch } = ItemListContext
+  const { isLoadingCustomerInfo, showAddToCart } = useItemListState()
+
+  const dispatch = useItemListDispatch()
 
   const translateMessage = (message: MessageDescriptor) => {
     return intl.formatMessage(message)
@@ -87,9 +85,9 @@ const TextAreaBlock: FunctionComponent<TextAreaBlockInterface &
   }
 
   const toastMessage = ({
-                          success,
-                          isNewItem,
-                        }: {
+    success,
+    isNewItem,
+  }: {
     success: boolean
     isNewItem: boolean
   }) => {
@@ -97,9 +95,9 @@ const TextAreaBlock: FunctionComponent<TextAreaBlockInterface &
 
     const action = success
       ? {
-        label: translateMessage(messages.seeCart),
-        href: '/checkout/#/cart',
-      }
+          label: translateMessage(messages.seeCart),
+          href: '/checkout/#/cart',
+        }
       : undefined
 
     showToast({ message, action })
@@ -111,7 +109,7 @@ const TextAreaBlock: FunctionComponent<TextAreaBlockInterface &
       variables: {
         items: items.map((item: ItemType) => {
           const [existsInCurrentOrder] = currentItemsInCart.filter(
-            el => el.id === item.id.toString()
+            (el: any) => el.id === item.id.toString()
           )
 
           if (existsInCurrentOrder) {
@@ -186,6 +184,21 @@ const TextAreaBlock: FunctionComponent<TextAreaBlockInterface &
         showAddToCart: show,
         textAreaValue: GetText(items),
       })
+
+      dispatch({
+        type: 'UPDATE_ALL_STATUSES',
+        args: {
+          itemStatuses: items.map((item: any) => ({
+            index: item.index,
+            availability: item.availability,
+            error: item.error,
+            sku: item.sku,
+            availableQuantity: !Number.isNaN(item.availableQuantity)
+              ? parseInt(item.availableQuantity, 10)
+              : 0,
+          })),
+        },
+      })
     }
 
     return true
@@ -203,8 +216,19 @@ const TextAreaBlock: FunctionComponent<TextAreaBlockInterface &
       reviewState: true,
       hasError: error,
       toValidate: true,
+      textAreaValue: GetText(items),
     })
-    onReviewItems(items)
+
+    dispatch({
+      type: 'ADD_STATUSES',
+      args: {
+        itemStatuses: items.map((item: any, index: number) => ({
+          index,
+          error: item.error,
+          sku: item.sku,
+        })),
+      },
+    })
   }
 
   const setTextareaValue = ($textAreaValue: string) => {
@@ -222,6 +246,9 @@ const TextAreaBlock: FunctionComponent<TextAreaBlockInterface &
     'buttonsBlock',
     'textContainerTitle',
     'textContainerDescription',
+    'textContainerMain',
+    'addToCartDisabled',
+    'addToCartBtn',
   ] as const
 
   const handles = useCssHandles(CSS_HANDLES)
@@ -229,18 +256,18 @@ const TextAreaBlock: FunctionComponent<TextAreaBlockInterface &
   const addToCartCopyNPaste = () => {
     const items: any = reviewItems
       .filter((item: any) => item.error === null && item.vtexSku !== null)
-      .map(({ vtexSku, quantity, seller }: any) => {
+      .map(({ vtexSku, quantity, seller, unit }: any) => {
         return {
           id: parseInt(vtexSku, 10),
-          quantity: parseFloat(quantity),
+          quantity: parseFloat(quantity) / unit,
           seller,
         }
       })
 
-    const merge = internalItems => {
+    const merge = (internalItems: any) => {
       return internalItems.reduce((acc, val) => {
         const { id, quantity }: ItemType = val
-        const ind = acc.findIndex(el => el.id === id)
+        const ind = acc.findIndex((el: any) => el.id === id)
 
         if (ind !== -1) {
           acc[ind].quantity += quantity
@@ -268,10 +295,14 @@ const TextAreaBlock: FunctionComponent<TextAreaBlockInterface &
     })
   }
 
+  if (isLoadingCustomerInfo) {
+    return <p>Loading sold to..</p>
+  }
+
   return (
-    <div>
+    <div className={`${handles.textContainerMain} flex flex-column`}>
       {!componentOnly && (
-        <div className={`${handles.textContainer} w-20-l w-100-ns fl-l`}>
+        <div className={`${handles.textContainer} w-100 fl-l`}>
           <h2
             className={`t-heading-3 mb3 ml5 ml3-ns mt4 ${handles.textContainerTitle}`}
           >
@@ -287,12 +318,12 @@ const TextAreaBlock: FunctionComponent<TextAreaBlockInterface &
 
       <div
         className={`${handles.componentContainer} ${
-          !componentOnly ? 'w-80-l w-100-ns fr-l pb6' : ''
+          !componentOnly ? 'w-100 fr-l pb6' : ''
         }`}
       >
         {!reviewState && (
           <div className="w-100 mb5">
-            <div className="bg-base t-body c-on-base ph6 br3 b--muted-4">
+            <div className="bg-base t-body c-on-base ph3 br3 b--muted-4">
               <Textarea
                 value={textAreaValue}
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
@@ -315,14 +346,20 @@ const TextAreaBlock: FunctionComponent<TextAreaBlockInterface &
         )}
 
         {reviewState && (
-          <div className={`w-100 ph6 ${handles.reviewBlock}`}>
+          <div className={`w-100 ph4 ${handles.reviewBlock}`}>
             <ReviewBlock
               reviewedItems={reviewItems}
               onReviewItems={onReviewItems}
               onRefidLoading={onRefidLoading}
             />
             <div
-              className={`mb4 mt4 flex justify-between ${handles.buttonsBlock}`}
+              className={`mb4 mt4 flex justify-between ${
+                handles.buttonsBlock
+              } ${
+                !showAddToCart
+                  ? handles.addToCartDisabled
+                  : handles.addToCartBtn
+              }`}
             >
               <Button
                 variation="tertiary"
@@ -334,18 +371,17 @@ const TextAreaBlock: FunctionComponent<TextAreaBlockInterface &
                 <FormattedMessage id="store/quickorder.back" />
               </Button>
               {refidLoading && <Spinner />}
-              {showAddToCart && (
-                <Button
-                  variation="primary"
-                  size="small"
-                  isLoading={mutationLoading}
-                  onClick={() => {
-                    addToCartCopyNPaste()
-                  }}
-                >
-                  <FormattedMessage id="store/quickorder.addToCart" />
-                </Button>
-              )}
+              <Button
+                variation="primary"
+                size="small"
+                isLoading={mutationLoading}
+                onClick={() => {
+                  addToCartCopyNPaste()
+                }}
+                disabled={!showAddToCart}
+              >
+                <FormattedMessage id="store/quickorder.addToCart" />
+              </Button>
             </div>
           </div>
         )}

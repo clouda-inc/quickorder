@@ -1,0 +1,43 @@
+.tableCol2Col2 {
+  min-height: 110px;
+}
+
+.productName {
+  font-size: 1.5rem;
+  line-height: 1.5rem;
+  padding-bottom: 0.75rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.deleteRowBtn :global(.vtex-button) {
+  background: unset;
+}
+
+.deleteRowBtn :global(.vtex__icon-delete) {
+  color: #787879;
+}
+
+.deleteRowBtn :global(.vtex-button):hover :global(.vtex__icon-delete) {
+  color: black;
+}
+
+.inStockMessage {
+  color: #137752;
+}
+
+.outOfStockMessage {
+  color: #f88b13;
+}
+
+.unAuthorizedMessage {
+  color: #e7040f;
+}
+
+.tableCol2 {
+  background: #f6f7f2;
+}
+
+.quickOrderTableRowWithIssues {
+  background-color: #ffd6d6;
+}

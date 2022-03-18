@@ -1,31 +1,35 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable vtex/prefer-early-return */
-import React, { useState, FunctionComponent } from 'react'
+/* eslint no-shadow: "error" */
+import React, {
+  useState,
+  FunctionComponent,
+  useCallback,
+  useEffect,
+} from 'react'
 import {
-  Table,
-  Input,
   ButtonWithIcon,
   IconDelete,
-  IconInfo,
+  // IconInfo,
+  // Input,
+  Table,
   Tooltip,
 } from 'vtex.styleguide'
-import { WrappedComponentProps, injectIntl, defineMessages } from 'react-intl'
+import { defineMessages, injectIntl, WrappedComponentProps } from 'react-intl'
 import PropTypes from 'prop-types'
-import { useApolloClient, useQuery } from 'react-apollo'
+import { useApolloClient } from 'react-apollo'
+import { useCssHandles } from 'vtex.css-handles'
 
-import { ParseText, GetText } from '../utils'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import getRefIdTranslation from '../queries/refids.gql'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import OrderFormQuery from '../queries/orderForm.gql'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+import { GetText, validateQuantity } from '../utils'
+import { TARGET_SYSTEM } from '../utils/const'
+import { keyValuePairsToString } from '../utils/performanceDataProcessing'
+import ItemPricing from './ItemPricing'
+import StockAvailability from './StockAvailability'
+import ItemListContext from '../ItemListContext'
 import GET_PRODUCT_DATA from '../queries/getPrductAvailability.graphql'
+import './ReviewBlock.css'
 
 const remove = <IconDelete />
-let initialLoad = ''
 
 const messages = defineMessages({
   valid: {
@@ -33,6 +37,15 @@ const messages = defineMessages({
   },
   available: {
     id: 'store/quickorder.available',
+  },
+  unavailable: {
+    id: 'store/quickorder.unavailable',
+  },
+  unAuthorized: {
+    id: 'store/quickorder.unauthorized',
+  },
+  unAuthorizedError: {
+    id: 'store/quickorder.unauthorizedError',
   },
   invalidPattern: {
     id: 'store/quickorder.invalidPattern',
@@ -133,9 +146,72 @@ const messages = defineMessages({
   ORD031: {
     id: 'store/quickorder.ORD031',
   },
+  customerPart: {
+    id: 'store/quickorder.customerPart',
+  },
+  goToProductPage: {
+    id: 'store/quickorder.goToProductPage',
+  },
+  unitOfMeasure: {
+    id: 'store/quickorder.unitOfMeasure',
+  },
+  quantityPerUnit: {
+    id: 'store/quickorder.quantityPerUnit',
+  },
+  unitMultiplier: {
+    id: 'store/quickorder.unitMultiplier',
+  },
+  inStock: {
+    id: 'store/quickorder.inStock',
+  },
+  outOfStock: {
+    id: 'store/quickorder.outOfStock',
+  },
+  moq: {
+    id: 'store/quickorder.moq',
+  },
+  leadTime: {
+    id: 'store/quickorder.leadTime',
+  },
 })
 
-let orderFormId = ''
+// let orderFormId = ''
+
+const CSS_HANDLES = [
+  'quickOrderTable',
+  'tableCol1',
+  'productName',
+  'skuInfoRow',
+  'skuName',
+  'customerPart',
+  'productLink',
+  'productDetailsLink',
+  'tableCol2',
+  'tableCol2Col1',
+  'tableCol2Col2',
+  'itemUom',
+  'KeyValueLabel',
+  'KeyValueValue',
+  'unitMultiplier',
+  'deleteRowBtn',
+  'tableCol3',
+  'lineItemStatus',
+  'customerPartLabel',
+  'customerPartValue',
+  'uomDescription',
+  'inStockMessage',
+  'outOfStockMessage',
+  'stockAvailabilityMessage',
+  'stockAvailabilityValue',
+  'productPageLink',
+  'orderedQuantity',
+  'orderedQuantityLabel',
+  'orderedQuantityValue',
+  'quickOrderTableRowWithIssues',
+  'unAuthorizedMessage',
+  'leadTime',
+  'moq',
+]
 
 const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   onReviewItems,
@@ -143,14 +219,25 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   onRefidLoading,
   intl,
 }: any) => {
+  // const { data: orderFormData } = useQuery<{
+  //   orderForm
+  // }>(OrderFormQuery, {
+  //   ssr: false,
+  //   skip: !!orderFormId,
+  // })
   const client = useApolloClient()
+  const styles = useCssHandles(CSS_HANDLES)
 
-  const { data: orderFormData } = useQuery<{
-    orderForm
-  }>(OrderFormQuery, {
-    ssr: false,
-    skip: !!orderFormId,
-  })
+  // const customerNumber =
+  //   soldToAccount?.getOrderSoldToAccount?.customerNumber ?? ''
+
+  // const targetSystem = soldToAccount?.getOrderSoldToAccount?.targetSystem ?? ''
+  // const salesOrganizationCode =
+  //   soldToAccount?.getOrderSoldToAccount?.salesOrganizationCode ?? ''
+
+  const { useItemListState } = ItemListContext
+  const { customerNumber, targetSystem, salesOrganizationCode, itemStatuses } =
+    useItemListState()
 
   const [state, setReviewState] = useState<any>({
     reviewItems:
@@ -164,13 +251,15 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
 
   const { reviewItems } = state
 
-  if (orderFormData?.orderForm?.orderFormId) {
-    orderFormId = orderFormData.orderForm.orderFormId
-  }
-
+  // if (orderFormData?.orderForm?.orderFormId) {
+  //   orderFormId = orderFormData.orderForm.orderFormId
+  // }
   const errorMessage = {
     'store/quickorder.valid': messages.valid,
     'store/quickorder.available': messages.available,
+    'store/quickorder.unavailable': messages.unavailable,
+    'store/quickorder.unauthorized': messages.unAuthorized,
+    'store/quickorder.unauthorizedError': messages.unAuthorizedError,
     'store/quickorder.invalidPattern': messages.invalidPattern,
     'store/quickorder.skuNotFound': messages.skuNotFound,
     'store/quickorder.withoutStock': messages.withoutStock,
@@ -210,56 +299,52 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   const validateRefids = (refidData: any, reviewed: any) => {
     let error = false
 
+    reviewed = reviewed.map((i: any) => {
+      const unit = refidData.getSkuAvailability?.items?.find(
+        (d: any) => i.sku === d.refid
+      )?.unitMultiplier
+
+      const minQty = refidData.getSkuAvailability?.items?.find(
+        (d: any) => i.sku === d.refid
+      )?.moq
+
+      i.quantity = validateQuantity(minQty, unit, i.quantity)
+
+      return {
+        ...i,
+        unit,
+        minQty,
+      }
+    })
+
     if (refidData) {
-      const refIdNotFound =
-        !!refidData && !!refidData.getSkuAvailability.items
-          ? refidData.getSkuAvailability.items.filter((item: any) => {
-              return item.sku === null
-            })
-          : []
+      const itemsFromQuery = refidData.getSkuAvailability?.items ?? []
+      const refIdNotFound = itemsFromQuery.filter((item: any) => {
+        return item.sku === null
+      })
 
-      const refIdFound =
-        !!refidData && !!refidData.getSkuAvailability.items
-          ? refidData.getSkuAvailability.items.filter((item: any) => {
-              return item.sku !== null
-            })
-          : []
+      const refIdFound = itemsFromQuery.filter((item: any) => {
+        return item.sku !== null
+      })
 
-      const refNotAvailable =
-        !!refidData && !!refidData.getSkuAvailability.items
-          ? refidData.getSkuAvailability.items.filter((item: any) => {
-              return item.availability !== 'available'
-            })
-          : []
+      const refNotAuthorized = itemsFromQuery.filter((item: any) => {
+        return item.availability !== 'authorized'
+      })
 
       const vtexSku = (item: any) => {
-        let ret: any = null
+        const ret: any = itemsFromQuery.find((curr: any) => {
+          return !!item.sku && item.sku === curr.refid
+        })
 
-        if (!!refidData && !!refidData.getSkuAvailability.items) {
-          ret = refidData.getSkuAvailability.items.find((curr: any) => {
-            return !!item.sku && item.sku === curr.refid
-          })
-          if (!!ret && !!ret.sku) {
-            ret = ret.sku
-          }
-        }
-
-        return ret
+        return ret?.sku
       }
 
       const getPrice = (item: any) => {
-        let ret: any = null
+        const ret: any = itemsFromQuery.find((curr: any) => {
+          return !!item.sku && item.sku === curr.refid
+        })
 
-        if (!!refidData && !!refidData.getSkuAvailability.items) {
-          ret = refidData.getSkuAvailability.items.find((curr: any) => {
-            return !!item.sku && item.sku === curr.refid
-          })
-          if (!!ret && !!ret.price) {
-            ret = ret.price
-          }
-        }
-
-        return ret
+        return ret?.price
       }
 
       const mappedRefId = {}
@@ -271,34 +356,28 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
       }
 
       const getAvailableQuantity = (item: any) => {
-        let ret: any = null
+        const ret: any = itemsFromQuery.find((curr: any) => {
+          return !!item.sku && item.sku === curr.refid
+        })
 
-        if (!!refidData && !!refidData.getSkuAvailability.items) {
-          ret = refidData.getSkuAvailability.items.find((curr: any) => {
-            return !!item.sku && item.sku === curr.refid
-          })
-          if (!!ret && !!ret.availableQuantity) {
-            ret = ret.availableQuantity
-          }
-        }
+        return ret?.availableQuantity
+      }
+
+      const getAvailability = (item: any) => {
+        const ret: any = itemsFromQuery.find((curr: any) => {
+          return !!item.sku && item.sku === curr.refid
+        })
+
+        return ret?.availability
+      }
+
+      const getItemFromQuery = (item: any) => {
+        const ret: any = itemsFromQuery.find((curr: any) => {
+          return !!item.sku && item.sku === curr.refid
+        })
 
         return ret
       }
-
-      // const getSellers = (item: any) => {
-      //   let ret: any = []
-      //
-      //   if (!!refidData && !!refidData.getSkuAvailability.items) {
-      //     ret = refidData.getSkuAvailability.items.find((curr: any) => {
-      //       return !!item.sku && item.sku === curr.refid
-      //     })
-      //     if (!!ret && !!ret.sellers) {
-      //       ret = ret.sellers
-      //     }
-      //   }
-      //
-      //   return ret
-      // }
 
       const errorMsg = (item: any) => {
         let ret: any = null
@@ -312,19 +391,20 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
 
         ret = notfound
           ? 'store/quickorder.skuNotFound'
-          : found?.availability && found.availability !== 'available'
-          ? `store/quickorder.${found.availability}`
-          : null
+          : found?.availability && found.availability === 'unauthorized'
+          ? 'store/quickorder.unauthorizedError'
+          : item.error
 
         return ret
       }
 
-      if (refIdNotFound.length || refNotAvailable.length) {
+      if (refIdNotFound.length || refNotAuthorized.length) {
         error = true
       }
 
       const items = reviewed.map((item: any) => {
         const sellers = item.sku ? mappedRefId[item.sku]?.sellers : '1'
+        const itm = getItemFromQuery(item)
 
         return {
           ...item,
@@ -333,13 +413,18 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
           availableQuantity: getAvailableQuantity(item),
           price: getPrice(item),
           vtexSku: vtexSku(item),
-          unitMultiplier: item.sku
-            ? mappedRefId[item.sku]?.unitMultiplier
-            : '1',
-          totalQuantity:
-            (item.sku ? mappedRefId[item.sku]?.unitMultiplier : '1') *
-            item.quantity,
+          totalQuantity: item.quantity,
           error: errorMsg(item),
+          availability: getAvailability(item),
+          productName: itm?.productName,
+          skuName: itm?.skuName,
+          uom: itm?.uom,
+          leadTime: itm?.leadTime,
+          uomDescription: itm?.uomDescription,
+          linkText: itm?.linkText,
+          unitMultiplier: itm?.unitMultiplier,
+          moq: itm?.moq,
+          refid: itm?.refid,
         }
       })
 
@@ -356,6 +441,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
       })
 
       onReviewItems(updated)
+
       setReviewState({
         ...state,
         reviewItems: updated,
@@ -369,20 +455,42 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     let refids = {}
 
     if (_refids.length) {
-      _refids.forEach(refid => {
+      _refids.forEach((refid: any) => {
         refids[refid] = true
       })
       refids = Object.getOwnPropertyNames(refids)
     }
 
-    const query = {
-      query: GET_PRODUCT_DATA,
-      variables: { refIds: refids },
+    try {
+      const query = {
+        query: GET_PRODUCT_DATA,
+        variables: {
+          refIds: refids as string[],
+          customerNumber,
+          targetSystem,
+          salesOrganizationCode,
+        },
+      }
+
+      const { data } = await client.query(query)
+
+      // TODO: Remove this line
+      // eslint-disable-next-line no-console
+      console.log(
+        JSON.stringify(
+          keyValuePairsToString(data?.getSkuAvailability?.performanceData),
+          null,
+          2
+        )
+      )
+
+      if (data) {
+        validateRefids(data, reviewed)
+      }
+    } catch (error) {
+      console.error(error)
     }
 
-    const { data } = await client.query(query)
-
-    validateRefids(data, reviewed)
     onRefidLoading(false)
   }
 
@@ -398,7 +506,12 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     getRefIds(refids, items)
   }
 
-  const checkValidatedItems = () => {
+  // Purpose is to avoid un necessary re renderings
+  // get review items basic info
+  const revItemStr = GetText(reviewItems)
+
+  // recreate validate function only if reviewItem basic info changed
+  const checkValidatedItems = useCallback(() => {
     const items: [any] = reviewItems.filter((item: any) => {
       return item.sku !== null && item.error === null && !item.vtexSku
     })
@@ -406,12 +519,13 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     if (items.length) {
       convertRefIds(items)
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [revItemStr])
 
-  if (initialLoad !== GetText(reviewItems)) {
+  // execute if validate function recreated
+  useEffect(() => {
     checkValidatedItems()
-    initialLoad = GetText(reviewItems)
-  }
+  }, [checkValidatedItems])
 
   const removeLine = (i: number) => {
     const items: [any] = reviewItems
@@ -433,192 +547,222 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     })
   }
 
-  const updateLineContent = (index: number, content: string) => {
-    const items = reviewItems.map((item: any) => {
-      return item.index === index
-        ? {
-            ...item,
-            content,
-          }
-        : item
-    })
+  const getLineError = (lineItem: any) => {
+    const item = itemStatuses.find((itm: any) => itm.index === lineItem.index)
 
-    setReviewState({
-      ...state,
-      reviewItems: items,
-    })
+    return item?.error ? intl.formatMessage(errorMessage[item.error]) : null
   }
 
-  // const updateLineSeller = (index: number, seller: string) => {
-  //   const items = reviewItems.map((item: any) => {
-  //     return item.index === index
-  //       ? {
-  //           ...item,
-  //           seller,
-  //         }
-  //       : item
-  //   })
-  //
-  //   setReviewState({
-  //     ...state,
-  //     reviewItems: items,
-  //   })
-  // }
+  const getLineItemStatus = (lineItem: any) => {
+    const item = itemStatuses.find((itm: any) => itm.index === lineItem.index)
 
-  const onBlurField = (line: number) => {
-    const joinLines = GetText(reviewItems)
-    const reviewd: any = ParseText(joinLines)
-
-    if (reviewd[line].error === null) {
-      setReviewState({
-        ...state,
-        reviewItems: reviewd,
-      })
-    }
+    return item?.availability
   }
+
+  const tableStyles = `.ReactVirtualized__Grid__innerScrollContainer>div {padding: 0;}`
 
   const tableSchema = {
     properties: {
-      line: {
+      col1: {
         type: 'object',
         title: intl.formatMessage({
           id: 'store/quickorder.review.label.lineNumber',
         }),
-        width: 50,
         // eslint-disable-next-line react/display-name
         cellRenderer: ({ rowData }: any) => {
-          return <div>{parseInt(rowData.line, 10) + 1}</div>
-        },
-      },
-      content: {
-        type: 'object',
-        title: intl.formatMessage({
-          id: 'store/quickorder.review.label.content',
-        }),
-        // eslint-disable-next-line react/display-name
-        cellRenderer: ({ cellData, rowData }: any) => {
-          if (rowData.error) {
-            return (
-              <div>
-                <Input
-                  value={cellData}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    updateLineContent(rowData.index, e.target.value)
-                  }}
-                  onBlur={() => {
-                    onBlurField(rowData.line)
+          const itemError = getLineError(rowData)
+          const itemAvailability = getLineItemStatus(rowData)
+
+          return (
+            <div
+              className={`${styles.quickOrderTable} ${
+                itemError ? styles.quickOrderTableRowWithIssues : ''
+              } flex w-100 relative`}
+            >
+              <style>{tableStyles}</style>
+
+              <div
+                className={`${styles.tableCol1} flex flex-column ${
+                  targetSystem === TARGET_SYSTEM.JDE ? 'w-40' : 'w-50'
+                } pa3`}
+              >
+                <div className={`${styles.productName}`}>
+                  <Tooltip label={rowData.productName}>
+                    <span className="truncate">{rowData.productName}</span>
+                  </Tooltip>
+                </div>
+                <div
+                  className={`${styles.skuInfoRow} flex flex-row justify-between`}
+                >
+                  <div className={`${styles.skuName} truncate`}>
+                    {rowData.sku}
+                  </div>
+                  <div className={`${styles.customerPart} ml3`}>
+                    <span className={`${styles.customerPartLabel} ttu`}>
+                      {intl.formatMessage(messages.customerPart)}
+                    </span>
+                    <span
+                      className={`${styles.customerPartValue} ml2 truncate`}
+                    >
+                      {rowData.refid}
+                    </span>
+                  </div>
+                </div>
+                <div
+                  className={`${styles.productLink} flex justify-between w-100`}
+                >
+                  <div className={`${styles.orderedQuantity} truncate`}>
+                    <span className={`${styles.orderedQuantityLabel} mr3`}>
+                      Ordered Quantity:
+                    </span>
+                    <span className={`${styles.orderedQuantityValue}`}>
+                      {!Number.isNaN(rowData.quantity) ? rowData.quantity : ''}
+                    </span>
+                  </div>
+                  <div className={`${styles.productPageLink} ml3`}>
+                    {!Number.isNaN(rowData.quantity) && rowData?.linkText && (
+                      <a
+                        className={`${styles.productDetailsLink} flex-column`}
+                        href={`${rowData?.linkText}/p`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {intl.formatMessage(messages.goToProductPage)}
+                      </a>
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <span className="red">{itemError}</span>
+                </div>
+              </div>
+
+              <div
+                className={`${
+                  itemError ? styles.quickOrderTableRowWithIssues : ''
+                } ${styles.tableCol2} flex pa3 ${
+                  targetSystem === TARGET_SYSTEM.JDE ? 'w-40' : 'w-30'
+                }`}
+              >
+                {targetSystem === TARGET_SYSTEM.JDE ? (
+                  <div className={`${styles.tableCol2Col1} w-40`}>
+                    <ItemPricing
+                      itemNumber={rowData?.sku}
+                      customerNumber={customerNumber}
+                    />
+                  </div>
+                ) : (
+                  <div />
+                )}
+                <div
+                  className={`${styles.tableCol2Col2} ${
+                    targetSystem === TARGET_SYSTEM.JDE ? 'w-60' : 'w-100'
+                  }`}
+                >
+                  {rowData.uom && (
+                    <div
+                      className={`${styles.itemUom} flex flex-row justify-between`}
+                    >
+                      <div className={`${styles.KeyValueLabel}`}>
+                        {intl.formatMessage(messages.unitOfMeasure)}
+                      </div>
+                      <div className={`${styles.KeyValueValue}`}>
+                        {rowData.uom}
+                      </div>
+                    </div>
+                  )}
+                  {rowData.uomDescription && (
+                    <div
+                      className={`${styles.uomDescription} flex flex-row justify-between`}
+                    >
+                      <div className={`${styles.KeyValueLabel}`}>
+                        {intl.formatMessage(messages.quantityPerUnit)}
+                      </div>
+                      <div className={`${styles.KeyValueValue}`}>
+                        {rowData.uomDescription}
+                      </div>
+                    </div>
+                  )}
+                  {rowData.unitMultiplier && (
+                    <div
+                      className={`${styles.uomDescription} flex flex-row justify-between`}
+                    >
+                      <div className={`${styles.KeyValueLabel}`}>
+                        {intl.formatMessage(messages.unitMultiplier)}
+                      </div>
+                      <div className={`${styles.KeyValueValue}`}>
+                        {rowData.unitMultiplier}
+                      </div>
+                    </div>
+                  )}
+                  {rowData.moq && (
+                    <div
+                      className={`${styles.moq} flex flex-row justify-between`}
+                    >
+                      <div className={`${styles.KeyValueLabel}`}>
+                        {intl.formatMessage(messages.moq)}
+                      </div>
+                      <div className={`${styles.KeyValueValue}`}>
+                        {rowData.moq}
+                      </div>
+                    </div>
+                  )}
+
+                  {rowData.leadTime && (
+                    <div
+                      className={`${styles.leadTime} flex flex-row justify-between`}
+                    >
+                      <div className={`${styles.KeyValueLabel}`}>
+                        {intl.formatMessage(messages.leadTime)}
+                      </div>
+                      <div className={`${styles.KeyValueValue}`}>
+                        {rowData.leadTime}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className={`${styles.tableCol3} flex flex-column w-20 pa3`}>
+                <div
+                  className={`${styles.stockAvailabilityMessage} flex w-100`}
+                >
+                  {itemAvailability === 'available' ? (
+                    <span className={`${styles.inStockMessage} b ttu`}>
+                      {intl.formatMessage(messages.inStock)}
+                    </span>
+                  ) : itemAvailability === 'unavailable' && !itemError ? (
+                    <span className={`${styles.outOfStockMessage} b ttu`}>
+                      {intl.formatMessage(messages.outOfStock)}
+                    </span>
+                  ) : (
+                    itemAvailability === 'unauthorized' && (
+                      <span className={`${styles.unAuthorizedMessage} b ttu`}>
+                        {intl.formatMessage(messages.unAuthorized)}
+                      </span>
+                    )
+                  )}
+                </div>
+                <div className={`${styles.stockAvailabilityValue} w-40`}>
+                  {targetSystem === TARGET_SYSTEM.JDE ? (
+                    <StockAvailability
+                      itemIndex={rowData?.index}
+                      itemNumber={rowData?.sku}
+                      customerNumber={customerNumber}
+                    />
+                  ) : (
+                    <div />
+                  )}
+                </div>
+              </div>
+              <div className={`${styles.deleteRowBtn} absolute right-0 top-0`}>
+                <ButtonWithIcon
+                  icon={remove}
+                  variation="tertiary"
+                  onClick={() => {
+                    removeLine(rowData.index)
                   }}
                 />
               </div>
-            )
-          }
-
-          return <span>{cellData}</span>
-        },
-      },
-      sku: {
-        type: 'string',
-        title: intl.formatMessage({ id: 'store/quickorder.review.label.sku' }),
-        width: 125,
-      },
-      quantity: {
-        type: 'string',
-        title: intl.formatMessage({
-          id: 'store/quickorder.review.label.quantity',
-        }),
-        width: 75,
-      },
-      unitMultiplier: {
-        type: 'float',
-        title: intl.formatMessage({
-          id: 'store/quickorder.review.label.multiplier',
-        }),
-        width: 100,
-      },
-      totalQuantity: {
-        type: 'float',
-        title: intl.formatMessage({
-          id: 'store/quickorder.review.label.totalQuantity',
-        }),
-        width: 100,
-      },
-      price: {
-        type: 'string',
-        title: 'Price',
-      },
-      availableQuantity: {
-        type: 'string',
-        title: 'Available Quantity',
-      },
-      // seller: {
-      //   type: 'string',
-      //   title: intl.formatMessage({
-      //     id: 'store/quickorder.review.label.seller',
-      //   }),
-      //   cellRenderer: ({ rowData }: any) => {
-      //     if (rowData?.sellers?.length > 1) {
-      //       return (
-      //         <div>
-      //           <Dropdown
-      //             options={rowData.sellers.map((item: any) => {
-      //               return {
-      //                 label: item.name,
-      //                 value: item.id,
-      //               }
-      //             })}
-      //             value={rowData.seller}
-      //             onChange={(_: any, v: any) =>
-      //               updateLineSeller(rowData.index, v)
-      //             }
-      //           />
-      //         </div>
-      //       )
-      //     }
-      //
-      //     return rowData?.sellers?.length ? rowData.sellers[0].name : ''
-      //   },
-      // },
-      error: {
-        type: 'string',
-        title: intl.formatMessage({
-          id: 'store/quickorder.review.label.status',
-        }),
-        width: 75,
-        cellRenderer: ({ cellData, rowData }: any) => {
-          if (rowData.error) {
-            const text = intl.formatMessage(
-              errorMessage[cellData || 'store/quickorder.valid']
-            )
-
-            return (
-              <span className="pa3 br2 dib mr5 mv0">
-                <Tooltip label={text}>
-                  <span className="c-danger pointer">
-                    <IconInfo />
-                  </span>
-                </Tooltip>
-              </span>
-            )
-          }
-
-          return intl.formatMessage({ id: 'store/quickorder.valid' })
-        },
-      },
-      delete: {
-        type: 'object',
-        title: ' ',
-        width: 75,
-        // eslint-disable-next-line react/display-name
-        cellRenderer: ({ rowData }: any) => {
-          return (
-            <div>
-              <ButtonWithIcon
-                icon={remove}
-                variation="tertiary"
-                onClick={() => {
-                  removeLine(rowData.index)
-                }}
-              />
             </div>
           )
         },
@@ -628,7 +772,13 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
 
   return (
     <div>
-      <Table schema={tableSchema} items={reviewItems} fullWidth />
+      <Table
+        dynamicRowHeight
+        fullWidth
+        disableHeader
+        schema={tableSchema}
+        items={reviewItems}
+      />
     </div>
   )
 }

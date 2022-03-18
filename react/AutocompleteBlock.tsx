@@ -77,7 +77,6 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
   const orderForm = OrderForm.useOrderForm()
 
   const translateMessage = (message: MessageDescriptor) => {
-    // eslint-disable-next-line react/prop-types
     return intl.formatMessage(message)
   }
 
@@ -93,7 +92,6 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
     let action
 
     if (typeof arg === 'string') {
-      // eslint-disable-next-line react/prop-types
       message = intl.formatMessage(messages[arg])
     } else {
       const {
@@ -138,7 +136,7 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
       variables: {
         items: items.map((item: ItemType) => {
           const [existsInCurrentOrder] = currentItemsInCart.filter(
-            el => el.id === item.id.toString()
+            (el: any) => el.id === item.id.toString()
           )
 
           if (existsInCurrentOrder) {
@@ -252,7 +250,7 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
     }
 
     const matchedItem = selectedItem.data.product.items.find(
-      item => item.itemId === value
+      (item: any) => item.itemId === value
     )
 
     setState({
@@ -316,14 +314,15 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
     'textContainerDescription',
     'componentContainer',
     'buttonClear',
+    'textContainerMain',
   ] as const
 
   const handles = useCssHandles(CSS_HANDLES)
 
   return (
-    <div>
+    <div className={`${handles.textContainerMain} flex flex-column`}>
       {!componentOnly && (
-        <div className={`${handles.textContainer} w-third-l w-100-ns fl-l`}>
+        <div className={`${handles.textContainer} w-100 fl-l`}>
           <h2
             className={`${handles.textContainerTitle} t-heading-3 mb3 ml5 ml3-ns mt4`}
           >
@@ -338,11 +337,11 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
       )}
       <div
         className={`${handles.componentContainer} ${
-          !componentOnly ? 'w-two-thirds-l w-100-ns fr-l' : ''
+          !componentOnly ? 'w-100 fr-l' : ''
         }`}
       >
         <div className="w-100 mb5">
-          <div className="bg-base t-body c-on-base pa7 br3 b--muted-4">
+          <div className="bg-base t-body c-on-base ph3 br3 b--muted-4">
             {!selectedItem && <QuickOrderAutocomplete onSelect={onSelect} />}
             {!!selectedItem && (
               <div>
@@ -443,7 +442,7 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
                         callAddUnitToCart()
                       }}
                     >
-                      <FormattedMessage id="store/quickorder.addToCart" />
+                      <FormattedMessage id="store/quickorder.autocomplete.addButton" />
                     </Button>
                   </div>
                   <div

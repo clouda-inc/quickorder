@@ -1,0 +1,14 @@
+query getStockAvailability($itemNumber: String!, $customer: String, $thruDate: String) {
+  getStockAvailability(itemNumber: $itemNumber, customer: $customer, thruDate: $thruDate) {
+    itemNumber
+    customer
+    thruDate
+    primaryUoM
+    pricingUoM
+    branchPlant
+    demand
+    supply
+    promiseDate
+    qtyAvailable
+  }
+}

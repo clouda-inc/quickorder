@@ -80,8 +80,9 @@ const CustomOption = (props: any) => {
 interface QuickOrderAutocompleteInt {
   onSelect: any
 }
-const QuickOrderAutocomplete: FunctionComponent<WrappedComponentProps &
-  QuickOrderAutocompleteInt> = ({ onSelect, intl }: any) => {
+const QuickOrderAutocomplete: FunctionComponent<
+  WrappedComponentProps & QuickOrderAutocompleteInt
+> = ({ onSelect, intl }: any) => {
   const client = useApolloClient()
   const [optionsResult, setOptions] = useState([])
   const [term, setTerm] = useState('')
