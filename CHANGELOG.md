@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Change upload file label
 
+## [0.1.31] - 2022-03-18
+
 ## [0.1.30] - 2022-03-15
 
 ## [0.1.29] - 2022-03-15
