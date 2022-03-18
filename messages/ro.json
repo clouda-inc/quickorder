@@ -61,7 +61,7 @@
   "store/quickorder.unitMultiplier": "Unit Multiplier",
   "store/quickorder.unitOfMeasure": "Unit of Measure",
   "store/quickorder.upload.choose": "alege fisier",
-  "store/quickorder.upload.drop": "Incarca aici XLS or",
+  "store/quickorder.upload.drop": "Incarca aici XLS, CSV or",
   "store/quickorder.valid": "Valid",
   "store/quickorder.validate": "Validare",
   "store/quickorder.withoutPriceFulfillment": "Produs fără preț",
