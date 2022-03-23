@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Add UoM filed in quick-order search
+
 ## [0.1.32] - 2022-03-18
 
 ### Changed
