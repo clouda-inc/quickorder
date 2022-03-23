@@ -43,6 +43,11 @@ const messages = defineMessages({
     defaultMessage: '',
     label: '',
   },
+  ondroprejected: {
+    id: 'store/toaster.cart.ondroprejected',
+    defaultMessage: '',
+    label: '',
+  },
 })
 
 const UploadBlock: FunctionComponent<
@@ -250,6 +255,10 @@ const UploadBlock: FunctionComponent<
   }
 
   const handleReset = () => {}
+
+  const handleOnDropRejected = () => {
+    showToast(translateMessage(messages.ondroprejected))
+  }
 
   const backList = () => {
     setState({
@@ -468,7 +477,8 @@ const UploadBlock: FunctionComponent<
               <Dropzone
                 onDropAccepted={handleFile}
                 onFileReset={handleReset}
-                accept=".xls,.xlsx"
+                onDropRejected={handleOnDropRejected}
+                accept=".xls,.xlsx,.csv"
               >
                 <div className="pt7">
                   <div>
