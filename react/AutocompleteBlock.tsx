@@ -1,13 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/prop-types */
-import React, { useState, useContext, FunctionComponent } from 'react'
+import React, {
+  useState,
+  useContext,
+  FunctionComponent,
+} from 'react'
 import {
   FormattedMessage,
   WrappedComponentProps,
   injectIntl,
   defineMessages,
 } from 'react-intl'
-import { Button, Tag, Input, ToastContext, IconClear } from 'vtex.styleguide'
+import {
+  Button,
+  Tag,
+  ToastContext,
+  IconClear,
+  NumericStepper,
+} from 'vtex.styleguide'
 import { OrderForm } from 'vtex.order-manager'
 import { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
@@ -15,10 +25,11 @@ import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
 import PropTypes from 'prop-types'
 import { useCssHandles } from 'vtex.css-handles'
-import { useApolloClient, useMutation } from 'react-apollo'
+import { useApolloClient, useMutation, useQuery } from 'react-apollo'
 
 import QuickOrderAutocomplete from './components/QuickOrderAutocomplete'
 import productQuery from './queries/product.gql'
+import ORDER_SOLD_TO_ACCOUNT from './queries/orderSoldToAccount.graphql'
 import './global.css'
 
 const messages = defineMessages({
@@ -62,7 +73,18 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
     selectedItem: null,
     quantitySelected: 0,
     unitMultiplier: 1,
+    minOrderQnt: 1,
+    adjustedQty: 0,
   })
+
+  const {
+    data: userSoldToAccount,
+    error: soldToAccntError,
+  } = useQuery(ORDER_SOLD_TO_ACCOUNT)
+
+  const targetSystem = (
+    userSoldToAccount?.getOrderSoldToAccount?.targetSystem ?? ''
+  ).toUpperCase()
 
   const [addToCart, { error, loading }] = useMutation<
     { addToCart: OrderFormType },
@@ -106,9 +128,9 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
 
       action = success
         ? {
-            label: translateMessage(messages.seeCart),
-            href: '/checkout/#/cart',
-          }
+          label: translateMessage(messages.seeCart),
+          href: '/checkout/#/cart',
+        }
         : undefined
     }
 
@@ -121,15 +143,29 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
       selectedItem: null,
       quantitySelected: 0,
       unitMultiplier: 1,
+      minOrderQnt: 0,
     })
   }
 
+  const { selectedItem, quantitySelected, unitMultiplier, minOrderQnt } = state
   interface ItemType {
     id: string
     quantity: number
   }
 
-  const { selectedItem, quantitySelected, unitMultiplier } = state
+  const adjustTheQuantity = (quantity: number) => {
+    const actualQty = quantity * unitMultiplier
+    const _adjustedQty =
+      minOrderQnt % unitMultiplier === 0
+        ? actualQty < minOrderQnt
+          ? minOrderQnt
+          : actualQty
+        : actualQty < minOrderQnt
+          ? minOrderQnt + (unitMultiplier - (minOrderQnt % unitMultiplier))
+          : actualQty
+    return _adjustedQty / unitMultiplier
+  }
+
   const callAddToCart = async (items: any) => {
     const currentItemsInCart = orderForm.orderForm.items
     const mutationResult = await addToCart({
@@ -152,6 +188,11 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
 
     if (error) {
       console.error(error)
+      toastMessage({ success: false, isNewItem: false })
+
+      return
+    } else if (soldToAccntError) {
+      console.error(soldToAccntError)
       toastMessage({ success: false, isNewItem: false })
 
       return
@@ -198,6 +239,33 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
     return showInstallPrompt
   }
 
+  const getMinOrderQty = (product: any) => {
+    let minQty
+    if (product && userSoldToAccount) {
+      let minProperty = (product?.properties ?? []).find(
+        (attribute: { name: string }) =>
+          attribute.name === 'Minimum Order Quantity'
+      )
+      if (targetSystem === 'SAP') {
+        minProperty = (product?.properties ?? []).find(
+          (attribute: { name: string }) =>
+            attribute.name === 'Minimum Order Quantity'
+        )
+      }
+      if (targetSystem === 'JDE') {
+        minProperty = (product?.properties ?? []).find(
+          (attribute: { name: string }) =>
+            attribute.name === 'JDE Minimum Order Quantity'
+        )
+      }
+      minQty =
+        (minProperty?.values ?? []).length > 0
+          ? Number(minProperty?.values[0])
+          : 1
+    }
+    return minQty
+  }
+
   const onSelect = async (product: any) => {
     if (!!product && product.length) {
       const query = {
@@ -211,8 +279,8 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
 
       const seller = selectedSku
         ? data.product.items[0].sellers.find((item: any) => {
-            return item.sellerDefault === true
-          }).sellerId
+          return item.sellerDefault === true
+        }).sellerId
         : null
 
       let multiplier = 1
@@ -228,9 +296,10 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
             ? { ...product[0], value: selectedSku, seller, data }
             : null,
         unitMultiplier: multiplier,
+        quantitySelected: adjustTheQuantity(getMinOrderQty(data.product) / multiplier),
+        minOrderQnt: getMinOrderQty(data.product),
       })
     }
-
     return true
   }
 
@@ -264,23 +333,12 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
     return url.replace('25-25', `50-50`)
   }
 
-  const calculateDivisible = (quantity: number, multiplier: number) => {
-    if (multiplier) {
-      return quantity / multiplier
-    }
-
-    return quantity
-  }
-
   const callAddUnitToCart = () => {
     if (selectedItem?.value) {
       const items = [
         {
           id: parseInt(selectedItem.value, 10),
-          quantity: calculateDivisible(
-            parseFloat(quantitySelected),
-            unitMultiplier
-          ),
+          quantity: parseFloat(quantitySelected),
           seller: selectedItem.seller,
         },
       ]
@@ -289,16 +347,6 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
     } else {
       toastMessage('selectSku')
     }
-  }
-
-  const roundToNearestMultiple = (quantity: number, multiplier: number) => {
-    if (multiplier) {
-      toastMessage('multiplier')
-
-      return Math.round(quantity / multiplier) * multiplier
-    }
-
-    return quantity
   }
 
   const CSS_HANDLES = [
@@ -336,9 +384,8 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
         </div>
       )}
       <div
-        className={`${handles.componentContainer} ${
-          !componentOnly ? 'w-100 fr-l' : ''
-        }`}
+        className={`${handles.componentContainer} ${!componentOnly ? 'w-100 fr-l' : ''
+          }`}
       >
         <div className="w-100 mb5">
           <div className="bg-base t-body c-on-base ph3 br3 b--muted-4">
@@ -361,6 +408,9 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
                   >
                     <span className={`${handles.productTitle}`}>
                       {selectedItem.label}
+                    </span>
+                    <span className={`${handles.productTitle}`}>
+                      UoM- {selectedItem?.data.product.properties.find(r=> r.name==="Unit of Measure").values}
                     </span>
 
                     {!!selectedItem &&
@@ -407,28 +457,20 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
                   <div
                     className={`flex flex-column w-40 ph5-l ph2 p fl ${handles.inputQuantity}`}
                   >
-                    <Input
+                    <NumericStepper
+                      size={'small'}
                       value={quantitySelected}
-                      size="small"
-                      type="number"
-                      step={unitMultiplier}
+                      minValue={1}
+                      maxValue={10000000}
+                      unitMultiplier={unitMultiplier}
                       onChange={(e: any) => {
+                        let qnt = adjustTheQuantity(e.value)
                         setState({
                           ...state,
-                          quantitySelected: e.target.value,
+                          quantitySelected: qnt
                         })
-                      }}
-                      onBlur={() => {
-                        const roundedValue = roundToNearestMultiple(
-                          quantitySelected,
-                          unitMultiplier
-                        )
-
-                        setState({
-                          ...state,
-                          quantitySelected: roundedValue,
-                        })
-                      }}
+                      }
+                      }
                     />
                   </div>
                   <div
@@ -444,6 +486,7 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
                     >
                       <FormattedMessage id="store/quickorder.autocomplete.addButton" />
                     </Button>
+
                   </div>
                   <div
                     className={`flex flex-column w-20 fl ${handles.buttonClear}`}

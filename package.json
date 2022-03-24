@@ -32,12 +32,12 @@
     "@vtex/intl-equalizer": "^2.4.2",
     "@vtex/prettier-config": "^1.0.0",
     "eslint": "^6.8.0",
-    "eslint-config-vtex": "^12.2.1",
+    "eslint-config-vtex": "^14.1.2",
     "eslint-config-vtex-react": "^6.2.1",
     "husky": "^4.3.6",
     "lint-staged": "^10.5.3",
-    "prettier": "^2.2.1",
-    "typescript": "^3.7.5"
+    "prettier": "^2.5.1",
+    "typescript": "^4.6.2"
   },
   "version": "0.5.7",
   "intl-equalizer": {

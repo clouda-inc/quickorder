@@ -28,7 +28,7 @@
   "store/quickorder.ORD030": "Shipping error",
   "store/quickorder.ORD031": "Shipping error",
   "store/quickorder.addToCart": "Add to Cart",
-  "store/quickorder.autocomplete.addButton": "Add",
+  "store/quickorder.autocomplete.addButton": "Add To Cart",
   "store/quickorder.autocomplete.placeholder": "Search for a product...",
   "store/quickorder.autocomplete.selectSku": "Please select one SKU",
   "store/quickorder.available": "Available",
