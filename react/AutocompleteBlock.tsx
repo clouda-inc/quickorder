@@ -410,7 +410,7 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
                       {selectedItem.label}
                     </span>
                     <span className={`${handles.productTitle}`}>
-                      UoM- {selectedItem?.data.product.properties.find(r=> r.name==="Unit of Measure").values}
+                      UoM- {selectedItem?.data.product.properties.find(r=> r.name==="Unit of Measure")?.values}
                     </span>
 
                     {!!selectedItem &&
