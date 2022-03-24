@@ -1,7 +1,7 @@
 {
   "vendor": "sbdsefprod",
   "name": "bulk-order",
-  "version": "0.1.34",
+  "version": "0.1.35",
   "title": "Quickorder",
   "description": "Allow users to add multiple products to the cart at once",
   "defaultLocale": "en-US",
