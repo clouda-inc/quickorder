@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Change Unauthorized message to Not Available Online
+
 ## [0.1.35] - 2022-03-24
 
 ## [0.1.34] - 2022-03-24
