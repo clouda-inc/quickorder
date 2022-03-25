@@ -32,7 +32,7 @@
   "store/quickorder.autocomplete.placeholder": "Busque um produto...",
   "store/quickorder.autocomplete.selectSku": "Por favor, selecione um SKU",
   "store/quickorder.available": "Disponível",
-  "store/quickorder.unauthorized": "Unauthorized",
+  "store/quickorder.unauthorized": "Não disponível on-line",
   "store/quickorder.unauthorizedError": "Produto não encontrado",
   "store/quickorder.back": "Voltar",
   "store/quickorder.cannotBeDelivered": "Não pode ser entregue",
