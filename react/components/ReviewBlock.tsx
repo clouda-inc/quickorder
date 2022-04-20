@@ -32,8 +32,6 @@ import './ReviewBlock.css'
 
 const remove = <IconDelete />
 
-// const { binding } = useRuntime()
-
 const messages = defineMessages({
   valid: {
     id: 'store/quickorder.valid',
