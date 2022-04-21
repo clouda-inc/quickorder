@@ -15,6 +15,7 @@ import {
   Table,
   Tooltip,
 } from 'vtex.styleguide'
+import { useRuntime } from 'vtex.render-runtime'
 import { defineMessages, injectIntl, WrappedComponentProps } from 'react-intl'
 import PropTypes from 'prop-types'
 import { useApolloClient } from 'react-apollo'
@@ -43,6 +44,9 @@ const messages = defineMessages({
   },
   unAuthorized: {
     id: 'store/quickorder.unauthorized',
+  },
+  unAuthorizedCatalogEU: {
+    id: 'store/quickorder.unauthorized.catalog-eu',
   },
   unAuthorizedError: {
     id: 'store/quickorder.unauthorizedError',
@@ -227,7 +231,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   // })
   const client = useApolloClient()
   const styles = useCssHandles(CSS_HANDLES)
-
+  const { binding } = useRuntime()
   // const customerNumber =
   //   soldToAccount?.getOrderSoldToAccount?.customerNumber ?? ''
 
@@ -259,6 +263,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     'store/quickorder.available': messages.available,
     'store/quickorder.unavailable': messages.unavailable,
     'store/quickorder.unauthorized': messages.unAuthorized,
+    'store/quickorder.unauthorized.catalog-eu': messages.unAuthorizedCatalogEU,
     'store/quickorder.unauthorizedError': messages.unAuthorizedError,
     'store/quickorder.invalidPattern': messages.invalidPattern,
     'store/quickorder.skuNotFound': messages.skuNotFound,
@@ -294,6 +299,14 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     'store/quickorder.ORD029': messages.ORD029,
     'store/quickorder.ORD030': messages.ORD030,
     'store/quickorder.ORD031': messages.ORD031,
+  }
+
+  const isEURegion = () => {
+    const url = binding?.canonicalBaseAddress ?? undefined
+
+    return url
+      ? !!url.split(`/`).find((element) => element === `catalog-eu`)
+      : false
   }
 
   const validateRefids = (refidData: any, reviewed: any) => {
@@ -737,7 +750,11 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                   ) : (
                     itemAvailability === 'unauthorized' && (
                       <span className={`${styles.unAuthorizedMessage} b ttu`}>
-                        {intl.formatMessage(messages.unAuthorized)}
+                        {intl.formatMessage(
+                          isEURegion()
+                            ? messages.unAuthorizedCatalogEU
+                            : messages.unAuthorized
+                        )}
                       </span>
                     )
                   )}

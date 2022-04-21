@@ -33,6 +33,7 @@
   "store/quickorder.autocomplete.selectSku": "Please select one SKU",
   "store/quickorder.available": "Available",
   "store/quickorder.unauthorized": "Not Available Online",
+  "store/quickorder.unauthorized.catalog-eu": "Not Available in Your Region",
   "store/quickorder.unauthorizedError": "Product Not Found",
   "store/quickorder.back": "Back",
   "store/quickorder.cannotBeDelivered": "Cannot be delivered",

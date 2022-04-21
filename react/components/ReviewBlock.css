@@ -32,6 +32,8 @@
 
 .unAuthorizedMessage {
   color: #e7040f;
+  white-space: normal;
+  max-width: 200px;
 }
 
 .tableCol2 {
