@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.38] - 2022-04-21
+
 ### Fixed
 
 - Change Not Avaolable Online message to Not Avaialable In Your Region in EUR
