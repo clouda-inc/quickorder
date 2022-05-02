@@ -1,9 +1,11 @@
 import './globals'
 
-import { Cached, RecorderState, LRUCache, method, Service } from '@vtex/api'
+import type { Cached, RecorderState } from '@vtex/api'
+import { LRUCache, method, Service } from '@vtex/api'
 
 import { Clients } from './clients'
 import { resolvers } from './resolvers'
+import { schemaDirectives } from './directives'
 import { health } from './middlewares/health'
 
 const TWO_SECONDS_MS = 2 * 1000
@@ -42,6 +44,7 @@ export default new Service<Clients, RecorderState, CustomContext>({
   },
   graphql: {
     resolvers,
+    schemaDirectives,
   },
   routes: {
     healthCheck: method({

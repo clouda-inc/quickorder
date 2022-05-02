@@ -1,4 +1,5 @@
-import { InstanceOptions, IOContext, JanusClient } from '@vtex/api'
+import type { InstanceOptions, IOContext } from '@vtex/api'
+import { JanusClient } from '@vtex/api'
 
 interface RefIdArgs {
   refids: any
@@ -151,6 +152,7 @@ export class Search extends JanusClient {
         sellers: null,
       }
     }
+
     const url = `/api/catalog_system/pvt/sku/stockkeepingunitbyid/${skuId}`
     const res = await this.http.getRaw(url, {
       headers: {
@@ -158,6 +160,7 @@ export class Search extends JanusClient {
         Authorization: `bearer ${this.context.authToken}`,
       },
     })
+
     return res.data?.SkuSellers
       ? {
           sku: skuId,
@@ -205,10 +208,15 @@ export class Search extends JanusClient {
   /**
    *
    * @param sku
-   * @param refid
+   * @param salesChannel
    */
-  public searchProductBySkuId = async (sku: string) => {
-    const priceBySkuIdUrl = `http://${this.context.account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search?fq=skuId:${sku}`
+  public searchProductBySkuId = async (sku: string, salesChannel?: string) => {
+    const priceBySkuIdUrl = `http://${
+      this.context.account
+    }.vtexcommercestable.com.br/api/catalog_system/pub/products/search?fq=skuId:${sku}${
+      salesChannel ? `&sc=${salesChannel}` : ''
+    }`
+
     const res = await this.http.getRaw(priceBySkuIdUrl, {
       headers: {
         'Content-Type': 'application/json',
