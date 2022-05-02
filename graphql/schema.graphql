@@ -6,9 +6,22 @@ type Query {
     @cacheControl(scope: SEGMENT, maxAge: MEDIUM)
     @withSegment
 
-  getSkuAvailability(refIds: [String], customerNumber: String, targetSystem: String, salesOrganizationCode: String): AvailableItems
+  getSkuAvailability(
+    refIds: [String]
+    customerNumber: String
+    targetSystem: String
+    salesOrganizationCode: String
+  ): AvailableItems @withSegmentData
 
-  getItemPricing(itemNumber: String!, customer: String, effectiveDate: String): ItemPrices
+  getItemPricing(
+    itemNumber: String!
+    customer: String
+    effectiveDate: String
+  ): ItemPrices
 
-  getStockAvailability(itemNumber: String!, customer: String, thruDate: String): StockAvailability
+  getStockAvailability(
+    itemNumber: String!
+    customer: String
+    thruDate: String
+  ): StockAvailability
 }

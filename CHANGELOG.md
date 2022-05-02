@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed product unavailability in trade policy
+
 ## [0.1.38] - 2022-04-21
 
 ### Fixed
