@@ -126,12 +126,12 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
 
       message = resolveToastMessage(success, isNewItem)
 
-      action = success
-        ? {
-          label: translateMessage(messages.seeCart),
-          href: '/checkout/#/cart',
-        }
-        : undefined
+      // action = success
+      //   ? {
+      //     label: translateMessage(messages.seeCart),
+      //     href: '/checkout/#/cart',
+      //   }
+      //   : undefined
     }
 
     showToast({ message, action })

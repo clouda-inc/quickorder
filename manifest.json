@@ -1,5 +1,5 @@
 {
-  "vendor": "sbdsefprod",
+  "vendor": "sbdsefuat",
   "name": "bulk-order",
   "version": "0.1.39",
   "title": "Quickorder",
@@ -154,7 +154,9 @@
     },
     "free": true,
     "type": "free",
-    "availableCountries": ["*"]
+    "availableCountries": [
+      "*"
+    ]
   },
   "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"
 }
