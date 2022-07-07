@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - Remove unnecessary decimal places from uom description
+- Removed go-to-checkout button from quick order add-to-cart popup
 
 ## [0.1.39] - 2022-05-02
 
