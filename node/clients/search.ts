@@ -1,5 +1,5 @@
-import type { InstanceOptions, IOContext } from '@vtex/api'
 import { JanusClient } from '@vtex/api'
+import type { InstanceOptions, IOContext } from '@vtex/api'
 
 interface RefIdArgs {
   refids: any

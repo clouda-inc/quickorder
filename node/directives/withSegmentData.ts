@@ -1,5 +1,5 @@
-import type { GraphQLField } from 'graphql'
 import { defaultFieldResolver } from 'graphql'
+import type { GraphQLField } from 'graphql'
 import { SchemaDirectiveVisitor } from 'graphql-tools'
 import atob from 'atob'
 

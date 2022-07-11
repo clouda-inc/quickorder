@@ -1,3 +1,4 @@
+import { MetricsAccumulator } from '@vtex/api'
 import type {
   IOContext,
   ParamsContext,
@@ -5,7 +6,6 @@ import type {
   ServiceContext,
   SegmentData,
 } from '@vtex/api'
-import { MetricsAccumulator } from '@vtex/api'
 
 import type { Clients } from './clients'
 
