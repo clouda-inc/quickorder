@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.40] - 2022-07-10
+
 ### Fixed
 
 - Remove unnecessary decimal places from uom description
