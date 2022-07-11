@@ -12,7 +12,7 @@ type AvailableItem {
   productName: String
   skuName: String
   uom: String
-  uomDescription: String
+  uomDescription: Float
   moq: Int
   leadTime: String
   linkText: String
