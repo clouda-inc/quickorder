@@ -111,7 +111,6 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
 
   const toastMessage = (arg: any) => {
     let message
-    let action
 
     if (typeof arg === 'string') {
       message = intl.formatMessage(messages[arg])
@@ -127,7 +126,7 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
       message = resolveToastMessage(success, isNewItem)
     }
 
-    showToast({ message, action })
+    showToast({ message })
   }
 
   const clear = () => {

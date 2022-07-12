@@ -99,14 +99,7 @@ const UploadBlock: FunctionComponent<
   }) => {
     const message = resolveToastMessage(success, isNewItem)
 
-    const action = success
-      ? {
-          label: translateMessage(messages.seeCart),
-          href: '/checkout/#/cart',
-        }
-      : undefined
-
-    showToast({ message, action })
+    showToast({ message })
   }
 
   const download = () => {
