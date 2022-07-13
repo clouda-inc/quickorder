@@ -30,14 +30,14 @@
   "devDependencies": {
     "@types/node": "^12.12.21",
     "@vtex/intl-equalizer": "^2.4.2",
-    "@vtex/prettier-config": "^1.0.0",
-    "eslint": "^6.8.0",
-    "eslint-config-vtex": "^14.1.2",
-    "eslint-config-vtex-react": "^6.2.1",
+    "@vtex/prettier-config": "^0.3.5",
+    "eslint": "^7.14.0",
+    "eslint-config-vtex": "^12.8.11",
+    "eslint-config-vtex-react": "^6.8.3",
     "husky": "^4.3.6",
-    "lint-staged": "^10.5.3",
-    "prettier": "^2.5.1",
-    "typescript": "^4.6.2"
+    "lint-staged": "^10.5.1",
+    "prettier": "^2.2.0",
+    "typescript": "^3.9.6"
   },
   "version": "0.5.7",
   "intl-equalizer": {
