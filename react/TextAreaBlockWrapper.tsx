@@ -1,9 +1,11 @@
 import React from 'react'
 import { useQuery } from 'react-apollo'
+import { useOrderForm } from 'vtex.order-manager/OrderForm'
 
 import ItemListContext from './ItemListContext'
 import GET_ACCOUNT_INFO from './queries/orderSoldToAccount.graphql'
 import TextAreaBlock from './TextAreaBlock'
+import { isPunchoutQuoteSession } from './utils/punchout'
 
 interface TextAreaBlockInterface {
   value: string
@@ -29,6 +31,12 @@ const TextAreaBlockWrapper = ({
       ssr: false,
     }
   )
+
+  const { orderForm } = useOrderForm()
+
+  if (isPunchoutQuoteSession(orderForm)) {
+    return null
+  }
 
   return (
     <ItemListProvider

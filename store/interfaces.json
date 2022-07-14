@@ -22,5 +22,8 @@
   "quickorder-textarea": {
     "component": "TextAreaBlockWrapper"
   },
+  "quickorder-punchout": {
+    "component": "PunchoutReviewWrapper"
+  },
   "store.quickorder": {}
 }
