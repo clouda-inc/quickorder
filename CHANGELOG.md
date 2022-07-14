@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix UOM description formatting issue
+
 ## [0.1.44] - 2022-07-14
 
 ### Added
