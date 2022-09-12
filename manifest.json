@@ -14,9 +14,6 @@
     "docs": "0.x"
   },
   "mustUpdateAt": "2019-04-02",
-  "scripts": {
-    "postreleasy": "bash lint.sh && vtex publish --verbose"
-  },
   "credentialType": "absolute",
   "dependencies": {
     "vtex.flex-layout": "0.x",
