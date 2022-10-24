@@ -9,7 +9,13 @@ import type { OrderForm } from 'vtex.checkout-graphql'
 import GET_PRODUCT_DATA from './queries/getPrductAvailability.graphql'
 import { validateQuantity } from './utils'
 
-const PunchoutReviewAndAddToCart = () => {
+type Props = {
+  enablePunchoutQuoteValidation?: boolean
+}
+
+const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
+  enablePunchoutQuoteValidation = false,
+}) => {
   const { orderForm }: { orderForm: OrderForm } = useOrderForm()
   const { soldTo, soldToCustomerNumber, soldToInfo, targetSystem } =
     (orderForm.customData?.customApps ?? []).find(
@@ -31,7 +37,7 @@ const PunchoutReviewAndAddToCart = () => {
   }, [soldToInfo, soldTo, soldToCustomerNumber, targetSystem])
 
   const { data } = useQuery(GET_PRODUCT_DATA, {
-    skip: !soldToSelected,
+    skip: !enablePunchoutQuoteValidation || !soldToSelected,
     variables: {
       refIds: quoteItems.map((quoteItem) => quoteItem.sku),
       customerNumber: soldTo,
@@ -72,6 +78,10 @@ const PunchoutReviewAndAddToCart = () => {
     }
   }, [addToCart, data])
 
+  if (!enablePunchoutQuoteValidation) {
+    return null
+  }
+
   if (!soldToSelected) {
     return <ExtensionPoint id="sold-to-account-selector" />
   }
@@ -80,3 +90,18 @@ const PunchoutReviewAndAddToCart = () => {
 }
 
 export default PunchoutReviewAndAddToCart
+
+PunchoutReviewAndAddToCart.schema = {
+  title: 'editor/quick-order.punchout.title',
+  description: 'editor/quick-order.punchout.description',
+  type: 'object',
+  properties: {
+    enablePunchoutQuoteValidation: {
+      title: 'editor/quick-order.punchout.enablePunchoutQuoteValidation.title',
+      description:
+        'editor/quick-order.punchout.enablePunchoutQuoteValidation.description',
+      type: 'boolean',
+      default: false,
+    },
+  },
+}

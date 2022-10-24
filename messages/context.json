@@ -72,5 +72,9 @@
   "store/toaster.cart.error": "store/toaster.cart.error",
   "store/toaster.cart.seeCart": "store/toaster.cart.seeCart",
   "store/toaster.cart.success": "store/toaster.cart.success",
-  "store/toaster.cart.ondroprejected": "store/toaster.cart.ondroprejected"
+  "store/toaster.cart.ondroprejected": "store/toaster.cart.ondroprejected",
+  "editor/quick-order.punchout.title": "editor/quick-order.punchout.title",
+  "editor/quick-order.punchout.description": "editor/quick-order.punchout.description",
+  "editor/quick-order.punchout.enablePunchoutQuoteValidation.title": "editor/quick-order.punchout.enablePunchoutQuoteValidation.title",
+  "editor/quick-order.punchout.enablePunchoutQuoteValidation.description": "editor/quick-order.punchout.enablePunchoutQuoteValidation.description"
 }

@@ -72,5 +72,9 @@
   "store/toaster.cart.error": "Eroare la adaugarea produselor in cos",
   "store/toaster.cart.seeCart": "Vezi cos",
   "store/toaster.cart.success": "Produse adaugate in cos",
-  "store/toaster.cart.ondroprejected": "Tip de fișier nevalid"
+  "store/toaster.cart.ondroprejected": "Tip de fișier nevalid",
+  "editor/quick-order.punchout.title": "Punchout Quote Validation",
+  "editor/quick-order.punchout.description": "Punchout quote validation",
+  "editor/quick-order.punchout.enablePunchoutQuoteValidation.title": "Enable Punchout quote validation",
+  "editor/quick-order.punchout.enablePunchoutQuoteValidation.description": "Enable Punchout quote validation"
 }

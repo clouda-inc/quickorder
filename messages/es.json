@@ -72,5 +72,9 @@
   "store/toaster.cart.error": "Error al agregar productos al carrito",
   "store/toaster.cart.seeCart": "Ver el carrito",
   "store/toaster.cart.success": "Productos agregados correctamente",
-  "store/toaster.cart.ondroprejected": "Tipo de archivo invalido"
+  "store/toaster.cart.ondroprejected": "Tipo de archivo invalido",
+  "editor/quick-order.punchout.title": "Punchout Quote Validation",
+  "editor/quick-order.punchout.description": "Punchout quote validation",
+  "editor/quick-order.punchout.enablePunchoutQuoteValidation.title": "Enable Punchout quote validation",
+  "editor/quick-order.punchout.enablePunchoutQuoteValidation.description": "Enable Punchout quote validation"
 }
