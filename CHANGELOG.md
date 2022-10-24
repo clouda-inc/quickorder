@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Skipped UI for Punchout quote validation
+
 ## [0.1.48] - 2022-09-12
 
 ### Fixed

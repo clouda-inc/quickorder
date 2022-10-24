@@ -79,5 +79,8 @@
       "text": "Categories",
       "description": "Add products directly from their categories"
     }
+  },
+  "store.punchout-quote": {
+    "children": ["quickorder-punchout"]
   }
 }
