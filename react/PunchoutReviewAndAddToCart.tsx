@@ -3,7 +3,7 @@ import { useOrderForm } from 'vtex.order-manager/OrderForm'
 import { useMutation, useQuery } from 'react-apollo'
 import type { OrderForm as OrderFormType } from 'vtex.checkout-graphql/graphql/__types_entrypoint'
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
-import { ExtensionPoint } from 'vtex.render-runtime'
+import { ExtensionPoint, useRuntime } from 'vtex.render-runtime'
 import type { OrderForm } from 'vtex.checkout-graphql'
 
 import GET_PRODUCT_DATA from './queries/getPrductAvailability.graphql'
@@ -17,6 +17,7 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
   enablePunchoutQuoteValidation = false,
 }) => {
   const { orderForm }: { orderForm: OrderForm } = useOrderForm()
+  const { rootPath = '' } = useRuntime()
   const { soldTo, soldToCustomerNumber, soldToInfo, targetSystem } =
     (orderForm.customData?.customApps ?? []).find(
       (app) => app.id === 'checkout-simulation'
@@ -73,7 +74,7 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
             })),
         },
       }).then(() => {
-        window.location.pathname = '/cart'
+        window.location.pathname = `${rootPath}/cart`
       })
     }
   }, [addToCart, data])
