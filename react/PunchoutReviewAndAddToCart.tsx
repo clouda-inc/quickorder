@@ -5,6 +5,7 @@ import type { OrderForm as OrderFormType } from 'vtex.checkout-graphql/graphql/_
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
 import { ExtensionPoint, useRuntime } from 'vtex.render-runtime'
 import type { OrderForm } from 'vtex.checkout-graphql'
+import { Spinner } from 'vtex.styleguide'
 
 import GET_PRODUCT_DATA from './queries/getPrductAvailability.graphql'
 import { validateQuantity } from './utils'
@@ -37,7 +38,7 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
     return !!(soldTo && soldToCustomerNumber && soldToInfo && targetSystem)
   }, [soldToInfo, soldTo, soldToCustomerNumber, targetSystem])
 
-  const { data } = useQuery(GET_PRODUCT_DATA, {
+  const { data, loading, error } = useQuery(GET_PRODUCT_DATA, {
     skip: !enablePunchoutQuoteValidation || !soldToSelected,
     variables: {
       refIds: quoteItems.map((quoteItem) => quoteItem.sku),
@@ -79,12 +80,26 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
     }
   }, [addToCart, data])
 
+  useEffect(() => {
+    if (error) {
+      window.location.pathname = `${rootPath}/cart`
+    }
+  }, [error, rootPath])
+
   if (!enablePunchoutQuoteValidation) {
     return null
   }
 
   if (!soldToSelected) {
     return <ExtensionPoint id="sold-to-account-selector" />
+  }
+
+  if (loading) {
+    return (
+      <div className="mw9 center pa7 flex justify-center">
+        <Spinner />
+      </div>
+    )
   }
 
   return <div />
