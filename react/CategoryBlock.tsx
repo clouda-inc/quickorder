@@ -26,7 +26,6 @@ import { graphql, useApolloClient, compose, useMutation } from 'react-apollo'
 
 import getCategories from './queries/categoriesQuery.gql'
 import SearchByCategory from './queries/productsByCategory.gql'
-import { isPunchoutQuoteSession } from './utils/punchout'
 
 const messages = defineMessages({
   success: {
@@ -88,7 +87,7 @@ const CategoryBlock: FunctionComponent<WrappedComponentProps & any> = ({
   const { settings = {}, showInstallPrompt = undefined } = usePWA() || {}
   const { promptOnCustomEvent } = settings
 
-  const { orderForm, setOrderForm }: OrderFormContext = OrderForm.useOrderForm()
+  const { setOrderForm }: OrderFormContext = OrderForm.useOrderForm()
 
   const resolveToastMessage = (success: boolean, isNewItem: boolean) => {
     if (!success) return intl.formatMessage(messages.error)
@@ -489,10 +488,6 @@ const CategoryBlock: FunctionComponent<WrappedComponentProps & any> = ({
         )}
       </Collapsible>
     )
-  }
-
-  if (!orderForm || isPunchoutQuoteSession(orderForm)) {
-    return null
   }
 
   return (

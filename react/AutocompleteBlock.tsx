@@ -31,7 +31,6 @@ import QuickOrderAutocomplete from './components/QuickOrderAutocomplete'
 import productQuery from './queries/product.gql'
 import ORDER_SOLD_TO_ACCOUNT from './queries/orderSoldToAccount.graphql'
 import './global.css'
-import { isPunchoutQuoteSession } from './utils/punchout'
 
 const messages = defineMessages({
   success: {
@@ -359,10 +358,6 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
   ] as const
 
   const handles = useCssHandles(CSS_HANDLES)
-
-  if (!orderForm?.orderForm || isPunchoutQuoteSession(orderForm.orderForm)) {
-    return null
-  }
 
   return (
     <div className={`${handles.textContainerMain} flex flex-column`}>

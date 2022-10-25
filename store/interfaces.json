@@ -23,7 +23,9 @@
     "component": "TextAreaBlockWrapper"
   },
   "quickorder-punchout": {
-    "component": "PunchoutReviewWrapper"
+    "component": "PunchoutReviewAndAddToCart",
+    "allowed": ["sold-to-account-selector"]
   },
-  "store.quickorder": {}
+  "store.quickorder": {},
+  "store.punchout-quote": {}
 }
