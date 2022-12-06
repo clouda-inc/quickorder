@@ -5,7 +5,7 @@ import { useCssHandles } from 'vtex.css-handles'
 import { Spinner } from 'vtex.styleguide'
 
 import OrderSoldToAccount from './queries/orderSoldToAccount.graphql'
-import './sbdsefprod.sold-to-validation.css'
+import './sbdsefuat.sold-to-validation.css'
 
 const SoldToValidationWrapper = () => {
   const CSS_HANDLES = [

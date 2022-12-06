@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Removed product search area from quickorder (temporary)
+
 ## [0.1.51] - 2022-10-25
 
 ### Fixed

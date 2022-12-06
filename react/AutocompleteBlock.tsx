@@ -359,152 +359,156 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
 
   const handles = useCssHandles(CSS_HANDLES)
 
-  return (
-    <div className={`${handles.textContainerMain} flex flex-column`}>
-      {!componentOnly && (
-        <div className={`${handles.textContainer} w-100 fl-l`}>
-          <h2
-            className={`${handles.textContainerTitle} t-heading-3 mb3 ml5 ml3-ns mt4`}
-          >
-            {text}
-          </h2>
-          <div
-            className={`${handles.textContainerDescription} t-body lh-copy c-muted-1 mb7 ml3 false`}
-          >
-            {description}
-          </div>
-        </div>
-      )}
-      <div
-        className={`${handles.componentContainer} ${!componentOnly ? 'w-100 fr-l' : ''
-          }`}
-      >
-        <div className="w-100 mb5">
-          <div className="bg-base t-body c-on-base ph3 br3 b--muted-4">
-            {!selectedItem && <QuickOrderAutocomplete onSelect={onSelect} />}
-            {!!selectedItem && (
-              <div>
-                <div className="w-two-thirds-l w-100-ns fl-l">
-                  <div
-                    className={`flex flex-column w-10 fl ${handles.productThumb}`}
-                  >
-                    <img
-                      src={thumb(selectedItem.thumb)}
-                      width="50"
-                      height="50"
-                      alt=""
-                    />
-                  </div>
-                  <div
-                    className={`flex flex-column w-90 fl ${handles.productLabel}`}
-                  >
-                    <span className={`${handles.productTitle}`}>
-                      {selectedItem.label}
-                    </span>
-                    <span className={`${handles.productTitle}`}>
-                      UoM- {selectedItem?.data.product.properties.find(r=> r.name==="Unit of Measure")?.values}
-                    </span>
+  const temporaryHide = true
 
-                    {!!selectedItem &&
-                      selectedItem.data.product.items.length > 1 && (
-                        <div className={`${handles.productSku} flex flex-row`}>
-                          {selectedItem.data.product.items.map((item: any) => {
-                            return (
-                              <span
-                                key={item.itemId}
-                                className={`mr4 ${handles.skuSelection}`}
-                              >
-                                <Tag
-                                  size="small"
-                                  bgColor={
-                                    item.itemId === selectedItem.value
-                                      ? '#8bc34a'
-                                      : '#979899'
-                                  }
-                                  onClick={() => {
-                                    selectSku(item.itemId)
-                                  }}
-                                >
-                                  {item.name}
-                                </Tag>
-                              </span>
-                            )
-                          })}
-                        </div>
-                      )}
-                  </div>
-                  {!!selectedItem && unitMultiplier && (
+  return (
+    !temporaryHide ? (
+      <div className={`${handles.textContainerMain} flex flex-column`}>
+        {!componentOnly && (
+          <div className={`${handles.textContainer} w-100 fl-l`}>
+            <h2
+              className={`${handles.textContainerTitle} t-heading-3 mb3 ml5 ml3-ns mt4`}
+            >
+              {text}
+            </h2>
+            <div
+              className={`${handles.textContainerDescription} t-body lh-copy c-muted-1 mb7 ml3 false`}
+            >
+              {description}
+            </div>
+          </div>
+        )}
+        <div
+          className={`${handles.componentContainer} ${!componentOnly ? 'w-100 fr-l' : ''
+            }`}
+        >
+          <div className="w-100 mb5">
+            <div className="bg-base t-body c-on-base ph3 br3 b--muted-4">
+              {!selectedItem && <QuickOrderAutocomplete onSelect={onSelect} />}
+              {!!selectedItem && (
+                <div>
+                  <div className="w-two-thirds-l w-100-ns fl-l">
+                    <div
+                      className={`flex flex-column w-10 fl ${handles.productThumb}`}
+                    >
+                      <img
+                        src={thumb(selectedItem.thumb)}
+                        width="50"
+                        height="50"
+                        alt=""
+                      />
+                    </div>
                     <div
                       className={`flex flex-column w-90 fl ${handles.productLabel}`}
                     >
-                      <span className="mr4">
-                        <Tag type="warning" variation="low">
-                          Unit Multiplier of {unitMultiplier}
-                        </Tag>
+                      <span className={`${handles.productTitle}`}>
+                        {selectedItem.label}
                       </span>
-                    </div>
-                  )}
-                </div>
-                <div className="w-third-l w-100-ns fr-l">
-                  <div
-                    className={`flex flex-column w-40 ph5-l ph2 p fl ${handles.inputQuantity}`}
-                  >
-                    <NumericStepper
-                      size={'small'}
-                      value={quantitySelected}
-                      minValue={1}
-                      maxValue={10000000}
-                      unitMultiplier={unitMultiplier}
-                      onChange={(e: any) => {
-                        let qnt = adjustTheQuantity(e.value)
-                        setState({
-                          ...state,
-                          quantitySelected: qnt
-                        })
-                      }
-                      }
-                    />
-                  </div>
-                  <div
-                    className={`flex flex-column w-40 fl ${handles.buttonAdd}`}
-                  >
-                    <Button
-                      variation="primary"
-                      size="small"
-                      isLoading={loading}
-                      onClick={() => {
-                        callAddUnitToCart()
-                      }}
-                    >
-                      <FormattedMessage id="store/quickorder.autocomplete.addButton" />
-                    </Button>
+                      <span className={`${handles.productTitle}`}>
+                        UoM- {selectedItem?.data.product.properties.find(r=> r.name==="Unit of Measure")?.values}
+                      </span>
 
+                      {!!selectedItem &&
+                        selectedItem.data.product.items.length > 1 && (
+                          <div className={`${handles.productSku} flex flex-row`}>
+                            {selectedItem.data.product.items.map((item: any) => {
+                              return (
+                                <span
+                                  key={item.itemId}
+                                  className={`mr4 ${handles.skuSelection}`}
+                                >
+                                  <Tag
+                                    size="small"
+                                    bgColor={
+                                      item.itemId === selectedItem.value
+                                        ? '#8bc34a'
+                                        : '#979899'
+                                    }
+                                    onClick={() => {
+                                      selectSku(item.itemId)
+                                    }}
+                                  >
+                                    {item.name}
+                                  </Tag>
+                                </span>
+                              )
+                            })}
+                          </div>
+                        )}
+                    </div>
+                    {!!selectedItem && unitMultiplier && (
+                      <div
+                        className={`flex flex-column w-90 fl ${handles.productLabel}`}
+                      >
+                        <span className="mr4">
+                          <Tag type="warning" variation="low">
+                            Unit Multiplier of {unitMultiplier}
+                          </Tag>
+                        </span>
+                      </div>
+                    )}
                   </div>
-                  <div
-                    className={`flex flex-column w-20 fl ${handles.buttonClear}`}
-                  >
-                    <Button
-                      variation="tertiary"
-                      size="small"
-                      disabled={loading}
-                      onClick={() => {
-                        clear()
-                      }}
+                  <div className="w-third-l w-100-ns fr-l">
+                    <div
+                      className={`flex flex-column w-40 ph5-l ph2 p fl ${handles.inputQuantity}`}
                     >
-                      <IconClear
+                      <NumericStepper
+                        size={'small'}
+                        value={quantitySelected}
+                        minValue={1}
+                        maxValue={10000000}
+                        unitMultiplier={unitMultiplier}
+                        onChange={(e: any) => {
+                          let qnt = adjustTheQuantity(e.value)
+                          setState({
+                            ...state,
+                            quantitySelected: qnt
+                          })
+                        }
+                        }
+                      />
+                    </div>
+                    <div
+                      className={`flex flex-column w-40 fl ${handles.buttonAdd}`}
+                    >
+                      <Button
+                        variation="primary"
+                        size="small"
+                        isLoading={loading}
+                        onClick={() => {
+                          callAddUnitToCart()
+                        }}
+                      >
+                        <FormattedMessage id="store/quickorder.autocomplete.addButton" />
+                      </Button>
+
+                    </div>
+                    <div
+                      className={`flex flex-column w-20 fl ${handles.buttonClear}`}
+                    >
+                      <Button
+                        variation="tertiary"
+                        size="small"
+                        disabled={loading}
                         onClick={() => {
                           clear()
                         }}
-                      />
-                    </Button>
+                      >
+                        <IconClear
+                          onClick={() => {
+                            clear()
+                          }}
+                        />
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    ) : null
   )
 }
 
