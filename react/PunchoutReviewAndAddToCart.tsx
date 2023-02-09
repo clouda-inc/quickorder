@@ -1,11 +1,12 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useOrderForm } from 'vtex.order-manager/OrderForm'
 import { useMutation, useQuery } from 'react-apollo'
 import type { OrderForm as OrderFormType } from 'vtex.checkout-graphql/graphql/__types_entrypoint'
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
 import { ExtensionPoint, useRuntime } from 'vtex.render-runtime'
 import type { OrderForm } from 'vtex.checkout-graphql'
-import { Spinner } from 'vtex.styleguide'
+import { Button, Modal, Spinner } from 'vtex.styleguide'
+import { useIntl } from 'react-intl'
 
 import GET_PRODUCT_DATA from './queries/getPrductAvailability.graphql'
 import { validateQuantity } from './utils'
@@ -29,6 +30,11 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
       (app) => app.id === 'punchout-to-go'
     )?.fields.quoteItems ?? '[]'
   )
+
+  const [warningModalOpen, setWarningModalOpen] = useState(false)
+  const [invalidItems, setInvalidItems] = useState<any>([])
+
+  const intl = useIntl()
 
   const [addToCart] = useMutation<{ addToCart: OrderFormType }, { items: [] }>(
     ADD_TO_CART
@@ -75,7 +81,19 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
             })),
         },
       }).then(() => {
-        window.location.pathname = `${rootPath}/cart`
+        const unavailableItems = (data?.getSkuAvailability?.items ?? []).filter(
+          (reviewedItem: any) =>
+            reviewedItem.sku === null ||
+            reviewedItem.availability !== 'authorized'
+        )
+
+        setInvalidItems(unavailableItems)
+
+        if (unavailableItems.length > 0) {
+          setWarningModalOpen(true)
+        } else {
+          window.location.pathname = `${rootPath}/cart`
+        }
       })
     }
   }, [addToCart, data])
@@ -99,6 +117,45 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
       <div className="mw9 center pa7 flex justify-center">
         <Spinner />
       </div>
+    )
+  }
+
+  if (warningModalOpen) {
+    return (
+      <Modal
+        centered
+        isOpen={warningModalOpen}
+        onClose={() => {
+          setWarningModalOpen(false)
+          window.location.pathname = `${rootPath}/cart`
+        }}
+        bottomBar={
+          <div className="nowrap">
+            <span>
+              <Button
+                variation="primary"
+                onClick={() => {
+                  setWarningModalOpen(false)
+                  window.location.pathname = `${rootPath}/cart`
+                }}
+              >
+                {intl.formatMessage({
+                  id: 'store/quickorder.punchout.continue',
+                })}
+              </Button>
+            </span>
+          </div>
+        }
+      >
+        <div className="dark-gray">
+          <p>
+            {intl.formatMessage(
+              { id: 'store/quickorder.punchout.unavailable' },
+              { items: invalidItems.map((item: any) => item.refid).join(', ') }
+            )}
+          </p>
+        </div>
+      </Modal>
     )
   }
 
