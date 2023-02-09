@@ -1,1 +1,1 @@
-declare module 'sbdsefuat.checkout-simulation'
+declare module 'sbdsefprod.checkout-simulation'
