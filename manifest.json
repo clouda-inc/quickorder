@@ -1,5 +1,5 @@
 {
-  "vendor": "sbdsefuat",
+  "vendor": "sbdsefprod",
   "name": "bulk-order",
   "version": "0.1.52",
   "title": "Quickorder",
@@ -33,7 +33,7 @@
     "vtex.store-resources": "0.x",
     "vtex.css-handles": "0.x",
     "vtex.store-icons": "0.x",
-    "sbdsefuat.checkout-simulation": "1.x"
+    "sbdsefprod.checkout-simulation": "1.x"
   },
   "policies": [
     {
