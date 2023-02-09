@@ -68,6 +68,8 @@
   "store/quickorder.withoutPriceFulfillment": "Producto sin precio",
   "store/quickorder.withoutStock": "Sin stock",
   "store/quickorder.productNotFound": "Producto no encontrado",
+  "store/quickorder.punchout.continue": "Continue",
+  "store/quickorder.punchout.unavailable": "Items: {items} are not available for purchase in the online catalog.",
   "store/toaster.cart.duplicated": "Elemento duplicado",
   "store/toaster.cart.error": "Error al agregar productos al carrito",
   "store/toaster.cart.seeCart": "Ver el carrito",
