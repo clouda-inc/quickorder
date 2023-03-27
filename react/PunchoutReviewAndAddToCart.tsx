@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useOrderForm } from 'vtex.order-manager/OrderForm'
 import { useMutation, useQuery } from 'react-apollo'
 import type { OrderForm as OrderFormType } from 'vtex.checkout-graphql/graphql/__types_entrypoint'
@@ -30,6 +30,8 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
   const [orgAccountFields, setOrgAccountFields] =
     useState<OrgAccountField | null>(null)
 
+  const [soldToSelected, setSoldToSelected] = useState(false)
+
   useEffect(() => {
     const { soldTo, soldToCustomerNumber, soldToInfo, targetSystem } =
       (orderForm.customData?.customApps ?? []).find(
@@ -42,6 +44,10 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
       soldToInfo,
       targetSystem,
     })
+
+    if (soldTo && soldToCustomerNumber && soldToInfo && targetSystem) {
+      setSoldToSelected(true)
+    }
   }, [orderForm.customData?.customApps])
 
   const [quoteItems, setQuoteItems] = useState<any>([])
@@ -65,19 +71,19 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
     ADD_TO_CART
   )
 
-  const soldToSelected = useMemo(() => {
-    return !!(
-      orgAccountFields?.soldTo &&
-      orgAccountFields.soldToCustomerNumber &&
-      orgAccountFields.soldToInfo &&
-      orgAccountFields.targetSystem
-    )
-  }, [
-    orgAccountFields?.soldToInfo,
-    orgAccountFields?.soldTo,
-    orgAccountFields?.soldToCustomerNumber,
-    orgAccountFields?.targetSystem,
-  ])
+  // const soldToSelected = useMemo(() => {
+  //   return !!(
+  //     orgAccountFields?.soldTo &&
+  //     orgAccountFields.soldToCustomerNumber &&
+  //     orgAccountFields.soldToInfo &&
+  //     orgAccountFields.targetSystem
+  //   )
+  // }, [
+  //   orgAccountFields?.soldToInfo,
+  //   orgAccountFields?.soldTo,
+  //   orgAccountFields?.soldToCustomerNumber,
+  //   orgAccountFields?.targetSystem,
+  // ])
 
   const { data, loading, error } = useQuery(GET_PRODUCT_DATA, {
     skip:
@@ -151,12 +157,14 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
   }
 
   if (!soldToSelected) {
+    console.info('soldToSelected 2', soldToSelected)
     console.info('poReview-test2')
 
     return <ExtensionPoint id="sold-to-account-selector" />
   }
 
   if (quoteItems.length === 0) {
+    console.info('soldToSelected 2.1', soldToSelected)
     console.info('poReview-test2.1')
 
     return null
