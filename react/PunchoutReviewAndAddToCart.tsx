@@ -44,11 +44,17 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
     })
   }, [orderForm.customData?.customApps])
 
-  const quoteItems = JSON.parse(
-    (orderForm.customData?.customApps ?? []).find(
-      (app) => app.id === 'punchout-to-go'
-    )?.fields.quoteItems ?? '[]'
-  )
+  const [quoteItems, setQuoteItems] = useState<any>([])
+
+  useEffect(() => {
+    setQuoteItems(
+      JSON.parse(
+        (orderForm.customData?.customApps ?? []).find(
+          (app) => app.id === 'punchout-to-go'
+        )?.fields.quoteItems ?? '[]'
+      )
+    )
+  }, [orderForm.customData?.customApps])
 
   const [warningModalOpen, setWarningModalOpen] = useState(false)
   const [invalidItems, setInvalidItems] = useState<any>([])
@@ -75,7 +81,10 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
 
   const { data, loading, error } = useQuery(GET_PRODUCT_DATA, {
     skip:
-      !orgAccountFields || !enablePunchoutQuoteValidation || !soldToSelected,
+      !orgAccountFields ||
+      !enablePunchoutQuoteValidation ||
+      !soldToSelected ||
+      quoteItems.length === 0,
     variables: {
       refIds: quoteItems.map((quoteItem) => quoteItem.sku),
       customerNumber: orgAccountFields?.soldTo,
@@ -136,14 +145,26 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
   }, [error, rootPath])
 
   if (!enablePunchoutQuoteValidation) {
-    return null
+    console.info('poReview-test1')
+
+    return <div className="poReview-test1" />
   }
 
   if (!soldToSelected) {
+    console.info('poReview-test2')
+
     return <ExtensionPoint id="sold-to-account-selector" />
   }
 
+  if (quoteItems.length === 0) {
+    console.info('poReview-test2.1')
+
+    return null
+  }
+
   if (loading) {
+    console.info('poReview-test3')
+
     return (
       <div className="mw9 center pa7 flex justify-center">
         <Spinner />
@@ -152,6 +173,8 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
   }
 
   if (warningModalOpen) {
+    console.info('poReview-test4')
+
     return (
       <Modal
         centered
@@ -190,7 +213,9 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
     )
   }
 
-  return <div />
+  console.info('poReview-test5')
+
+  return <div className="poReview-test5" />
 }
 
 export default PunchoutReviewAndAddToCart
