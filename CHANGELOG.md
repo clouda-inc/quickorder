@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed P2G quote behavior with single account
+
 ## [0.1.53] - 2023-02-09
 
 ### Fixed
