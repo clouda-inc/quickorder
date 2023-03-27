@@ -15,15 +15,34 @@ type Props = {
   enablePunchoutQuoteValidation?: boolean
 }
 
+type OrgAccountField = {
+  soldTo: string
+  soldToCustomerNumber: string
+  soldToInfo: string
+  targetSystem: string
+}
+
 const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
   enablePunchoutQuoteValidation = false,
 }) => {
   const { orderForm }: { orderForm: OrderForm } = useOrderForm()
   const { rootPath = '' } = useRuntime()
-  const { soldTo, soldToCustomerNumber, soldToInfo, targetSystem } =
-    (orderForm.customData?.customApps ?? []).find(
-      (app) => app.id === 'checkout-simulation'
-    )?.fields ?? {}
+  const [orgAccountFields, setOrgAccountFields] =
+    useState<OrgAccountField | null>(null)
+
+  useEffect(() => {
+    const { soldTo, soldToCustomerNumber, soldToInfo, targetSystem } =
+      (orderForm.customData?.customApps ?? []).find(
+        (app) => app.id === 'checkout-simulation'
+      )?.fields ?? {}
+
+    setOrgAccountFields({
+      soldTo,
+      soldToCustomerNumber,
+      soldToInfo,
+      targetSystem,
+    })
+  }, [orderForm.customData?.customApps])
 
   const quoteItems = JSON.parse(
     (orderForm.customData?.customApps ?? []).find(
@@ -41,17 +60,29 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
   )
 
   const soldToSelected = useMemo(() => {
-    return !!(soldTo && soldToCustomerNumber && soldToInfo && targetSystem)
-  }, [soldToInfo, soldTo, soldToCustomerNumber, targetSystem])
+    return !!(
+      orgAccountFields?.soldTo &&
+      orgAccountFields.soldToCustomerNumber &&
+      orgAccountFields.soldToInfo &&
+      orgAccountFields.targetSystem
+    )
+  }, [
+    orgAccountFields?.soldToInfo,
+    orgAccountFields?.soldTo,
+    orgAccountFields?.soldToCustomerNumber,
+    orgAccountFields?.targetSystem,
+  ])
 
   const { data, loading, error } = useQuery(GET_PRODUCT_DATA, {
-    skip: !enablePunchoutQuoteValidation || !soldToSelected,
+    skip:
+      !orgAccountFields || !enablePunchoutQuoteValidation || !soldToSelected,
     variables: {
       refIds: quoteItems.map((quoteItem) => quoteItem.sku),
-      customerNumber: soldTo,
-      targetSystem,
+      customerNumber: orgAccountFields?.soldTo,
+      targetSystem: orgAccountFields?.targetSystem,
       salesOrganizationCode:
-        JSON.parse(soldToInfo ?? '{}').salesOrganizationCode ?? '',
+        JSON.parse(orgAccountFields?.soldToInfo ?? '{}')
+          .salesOrganizationCode ?? '',
     },
   })
 
@@ -96,7 +127,7 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
         }
       })
     }
-  }, [addToCart, data])
+  }, [addToCart, data, orderForm.items, quoteItems, rootPath])
 
   useEffect(() => {
     if (error) {
