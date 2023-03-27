@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { useOrderForm } from 'vtex.order-manager/OrderForm'
+// import { useOrderForm } from 'vtex.order-manager/OrderForm'
 import { useMutation, useQuery } from 'react-apollo'
 import type { OrderForm as OrderFormType } from 'vtex.checkout-graphql/graphql/__types_entrypoint'
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
+import { orderForm as ORDER_FORM } from 'vtex.checkout-resources/Queries'
 import { ExtensionPoint, useRuntime } from 'vtex.render-runtime'
 import type { OrderForm } from 'vtex.checkout-graphql'
 import { Button, Modal, Spinner } from 'vtex.styleguide'
 import { useIntl } from 'react-intl'
 
 import GET_PRODUCT_DATA from './queries/getPrductAvailability.graphql'
+// import SET_SOLD_TO from './mutations/setSoldToAccount.graphql'
 import { validateQuantity } from './utils'
 
 type Props = {
@@ -25,16 +27,24 @@ type OrgAccountField = {
 const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
   enablePunchoutQuoteValidation = false,
 }) => {
-  const { orderForm }: { orderForm: OrderForm } = useOrderForm()
+  const {
+    data: orderForm,
+    // loading: orderFormLoading,
+    // error: orderFormError,
+    // refetch: refetchOrderForm,
+  } = useQuery<{ orderForm: OrderForm }>(ORDER_FORM)
+
   const { rootPath = '' } = useRuntime()
   const [orgAccountFields, setOrgAccountFields] =
     useState<OrgAccountField | null>(null)
 
   const [soldToSelected, setSoldToSelected] = useState(false)
+  // const [setSoldTo, { loading: settingSoldTo, error: setSoldToError }] =
+  //   useMutation(SET_SOLD_TO)
 
   useEffect(() => {
     const { soldTo, soldToCustomerNumber, soldToInfo, targetSystem } =
-      (orderForm.customData?.customApps ?? []).find(
+      (orderForm?.orderForm.customData?.customApps ?? []).find(
         (app) => app.id === 'checkout-simulation'
       )?.fields ?? {}
 
@@ -48,19 +58,19 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
     if (soldTo && soldToCustomerNumber && soldToInfo && targetSystem) {
       setSoldToSelected(true)
     }
-  }, [orderForm.customData?.customApps])
+  }, [orderForm?.orderForm.customData?.customApps])
 
   const [quoteItems, setQuoteItems] = useState<any>([])
 
   useEffect(() => {
     setQuoteItems(
       JSON.parse(
-        (orderForm.customData?.customApps ?? []).find(
+        (orderForm?.orderForm.customData?.customApps ?? []).find(
           (app) => app.id === 'punchout-to-go'
         )?.fields.quoteItems ?? '[]'
       )
     )
-  }, [orderForm.customData?.customApps])
+  }, [orderForm?.orderForm.customData?.customApps])
 
   const [warningModalOpen, setWarningModalOpen] = useState(false)
   const [invalidItems, setInvalidItems] = useState<any>([])
@@ -115,7 +125,7 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
               id: parseInt(item.sku, 10),
               seller: item.seller.id,
               quantity:
-                ((orderForm.items ?? []).find(
+                ((orderForm?.orderForm.items ?? []).find(
                   (ofItem) => ofItem.id === item.sku
                 )?.quantity ?? 0) +
                 validateQuantity(
@@ -142,7 +152,7 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
         }
       })
     }
-  }, [addToCart, data, orderForm.items, quoteItems, rootPath])
+  }, [addToCart, data, orderForm?.orderForm.items, quoteItems, rootPath])
 
   useEffect(() => {
     if (error) {
