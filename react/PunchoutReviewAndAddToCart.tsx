@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useOrderForm } from 'vtex.order-manager/OrderForm'
 import { useMutation, useQuery } from 'react-apollo'
 import type { OrderForm as OrderFormType } from 'vtex.checkout-graphql/graphql/__types_entrypoint'
@@ -30,6 +30,8 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
   const [orgAccountFields, setOrgAccountFields] =
     useState<OrgAccountField | null>(null)
 
+  const [soldToSelected, setSoldToSelected] = useState(false)
+
   useEffect(() => {
     const { soldTo, soldToCustomerNumber, soldToInfo, targetSystem } =
       (orderForm.customData?.customApps ?? []).find(
@@ -42,13 +44,23 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
       soldToInfo,
       targetSystem,
     })
+
+    if (soldTo && soldToCustomerNumber && soldToInfo && targetSystem) {
+      setSoldToSelected(true)
+    }
   }, [orderForm.customData?.customApps])
 
-  const quoteItems = JSON.parse(
-    (orderForm.customData?.customApps ?? []).find(
-      (app) => app.id === 'punchout-to-go'
-    )?.fields.quoteItems ?? '[]'
-  )
+  const [quoteItems, setQuoteItems] = useState<any>([])
+
+  useEffect(() => {
+    setQuoteItems(
+      JSON.parse(
+        (orderForm.customData?.customApps ?? []).find(
+          (app) => app.id === 'punchout-to-go'
+        )?.fields.quoteItems ?? '[]'
+      )
+    )
+  }, [orderForm.customData?.customApps])
 
   const [warningModalOpen, setWarningModalOpen] = useState(false)
   const [invalidItems, setInvalidItems] = useState<any>([])
@@ -59,23 +71,26 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
     ADD_TO_CART
   )
 
-  const soldToSelected = useMemo(() => {
-    return !!(
-      orgAccountFields?.soldTo &&
-      orgAccountFields.soldToCustomerNumber &&
-      orgAccountFields.soldToInfo &&
-      orgAccountFields.targetSystem
-    )
-  }, [
-    orgAccountFields?.soldToInfo,
-    orgAccountFields?.soldTo,
-    orgAccountFields?.soldToCustomerNumber,
-    orgAccountFields?.targetSystem,
-  ])
+  // const soldToSelected = useMemo(() => {
+  //   return !!(
+  //     orgAccountFields?.soldTo &&
+  //     orgAccountFields.soldToCustomerNumber &&
+  //     orgAccountFields.soldToInfo &&
+  //     orgAccountFields.targetSystem
+  //   )
+  // }, [
+  //   orgAccountFields?.soldToInfo,
+  //   orgAccountFields?.soldTo,
+  //   orgAccountFields?.soldToCustomerNumber,
+  //   orgAccountFields?.targetSystem,
+  // ])
 
   const { data, loading, error } = useQuery(GET_PRODUCT_DATA, {
     skip:
-      !orgAccountFields || !enablePunchoutQuoteValidation || !soldToSelected,
+      !orgAccountFields ||
+      !enablePunchoutQuoteValidation ||
+      !soldToSelected ||
+      quoteItems.length === 0,
     variables: {
       refIds: quoteItems.map((quoteItem) => quoteItem.sku),
       customerNumber: orgAccountFields?.soldTo,
@@ -136,14 +151,28 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
   }, [error, rootPath])
 
   if (!enablePunchoutQuoteValidation) {
-    return null
+    console.info('poReview-test1')
+
+    return <div className="poReview-test1" />
   }
 
   if (!soldToSelected) {
+    console.info('soldToSelected 2', soldToSelected)
+    console.info('poReview-test2')
+
     return <ExtensionPoint id="sold-to-account-selector" />
   }
 
+  if (quoteItems.length === 0) {
+    console.info('soldToSelected 2.1', soldToSelected)
+    console.info('poReview-test2.1')
+
+    return null
+  }
+
   if (loading) {
+    console.info('poReview-test3')
+
     return (
       <div className="mw9 center pa7 flex justify-center">
         <Spinner />
@@ -152,6 +181,8 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
   }
 
   if (warningModalOpen) {
+    console.info('poReview-test4')
+
     return (
       <Modal
         centered
@@ -190,7 +221,9 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
     )
   }
 
-  return <div />
+  console.info('poReview-test5')
+
+  return <div className="poReview-test5" />
 }
 
 export default PunchoutReviewAndAddToCart
