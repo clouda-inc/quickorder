@@ -10,7 +10,7 @@ import { Button, Modal, Spinner } from 'vtex.styleguide'
 import { useIntl } from 'react-intl'
 
 import GET_PRODUCT_DATA from './queries/getPrductAvailability.graphql'
-// import SET_SOLD_TO from './mutations/setSoldToAccount.graphql'
+import SET_SOLD_TO from './mutations/setSoldToAccount.graphql'
 import { validateQuantity } from './utils'
 
 type Props = {
@@ -31,7 +31,7 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
     data: orderForm,
     // loading: orderFormLoading,
     // error: orderFormError,
-    // refetch: refetchOrderForm,
+    refetch: refetchOrderForm,
   } = useQuery<{ orderForm: OrderForm }>(ORDER_FORM)
 
   const { rootPath = '' } = useRuntime()
@@ -39,8 +39,13 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
     useState<OrgAccountField | null>(null)
 
   const [soldToSelected, setSoldToSelected] = useState(false)
-  // const [setSoldTo, { loading: settingSoldTo, error: setSoldToError }] =
-  //   useMutation(SET_SOLD_TO)
+  const [setSoldTo] = useMutation(SET_SOLD_TO)
+
+  useEffect(() => {
+    setSoldTo().then(() => {
+      refetchOrderForm()
+    })
+  }, [refetchOrderForm, setSoldTo])
 
   useEffect(() => {
     const { soldTo, soldToCustomerNumber, soldToInfo, targetSystem } =
