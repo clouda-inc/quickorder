@@ -139,7 +139,7 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
         }
       })
     }
-  }, [addToCart, data, orderForm.items, quoteItems, rootPath])
+  }, [addToCart, data])
 
   useEffect(() => {
     if (error) {
