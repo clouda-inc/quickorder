@@ -6,5 +6,15 @@ mutation setSoldToAccount($orderFormId: String) {
       corporateName
     }
     alreadyAssigned
+    simulationInfo {
+      soldTo
+      soldToCustomerNumber
+      soldToInfo
+      targetSystem
+    }
+    punchoutInfo {
+      sessionKey
+      quoteItems
+    }
   }
 }
