@@ -148,20 +148,14 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
   }, [error, rootPath])
 
   if (!enablePunchoutQuoteValidation) {
-    console.info('Quick order PO 1')
-
     return null
   }
 
   if (!soldToSelected) {
-    console.info('Quick order PO 2')
-
     return <ExtensionPoint id="sold-to-account-selector" />
   }
 
   if (loading) {
-    console.info('Quick order PO 3')
-
     return (
       <div className="mw9 center pa7 flex justify-center">
         <Spinner />
@@ -170,8 +164,6 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
   }
 
   if (warningModalOpen) {
-    console.info('Quick order PO 4')
-
     return (
       <Modal
         centered
@@ -209,8 +201,6 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
       </Modal>
     )
   }
-
-  console.info('Quick order PO 5')
 
   return <div />
 }
