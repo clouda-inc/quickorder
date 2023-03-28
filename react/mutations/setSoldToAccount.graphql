@@ -1,0 +1,20 @@
+mutation setSoldToAccount($orderFormId: String) {
+  setSoldToAccount(orderFormId: $orderFormId) {
+    hasMultipleSoldToAccounts
+    soldToAccountSet
+    selectedSoldTo {
+      corporateName
+    }
+    alreadyAssigned
+    simulationInfo {
+      soldTo
+      soldToCustomerNumber
+      soldToInfo
+      targetSystem
+    }
+    punchoutInfo {
+      sessionKey
+      quoteItems
+    }
+  }
+}

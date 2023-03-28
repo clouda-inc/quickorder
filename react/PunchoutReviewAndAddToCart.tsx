@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useOrderForm } from 'vtex.order-manager/OrderForm'
 import { useMutation, useQuery } from 'react-apollo'
 import type { OrderForm as OrderFormType } from 'vtex.checkout-graphql/graphql/__types_entrypoint'
@@ -9,16 +9,17 @@ import { Button, Modal, Spinner } from 'vtex.styleguide'
 import { useIntl } from 'react-intl'
 
 import GET_PRODUCT_DATA from './queries/getPrductAvailability.graphql'
+import SET_SOLD_TO from './mutations/setSoldToAccount.graphql'
 import { validateQuantity } from './utils'
 
 type Props = {
   enablePunchoutQuoteValidation?: boolean
 }
 
-type OrgAccountField = {
+type OrgInfo = {
   soldTo: string
-  soldToCustomerNumber: string
   soldToInfo: string
+  soldToCustomerNumber: string
   targetSystem: string
 }
 
@@ -26,11 +27,9 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
   enablePunchoutQuoteValidation = false,
 }) => {
   const { orderForm }: { orderForm: OrderForm } = useOrderForm()
+  const [setSoldTo] = useMutation<SetSoldToResponse>(SET_SOLD_TO)
   const { rootPath = '' } = useRuntime()
-  const [orgAccountFields, setOrgAccountFields] =
-    useState<OrgAccountField | null>(null)
-
-  const [soldToSelected, setSoldToSelected] = useState(false)
+  const [orgInfo, setOrgInfo] = useState<OrgInfo | null>(null)
 
   useEffect(() => {
     const { soldTo, soldToCustomerNumber, soldToInfo, targetSystem } =
@@ -38,29 +37,37 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
         (app) => app.id === 'checkout-simulation'
       )?.fields ?? {}
 
-    setOrgAccountFields({
+    setOrgInfo({
       soldTo,
       soldToCustomerNumber,
       soldToInfo,
       targetSystem,
     })
-
-    if (soldTo && soldToCustomerNumber && soldToInfo && targetSystem) {
-      setSoldToSelected(true)
-    }
   }, [orderForm.customData?.customApps])
-
-  const [quoteItems, setQuoteItems] = useState<any>([])
 
   useEffect(() => {
-    setQuoteItems(
-      JSON.parse(
-        (orderForm.customData?.customApps ?? []).find(
-          (app) => app.id === 'punchout-to-go'
-        )?.fields.quoteItems ?? '[]'
-      )
-    )
-  }, [orderForm.customData?.customApps])
+    if (!orgInfo) {
+      setSoldTo().then((response) => {
+        if (response.data) {
+          const { soldTo, soldToCustomerNumber, soldToInfo, targetSystem } =
+            response.data.setSoldToAccount.simulationInfo
+
+          setOrgInfo({
+            soldTo,
+            soldToCustomerNumber,
+            soldToInfo,
+            targetSystem,
+          })
+        }
+      })
+    }
+  }, [orgInfo, setSoldTo])
+
+  const quoteItems = JSON.parse(
+    (orderForm.customData?.customApps ?? []).find(
+      (app) => app.id === 'punchout-to-go'
+    )?.fields.quoteItems ?? '[]'
+  )
 
   const [warningModalOpen, setWarningModalOpen] = useState(false)
   const [invalidItems, setInvalidItems] = useState<any>([])
@@ -71,33 +78,23 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
     ADD_TO_CART
   )
 
-  // const soldToSelected = useMemo(() => {
-  //   return !!(
-  //     orgAccountFields?.soldTo &&
-  //     orgAccountFields.soldToCustomerNumber &&
-  //     orgAccountFields.soldToInfo &&
-  //     orgAccountFields.targetSystem
-  //   )
-  // }, [
-  //   orgAccountFields?.soldToInfo,
-  //   orgAccountFields?.soldTo,
-  //   orgAccountFields?.soldToCustomerNumber,
-  //   orgAccountFields?.targetSystem,
-  // ])
+  const soldToSelected = useMemo(() => {
+    return !!(
+      orgInfo?.soldTo &&
+      orgInfo.soldToCustomerNumber &&
+      orgInfo.soldToInfo &&
+      orgInfo.targetSystem
+    )
+  }, [orgInfo])
 
   const { data, loading, error } = useQuery(GET_PRODUCT_DATA, {
-    skip:
-      !orgAccountFields ||
-      !enablePunchoutQuoteValidation ||
-      !soldToSelected ||
-      quoteItems.length === 0,
+    skip: !enablePunchoutQuoteValidation || !soldToSelected,
     variables: {
       refIds: quoteItems.map((quoteItem) => quoteItem.sku),
-      customerNumber: orgAccountFields?.soldTo,
-      targetSystem: orgAccountFields?.targetSystem,
+      customerNumber: orgInfo?.soldTo,
+      targetSystem: orgInfo?.targetSystem,
       salesOrganizationCode:
-        JSON.parse(orgAccountFields?.soldToInfo ?? '{}')
-          .salesOrganizationCode ?? '',
+        JSON.parse(orgInfo?.soldToInfo ?? '{}').salesOrganizationCode ?? '',
     },
   })
 
@@ -142,7 +139,7 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
         }
       })
     }
-  }, [addToCart, data, orderForm.items, quoteItems, rootPath])
+  }, [addToCart, data])
 
   useEffect(() => {
     if (error) {
@@ -151,28 +148,14 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
   }, [error, rootPath])
 
   if (!enablePunchoutQuoteValidation) {
-    console.info('poReview-test1')
-
-    return <div className="poReview-test1" />
-  }
-
-  if (!soldToSelected) {
-    console.info('soldToSelected 2', soldToSelected)
-    console.info('poReview-test2')
-
-    return <ExtensionPoint id="sold-to-account-selector" />
-  }
-
-  if (quoteItems.length === 0) {
-    console.info('soldToSelected 2.1', soldToSelected)
-    console.info('poReview-test2.1')
-
     return null
   }
 
-  if (loading) {
-    console.info('poReview-test3')
+  if (!soldToSelected) {
+    return <ExtensionPoint id="sold-to-account-selector" />
+  }
 
+  if (loading) {
     return (
       <div className="mw9 center pa7 flex justify-center">
         <Spinner />
@@ -181,8 +164,6 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
   }
 
   if (warningModalOpen) {
-    console.info('poReview-test4')
-
     return (
       <Modal
         centered
@@ -221,9 +202,7 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
     )
   }
 
-  console.info('poReview-test5')
-
-  return <div className="poReview-test5" />
+  return <div />
 }
 
 export default PunchoutReviewAndAddToCart
