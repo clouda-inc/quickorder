@@ -46,21 +46,22 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
   }, [orderForm.customData?.customApps])
 
   useEffect(() => {
-    setSoldTo().then((response) => {
-      console.info('Set sold to response', response)
-      if (response.data) {
-        const { soldTo, soldToCustomerNumber, soldToInfo, targetSystem } =
-          response.data.setSoldToAccount.simulationInfo
+    if (!orgInfo) {
+      setSoldTo().then((response) => {
+        if (response.data) {
+          const { soldTo, soldToCustomerNumber, soldToInfo, targetSystem } =
+            response.data.setSoldToAccount.simulationInfo
 
-        setOrgInfo({
-          soldTo,
-          soldToCustomerNumber,
-          soldToInfo,
-          targetSystem,
-        })
-      }
-    })
-  }, [setSoldTo])
+          setOrgInfo({
+            soldTo,
+            soldToCustomerNumber,
+            soldToInfo,
+            targetSystem,
+          })
+        }
+      })
+    }
+  }, [orgInfo, setSoldTo])
 
   const quoteItems = JSON.parse(
     (orderForm.customData?.customApps ?? []).find(
