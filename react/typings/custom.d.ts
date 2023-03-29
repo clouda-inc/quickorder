@@ -15,3 +15,13 @@ interface ItemPrices {
   quantity: string
   uom: string
 }
+
+type GtmProductDetail = {
+  productId: string
+  productName: string
+  categoryTree: Category[]
+}
+
+type Category = {
+  name: string
+}
