@@ -99,11 +99,9 @@ const TextAreaBlock: FunctionComponent<
           item_category3: prod.categoryTree[2]?.name ?? undefined,
           item_category4: prod.categoryTree[3]?.name ?? undefined,
           item_category5: prod.categoryTree[4]?.name ?? undefined,
-          // TODO: fix this
-          quantity: 1,
+          quantity: reviewItems.find((i: { quantity: number, vtexSku: string }) => i.vtexSku === prod.productId.toString())?.quantity ?? 1,
         })
       })
-      console.log("pixelEventItems: ", pixelEventItems)
       push({
         event: 'bulkAddToCart',
         items: pixelEventItems,
@@ -161,8 +159,8 @@ const TextAreaBlock: FunctionComponent<
     // Update OrderForm from the context
     mutationResult.data && setOrderForm(mutationResult.data.addToCart)
 
-    // TODO: set the product IDs here
-    getProductsByIds({ variables: { values: ["7583", "71"] } })
+    const idArray = items.map((i: { id: number }) => i.id)
+    getProductsByIds({ variables: { values: idArray } })
     if (
       mutationResult.data?.addToCart?.messages?.generalMessages &&
       mutationResult.data.addToCart.messages.generalMessages.length
