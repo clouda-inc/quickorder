@@ -57,11 +57,10 @@ const TextAreaBlock: FunctionComponent<
   const [gtmProductDetails, setGtmProductDetails] = useState<GtmProductDetail[]>([])
 
   const [getProductsByIds] = useLazyQuery(PRODUCTS_BY_IDS, {
-    onCompleted: (someData: any) => {
-      setGtmProductDetails(someData?.productsByIdentifier ?? [])
+    onCompleted: (data: any) => {
+      setGtmProductDetails(data?.productsByIdentifier ?? [])
     }
-  }
-  )
+  })
 
   const [refidLoading, setRefIdLoading] = useState<any>()
 
