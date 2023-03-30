@@ -387,21 +387,6 @@ const UploadBlock: FunctionComponent<
     getProductsByIds({ variables: { values: idArray } })
     // Update OrderForm from the context
 
-    // const adjustSkuItemForPixelEvent = (item: any) => {
-    //   return {
-    //     skuId: item.id,
-    //     quantity: item.quantity,
-    //   }
-    // }
-
-    // // Send event to pixel-manager
-    // const pixelEventItems = items.map(adjustSkuItemForPixelEvent)
-
-    // push({
-    //   event: 'addToCart',
-    //   items: pixelEventItems,
-    // })
-
     if (promptOnCustomEvent === 'addToCart' && showInstallPrompt) {
       showInstallPrompt()
     }
