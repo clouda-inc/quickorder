@@ -1,0 +1,9 @@
+query ProductsByIds($values: [ID!]) {
+  productsByIdentifier(field: id, values: $values) @context(provider: "vtex.search-graphql") {
+    productId
+    productName
+    categoryTree {
+      name
+    }
+  }
+}
