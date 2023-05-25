@@ -1,15 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
-import React, { useState, useContext, FunctionComponent, useEffect } from 'react'
-import {
-  FormattedMessage,
-  defineMessages,
-  WrappedComponentProps,
-  injectIntl,
-} from 'react-intl'
+import { FunctionComponent, useEffect } from 'react'
+import React, { useState, useContext } from 'react'
+import type { WrappedComponentProps } from 'react-intl'
+import { FormattedMessage, defineMessages, injectIntl } from 'react-intl'
 import { Button, Textarea, ToastContext, Spinner } from 'vtex.styleguide'
 import { OrderForm } from 'vtex.order-manager'
-import { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
+import type { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
 import { useCssHandles } from 'vtex.css-handles'
 import { useLazyQuery, useMutation } from 'react-apollo'
@@ -54,12 +51,14 @@ const TextAreaBlock: FunctionComponent<
     reviewItems: [],
   })
 
-  const [gtmProductDetails, setGtmProductDetails] = useState<GtmProductDetail[]>([])
+  const [gtmProductDetails, setGtmProductDetails] = useState<
+    GtmProductDetail[]
+  >([])
 
   const [getProductsByIds] = useLazyQuery(PRODUCTS_BY_IDS, {
     onCompleted: (data: any) => {
       setGtmProductDetails(data?.productsByIdentifier ?? [])
-    }
+    },
   })
 
   const [refidLoading, setRefIdLoading] = useState<any>()
@@ -89,6 +88,7 @@ const TextAreaBlock: FunctionComponent<
   useEffect(() => {
     if (gtmProductDetails.length !== 0) {
       const pixelEventItems: any = []
+
       gtmProductDetails.map((prod: GtmProductDetail) => {
         pixelEventItems.push({
           item_id: prod.productId,
@@ -98,7 +98,11 @@ const TextAreaBlock: FunctionComponent<
           item_category3: prod.categoryTree[2]?.name ?? undefined,
           item_category4: prod.categoryTree[3]?.name ?? undefined,
           item_category5: prod.categoryTree[4]?.name ?? undefined,
-          quantity: reviewItems.find((i: { quantity: number, vtexSku: string }) => i.vtexSku === prod.productId.toString())?.quantity ?? 1,
+          quantity:
+            reviewItems.find(
+              (i: { quantity: number; vtexSku: string }) =>
+                i.vtexSku === prod.productId.toString()
+            )?.quantity ?? 1,
         })
       })
       push({
@@ -107,7 +111,6 @@ const TextAreaBlock: FunctionComponent<
       })
     }
   }, [gtmProductDetails])
-
 
   const resolveToastMessage = (success: boolean, isNewItem: boolean) => {
     if (!success) return translateMessage(messages.error)
@@ -128,8 +131,98 @@ const TextAreaBlock: FunctionComponent<
     showToast({ message })
   }
 
+  const createBulkAddToCartEventData = (
+    itemsByUser: any,
+    previousOrderFormItems: any,
+    mutationItems: any
+  ) => {
+    if (!mutationItems || !itemsByUser) {
+      return null
+    }
+
+    return itemsByUser
+      ?.map((el: { id: any }) => {
+        const mutatedItem =
+          mutationItems && Array.isArray(mutationItems)
+            ? mutationItems.find(
+                (item: { id: any }) => item.id === el.id.toString()
+              )
+            : null
+
+        if (mutatedItem) {
+          const previousItem =
+            previousOrderFormItems && Array.isArray(previousOrderFormItems)
+              ? previousOrderFormItems?.find(
+                  (item: { id: any }) => item.id === el.id.toString()
+                )
+              : null
+
+          const quantity = previousItem
+            ? mutatedItem.quantity - previousItem.quantity
+            : mutatedItem.quantity
+
+          const categories = mutatedItem.productCategories
+            ? Object.entries(mutatedItem.productCategories)
+            : null
+
+          return {
+            item_id: mutatedItem.productRefId,
+            item_name: mutatedItem.name,
+            item_category:
+              categories && categories.length > 0
+                ? categories[0][1]
+                : undefined,
+            item_category2:
+              categories && categories.length > 1
+                ? categories[1][1]
+                : undefined,
+            item_category3:
+              categories && categories.length > 2
+                ? categories[2][1]
+                : undefined,
+            item_category4:
+              categories && categories.length > 3
+                ? categories[3][1]
+                : undefined,
+            item_category5:
+              categories && categories.length > 4
+                ? categories[4][1]
+                : undefined,
+            quantity,
+          }
+        }
+
+        return {}
+      })
+      .filter((x: any) => Object.keys(x).length !== 0)
+  }
+
+  const triggerEvent = (
+    itemsByUser: any,
+    previousOrderFormItems: any,
+    mutationItems: any
+  ) => {
+    // eslint-disable-next-line no-self-assign
+    window.dataLayer = window.dataLayer
+    window.dataLayer.push({
+      event: 'bulkAddToCart',
+      ecommerce: {
+        items: createBulkAddToCartEventData(
+          itemsByUser,
+          previousOrderFormItems,
+          mutationItems
+        ),
+      },
+    })
+  }
+
   const callAddToCart = async (items: any) => {
+    console.log('___itemsbyuser: ', items)
+
     const currentItemsInCart = orderForm.orderForm.items
+
+    console.log('___currentitems: ', currentItemsInCart)
+
     const mutationResult = await addToCart({
       variables: {
         items: items.map((item: ItemType) => {
@@ -148,6 +241,8 @@ const TextAreaBlock: FunctionComponent<
       },
     })
 
+    console.log('___mutation: ', mutationResult)
+
     if (mutationError) {
       console.error(mutationError)
       toastMessage({ success: false, isNewItem: false })
@@ -159,7 +254,25 @@ const TextAreaBlock: FunctionComponent<
     mutationResult.data && setOrderForm(mutationResult.data.addToCart)
 
     const idArray = items.map((i: { id: number }) => i.id)
+
     getProductsByIds({ variables: { values: idArray } })
+
+    // console.log('___productsbyid: ', gtmProductDetails)
+    console.log(
+      '___gtmitems: ',
+      createBulkAddToCartEventData(
+        items,
+        currentItemsInCart,
+        mutationResult?.data?.addToCart?.items ?? null
+      )
+    )
+
+    triggerEvent(
+      items,
+      currentItemsInCart,
+      mutationResult?.data?.addToCart?.items ?? null
+    )
+
     if (
       mutationResult.data?.addToCart?.messages?.generalMessages &&
       mutationResult.data.addToCart.messages.generalMessages.length
@@ -329,8 +442,9 @@ const TextAreaBlock: FunctionComponent<
       )}
 
       <div
-        className={`${handles.componentContainer} ${!componentOnly ? 'w-100 fr-l pb6' : ''
-          }`}
+        className={`${handles.componentContainer} ${
+          !componentOnly ? 'w-100 fr-l pb6' : ''
+        }`}
       >
         {!reviewState && (
           <div className="w-100 mb5">
@@ -364,11 +478,13 @@ const TextAreaBlock: FunctionComponent<
               onRefidLoading={onRefidLoading}
             />
             <div
-              className={`mb4 mt4 flex justify-between ${handles.buttonsBlock
-                } ${!showAddToCart
+              className={`mb4 mt4 flex justify-between ${
+                handles.buttonsBlock
+              } ${
+                !showAddToCart
                   ? handles.addToCartDisabled
                   : handles.addToCartBtn
-                }`}
+              }`}
             >
               <Button
                 variation="tertiary"
