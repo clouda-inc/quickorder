@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - Showed unavailable items for Punchout quote in modal
-- Changed vendor name to `sbdsefprod`
+- Changed vendor name to `sbdsefuat`
 
 ## [0.1.52] - 2022-12-06
 
