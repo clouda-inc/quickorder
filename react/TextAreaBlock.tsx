@@ -1,25 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
-import React, { useState, useContext, FunctionComponent, useEffect } from 'react'
-import {
-  FormattedMessage,
-  defineMessages,
-  WrappedComponentProps,
-  injectIntl,
-} from 'react-intl'
+import type { FunctionComponent } from 'react'
+import React, { useState, useContext } from 'react'
+import type { WrappedComponentProps } from 'react-intl'
+import { FormattedMessage, defineMessages, injectIntl } from 'react-intl'
 import { Button, Textarea, ToastContext, Spinner } from 'vtex.styleguide'
 import { OrderForm } from 'vtex.order-manager'
-import { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
+import type { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
 import { useCssHandles } from 'vtex.css-handles'
-import { useLazyQuery, useMutation } from 'react-apollo'
+import { useMutation } from 'react-apollo'
 import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
 
 import ReviewBlock from './components/ReviewBlock'
 import { ParseText, GetText } from './utils'
+import { addToCartGTMEventData } from './utils/GTMEventDataHandler'
 import ItemListContext from './ItemListContext'
-import PRODUCTS_BY_IDS from './queries/productsByIds.gql'
 
 const messages = defineMessages({
   success: {
@@ -54,14 +51,6 @@ const TextAreaBlock: FunctionComponent<
     reviewItems: [],
   })
 
-  const [gtmProductDetails, setGtmProductDetails] = useState<GtmProductDetail[]>([])
-
-  const [getProductsByIds] = useLazyQuery(PRODUCTS_BY_IDS, {
-    onCompleted: (data: any) => {
-      setGtmProductDetails(data?.productsByIdentifier ?? [])
-    }
-  })
-
   const [refidLoading, setRefIdLoading] = useState<any>()
 
   const { textAreaValue, reviewItems, reviewState } = state
@@ -85,29 +74,6 @@ const TextAreaBlock: FunctionComponent<
   const translateMessage = (message: MessageDescriptor) => {
     return intl.formatMessage(message)
   }
-
-  useEffect(() => {
-    if (gtmProductDetails.length !== 0) {
-      const pixelEventItems: any = []
-      gtmProductDetails.map((prod: GtmProductDetail) => {
-        pixelEventItems.push({
-          item_id: prod.productId,
-          item_name: prod.productName,
-          item_category: prod.categoryTree[0]?.name ?? undefined,
-          item_category2: prod.categoryTree[1]?.name ?? undefined,
-          item_category3: prod.categoryTree[2]?.name ?? undefined,
-          item_category4: prod.categoryTree[3]?.name ?? undefined,
-          item_category5: prod.categoryTree[4]?.name ?? undefined,
-          quantity: reviewItems.find((i: { quantity: number, vtexSku: string }) => i.vtexSku === prod.productId.toString())?.quantity ?? 1,
-        })
-      })
-      push({
-        event: 'bulkAddToCart',
-        items: pixelEventItems,
-      })
-    }
-  }, [gtmProductDetails])
-
 
   const resolveToastMessage = (success: boolean, isNewItem: boolean) => {
     if (!success) return translateMessage(messages.error)
@@ -155,11 +121,18 @@ const TextAreaBlock: FunctionComponent<
       return
     }
 
+    push({
+      event: 'bulkAddToCart',
+      items: addToCartGTMEventData(
+        orderForm?.orderForm?.items,
+        items,
+        mutationResult?.data?.addToCart?.items
+      ),
+    })
+
     // Update OrderForm from the context
     mutationResult.data && setOrderForm(mutationResult.data.addToCart)
 
-    const idArray = items.map((i: { id: number }) => i.id)
-    getProductsByIds({ variables: { values: idArray } })
     if (
       mutationResult.data?.addToCart?.messages?.generalMessages &&
       mutationResult.data.addToCart.messages.generalMessages.length
@@ -329,8 +302,9 @@ const TextAreaBlock: FunctionComponent<
       )}
 
       <div
-        className={`${handles.componentContainer} ${!componentOnly ? 'w-100 fr-l pb6' : ''
-          }`}
+        className={`${handles.componentContainer} ${
+          !componentOnly ? 'w-100 fr-l pb6' : ''
+        }`}
       >
         {!reviewState && (
           <div className="w-100 mb5">
@@ -364,11 +338,13 @@ const TextAreaBlock: FunctionComponent<
               onRefidLoading={onRefidLoading}
             />
             <div
-              className={`mb4 mt4 flex justify-between ${handles.buttonsBlock
-                } ${!showAddToCart
+              className={`mb4 mt4 flex justify-between ${
+                handles.buttonsBlock
+              } ${
+                !showAddToCart
                   ? handles.addToCartDisabled
                   : handles.addToCartBtn
-                }`}
+              }`}
             >
               <Button
                 variation="tertiary"
