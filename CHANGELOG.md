@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed bulk add to cart gtm event issue
+
 ## [0.1.55] - 2023-03-28
 
 ## [0.1.54] - 2023-03-27
@@ -20,7 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - Showed unavailable items for Punchout quote in modal
-- Changed vendor name to `sbdsefprod`
+- Changed vendor name to `sbdsefuat`
 
 ## [0.1.52] - 2022-12-06
 

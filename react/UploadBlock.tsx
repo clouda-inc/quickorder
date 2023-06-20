@@ -1,26 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
-import React, { useState, useContext, FunctionComponent, useEffect } from 'react'
-import {
-  FormattedMessage,
-  injectIntl,
-  WrappedComponentProps,
-  defineMessages,
-} from 'react-intl'
+import type { FunctionComponent } from 'react'
+import React, { useState, useContext } from 'react'
+import type { WrappedComponentProps } from 'react-intl'
+import { FormattedMessage, injectIntl, defineMessages } from 'react-intl'
 import { Button, Dropzone, ToastContext, Spinner } from 'vtex.styleguide'
 import { OrderForm } from 'vtex.order-manager'
-import { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
+import type { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
 import { useCssHandles } from 'vtex.css-handles'
-import { useLazyQuery, useMutation } from 'react-apollo'
+import { useMutation } from 'react-apollo'
 import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
 import XLSX from 'xlsx'
 
 import { ParseText, GetText } from './utils'
 import ReviewBlock from './components/ReviewBlock'
+import { addToCartGTMEventData } from './utils/GTMEventDataHandler'
 import ItemListContext from './ItemListContext'
-import PRODUCTS_BY_IDS from './queries/productsByIds.gql'
 
 interface ItemType {
   id: string
@@ -76,14 +73,6 @@ const UploadBlock: FunctionComponent<
   const { settings = {}, showInstallPrompt = undefined } = usePWA() || {}
   const { promptOnCustomEvent } = settings
 
-  const [gtmProductDetails, setGtmProductDetails] = useState<GtmProductDetail[]>([])
-
-  const [getProductsByIds] = useLazyQuery(PRODUCTS_BY_IDS, {
-    onCompleted: (data: any) => {
-      setGtmProductDetails(data?.productsByIdentifier ?? [])
-    }
-  })
-
   const { setOrderForm }: OrderFormContext = OrderForm.useOrderForm()
   const orderForm = OrderForm.useOrderForm()
   const { showToast } = useContext(ToastContext)
@@ -91,28 +80,6 @@ const UploadBlock: FunctionComponent<
   const translateMessage = (message: MessageDescriptor) => {
     return intl.formatMessage(message)
   }
-
-  useEffect(() => {
-    if (gtmProductDetails.length !== 0) {
-      const pixelEventItems: any = []
-      gtmProductDetails.map((prod: GtmProductDetail) => {
-        pixelEventItems.push({
-          item_id: prod.productId,
-          item_name: prod.productName,
-          item_category: prod.categoryTree[0]?.name ?? undefined,
-          item_category2: prod.categoryTree[1]?.name ?? undefined,
-          item_category3: prod.categoryTree[2]?.name ?? undefined,
-          item_category4: prod.categoryTree[3]?.name ?? undefined,
-          item_category5: prod.categoryTree[4]?.name ?? undefined,
-          quantity: reviewItems.find((i: { quantity: number, vtexSku: string }) => i.vtexSku === prod.productId.toString())?.quantity ?? 1,
-        })
-      })
-      push({
-        event: 'bulkAddToCart',
-        items: pixelEventItems,
-      })
-    }
-  }, [gtmProductDetails])
 
   const resolveToastMessage = (success: boolean, isNewItem: boolean) => {
     if (!success) return translateMessage(messages.error)
@@ -278,7 +245,7 @@ const UploadBlock: FunctionComponent<
     doFile(files)
   }
 
-  const handleReset = () => { }
+  const handleReset = () => {}
 
   const handleOnDropRejected = () => {
     showToast(translateMessage(messages.ondroprejected))
@@ -292,67 +259,6 @@ const UploadBlock: FunctionComponent<
   }
 
   const callAddToCart = async (items: any) => {
-    // TODO: Remove comments
-
-    // const splitBy = 10
-    // const tempItems = items
-    // const loopCount = Math.floor(items.length / splitBy) + 1
-
-    // const promises: any = []
-    // let orderFormData = []
-
-    // for (let i = 0; i < loopCount; i++) {
-    //   const chunk = tempItems.splice(0, splitBy)
-
-    //   if (chunk.length) {
-    //     const currentItemsInCart = orderForm.orderForm.items
-
-    //     const mutationChunk = addToCart({
-    //       variables: {
-    //         items: chunk.map((item: ItemType) => {
-    //           const [existsInCurrentOrder] = currentItemsInCart.filter(
-    //             (el: any) => el.id === item.id.toString()
-    //           )
-
-    //           if (existsInCurrentOrder) {
-    //             item.quantity += parseInt(existsInCurrentOrder.quantity, 10)
-    //           }
-
-    //           return {
-    //             ...item,
-    //           }
-    //         }),
-    //       },
-    //     }).then((data: any) => {
-    //       data && setOrderForm(data.addToCart)
-
-    //       if (
-    //         data?.addToCart?.messages?.generalMessages &&
-    //         data.addToCart.messages.generalMessages.length
-    //       ) {
-    //         data.addToCart.messages.generalMessages.map((msg: any) => {
-    //           return showToast({
-    //             message: msg.text,
-    //             action: undefined,
-    //             duration: 30000,
-    //           })
-    //         })
-    //       } else {
-    //         toastMessage({ success: true, isNewItem: true })
-    //       }
-    //     })
-
-    //     promises.push(mutationChunk)
-    //   }
-    // }
-
-    // await Promise.all(promises).catch(() => {
-    //   console.error(mutationError)
-    //   toastMessage({ success: false, isNewItem: false })
-    // })
-
-    // //// START: Fix for add to card not working issue
-
     const currentItemsInCart = orderForm.orderForm.items
     const mutationResult = await addToCart({
       variables: {
@@ -379,13 +285,17 @@ const UploadBlock: FunctionComponent<
       return
     }
 
+    push({
+      event: 'bulkAddToCart',
+      items: addToCartGTMEventData(
+        orderForm?.orderForm?.items,
+        items,
+        mutationResult?.data?.addToCart?.items
+      ),
+    })
+
     // Update OrderForm from the context
     mutationResult.data && setOrderForm(mutationResult.data.addToCart)
-
-    // //// END: Fix for add to card not working issue
-    const idArray = items.map((i: { id: number }) => i.id)
-    getProductsByIds({ variables: { values: idArray } })
-    // Update OrderForm from the context
 
     if (promptOnCustomEvent === 'addToCart' && showInstallPrompt) {
       showInstallPrompt()
@@ -475,8 +385,9 @@ const UploadBlock: FunctionComponent<
         </div>
       )}
       <div
-        className={`${handles.componentContainer} ${!componentOnly ? 'w-100 fr-l' : ''
-          }`}
+        className={`${handles.componentContainer} ${
+          !componentOnly ? 'w-100 fr-l' : ''
+        }`}
       >
         {!reviewState && (
           <div className="w-100 mb5">
@@ -526,11 +437,13 @@ const UploadBlock: FunctionComponent<
               onRefidLoading={onRefidLoading}
             />
             <div
-              className={`mb4 mt4 flex justify-between ${handles.buttonsBlock
-                } ${!showAddToCart
+              className={`mb4 mt4 flex justify-between ${
+                handles.buttonsBlock
+              } ${
+                !showAddToCart
                   ? handles.addToCartDisabled
                   : handles.addToCartBtn
-                }`}
+              }`}
             >
               <Button
                 variation="tertiary"
