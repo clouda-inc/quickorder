@@ -1,7 +1,7 @@
 {
   "vendor": "sbdsefuat",
   "name": "bulk-order",
-  "version": "0.1.55",
+  "version": "0.1.7",
   "title": "Quickorder",
   "description": "Allow users to add multiple products to the cart at once",
   "defaultLocale": "en-US",
@@ -14,6 +14,9 @@
     "docs": "0.x"
   },
   "mustUpdateAt": "2019-04-02",
+  "scripts": {
+    "postreleasy": "bash lint.sh && vtex publish --verbose"
+  },
   "credentialType": "absolute",
   "dependencies": {
     "vtex.flex-layout": "0.x",
@@ -33,7 +36,7 @@
     "vtex.store-resources": "0.x",
     "vtex.css-handles": "0.x",
     "vtex.store-icons": "0.x",
-    "sbdsefuat.checkout-simulation": "1.x"
+    "sbdsefprod.checkout-simulation": "1.x"
   },
   "policies": [
     {
@@ -108,42 +111,13 @@
       }
     },
     {
-      "name": "outbound-access",
-      "attrs": {
-        "host": "u-api.sbdinc.com",
-        "path": "*"
-      }
-    },
-    {
-      "name": "outbound-access",
-      "attrs": {
-        "host": "api.sbdinc.com",
-        "path": "*"
-      }
-    },
-    {
       "name": "POWER_USER_DS"
     },
     {
       "name": "LogisticsAdmin"
     }
   ],
-  "settingsSchema": {
-    "title": "Bulk Order",
-    "type": "object",
-    "properties": {
-      "agoraBaseUrl": {
-        "title": "Agora endpoint base Url",
-        "description": "Endpoint url to query agora apis",
-        "type": "string"
-      },
-      "agoraSubscriptionKey": {
-        "title": "Agora Subscription Key",
-        "description": "Agora subscription key",
-        "type": "string"
-      }
-    }
-  },
+  "settingsSchema": {},
   "billingOptions": {
     "termsURL": "https://compliance.vtex.com/gdpr/policies/vtex-privacy-policy",
     "support": {
@@ -151,7 +125,9 @@
     },
     "free": true,
     "type": "free",
-    "availableCountries": ["*"]
+    "availableCountries": [
+      "*"
+    ]
   },
   "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"
 }
