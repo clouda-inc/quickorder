@@ -608,7 +608,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                   className={`${styles.skuInfoRow} flex flex-row justify-between`}
                 >
                   <div className={`${styles.skuName} truncate`}>
-                    {rowData.sku}
+                    {decodeURIComponent(rowData.sku)}
                   </div>
                   <div className={`${styles.customerPart} ml3`}>
                     <span className={`${styles.customerPartLabel} ttu`}>
@@ -617,7 +617,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                     <span
                       className={`${styles.customerPartValue} ml2 truncate`}
                     >
-                      {rowData.refid}
+                      {decodeURIComponent(rowData.refid)}
                     </span>
                   </div>
                 </div>
