@@ -53,6 +53,7 @@ export const ParseText = (textAreaValue: string) => {
           return {
             index,
             line: index,
+            // Add endording to handle special characters in sku name , Due to encording sku name might be changed inside the project
             sku: encodeURIComponent(String(lineSplitted[0]).trim()),
             quantity: parseFloat(String(lineSplitted[1]).trim()),
             content: line,
