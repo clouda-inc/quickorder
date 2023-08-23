@@ -3,6 +3,7 @@ import { useQuery } from 'react-apollo'
 import { useCssHandles } from 'vtex.css-handles'
 import getSymbolFromCurrency from 'currency-symbol-map'
 import { Modal } from 'vtex.styleguide'
+import { useIntl, defineMessages } from 'react-intl'
 
 import GET_ITEM_PRICING from '../queries/getItemPricing.gql'
 import { getFormattedDate } from '../utils'
@@ -19,6 +20,29 @@ const CSS_HANDLES = [
   'priceTableRowPrice',
 ]
 
+const messages = defineMessages({
+  price: {
+    id: 'store/quickorder.item-price.price',
+    defaultMessage: 'PRICE',
+  },
+  more: {
+    id: 'store/quickorder.item-price.more',
+    defaultMessage: 'more...',
+  },
+  loading: {
+    id: 'store/quickorder.item-price.loading',
+    defaultMessage: 'loading...',
+  },
+  qty: {
+    id: 'store/quickorder.item-price.qty',
+    defaultMessage: 'QTY',
+  },
+  completePrice: {
+    id: 'store/quickorder.item-price.complete-price',
+    defaultMessage: 'Complete Pricing',
+  },
+})
+
 interface Props {
   itemNumber: string
   customerNumber: string
@@ -27,6 +51,7 @@ interface Props {
 const ItemPricing = ({ itemNumber, customerNumber }: Props) => {
   const styles = useCssHandles(CSS_HANDLES)
   const [isOpen, setIsOpen] = useState(false)
+  const intl = useIntl()
 
   const { data: itemPricingInfo, loading } = useQuery(GET_ITEM_PRICING, {
     skip: !itemNumber || itemNumber === '',
@@ -44,15 +69,15 @@ const ItemPricing = ({ itemNumber, customerNumber }: Props) => {
   }
 
   return loading ? (
-    <div className={`${styles.priceTable}`}>Loading...</div>
+    <div className={`${styles.priceTable}`}>{intl.formatMessage(messages.loading)}</div>
   ) : (
     <div className={`${styles.priceTable} flex flex-column`}>
       <div className={`${styles.priceTableHeader} flex w-100`}>
         <div className={`${styles.priceTableHeaderQty} flex mr3 w-60 b`}>
-          QTY
+          {intl.formatMessage(messages.qty)}
         </div>
         <div className={`${styles.priceTableHeaderPrice} flex w-40 b mr3`}>
-          PRICE
+          {intl.formatMessage(messages.price)}
         </div>
       </div>
       {priceList.map((item: ItemPrices, index: number) => {
@@ -77,7 +102,7 @@ const ItemPricing = ({ itemNumber, customerNumber }: Props) => {
               onKeyDown={openModal}
               tabIndex={0}
             >
-              more...
+              {intl.formatMessage(messages.more)}
             </div>
           )
         )
@@ -86,15 +111,15 @@ const ItemPricing = ({ itemNumber, customerNumber }: Props) => {
       <Modal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        title="Complete Pricing"
+        title= {intl.formatMessage(messages.completePrice)}
       >
         <div className={`${styles.priceTableModal}`}>
           <div className={`${styles.priceTableHeader} flex w-100`}>
             <div className={`${styles.priceTableHeaderQty} flex mr3 w-60 b`}>
-              QTY
+              {intl.formatMessage(messages.qty)}
             </div>
             <div className={`${styles.priceTableHeaderPrice} flex w-40 b mr3`}>
-              PRICE
+              {intl.formatMessage(messages.price)}
             </div>
           </div>
           {priceList.map((item: ItemPrices) => {

@@ -59,7 +59,12 @@ const messages = defineMessages({
     defaultMessage: '',
     label: '',
   },
+  unitMultiplier: {
+    id: 'store/quickorder.category.unit-multiplier',
+    defaultMessage: 'Unit Multiplier of'
+  },
 })
+
 
 const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
   text,
@@ -442,7 +447,7 @@ const AutocompleteBlock: FunctionComponent<any & WrappedComponentProps> = ({
                       >
                         <span className="mr4">
                           <Tag type="warning" variation="low">
-                            Unit Multiplier of {unitMultiplier}
+                             {intl.formatMessage(messages.unitMultiplier)} {unitMultiplier}
                           </Tag>
                         </span>
                       </div>

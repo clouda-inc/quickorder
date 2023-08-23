@@ -177,6 +177,10 @@ const messages = defineMessages({
   leadTime: {
     id: 'store/quickorder.leadTime',
   },
+  orderedQuantity: {
+    id: 'store/quickorder.ordered-quantity',
+    defaultMessage: 'Ordered Quantity: '
+  }
 })
 
 // let orderFormId = ''
@@ -628,7 +632,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                 >
                   <div className={`${styles.orderedQuantity} truncate`}>
                     <span className={`${styles.orderedQuantityLabel} mr3`}>
-                      Ordered Quantity:
+                      {intl.formatMessage(messages.orderedQuantity)}
                     </span>
                     <span className={`${styles.orderedQuantityValue}`}>
                       {!Number.isNaN(rowData.quantity) ? rowData.quantity : ''}

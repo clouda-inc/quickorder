@@ -13,6 +13,10 @@ const messages = defineMessages({
     defaultMessage: '',
     label: '',
   },
+  lastSearchProduct: {
+    id: 'store/quickorder.autocomplete.lastSearchedProduct',
+    defaultMessage: 'Last searched products',
+  },
 })
 
 const getImageSrc = (img: string) => {
@@ -126,7 +130,7 @@ const QuickOrderAutocomplete: FunctionComponent<
           }),
     lastSearched: {
       value: lastSearched,
-      label: 'Last searched products',
+      label: `${intl.formatMessage(messages.lastSearchedProduct)}`,
       onChange: (option: never) =>
         option && setLastSearched([...new Set([...lastSearched, option])]),
     },
