@@ -35,6 +35,10 @@ const messages = defineMessages({
     defaultMessage: '',
     label: '',
   },
+  loadingSoldTo: {
+    id: 'store/toaster.cart.loading-soldTo',
+    defaultMessage: 'Loading sold to..',
+  },
 })
 
 interface ItemType {
@@ -281,7 +285,7 @@ const TextAreaBlock: FunctionComponent<
   }
 
   if (isLoadingCustomerInfo) {
-    return <p>Loading sold to..</p>
+    return <p>{intl.formatMessage(messages.loadingSoldTo)}</p>
   }
 
   return (

@@ -54,6 +54,15 @@ const messages = defineMessages({
     defaultMessage: '',
     label: '',
   },
+  noProducts: {
+    id: 'store/quickorder.category.no-products',
+    defaultMessage: 'No products',
+  },
+  unitMultiplier: {
+    id: 'store/quickorder.category.unit-multiplier',
+    defaultMessage: 'Unit Multiplier of',
+  },
+
 })
 
 const CategoryBlock: FunctionComponent<WrappedComponentProps & any> = ({
@@ -362,7 +371,7 @@ const CategoryBlock: FunctionComponent<WrappedComponentProps & any> = ({
                       {content.itemId in unitMultiplierList && (
                         <span className="pl5 mr4">
                           <Tag type="warning" variation="low">
-                            Unit Multiplier of{' '}
+                            {intl.formatMessage(messages.unitMultiplier)}{' '}
                             {
                               unitMultiplierList[content.itemId]
                                 .unitMultiplier
@@ -423,7 +432,7 @@ const CategoryBlock: FunctionComponent<WrappedComponentProps & any> = ({
         )
       })
     ) : (
-      <span>No products</span>
+      <span>{intl.formatMessage(messages.noProducts)}</span>
     )
   }
 

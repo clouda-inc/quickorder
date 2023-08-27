@@ -6,6 +6,14 @@ import { Spinner } from 'vtex.styleguide'
 
 import OrderSoldToAccount from './queries/orderSoldToAccount.graphql'
 import './sbdsefuat.sold-to-validation.css'
+import {defineMessages, useIntl} from 'react-intl'
+
+const messages = defineMessages({
+  selectSoldToAccount: {
+    id: 'store/sold-to-validation.select-sold-to-account',
+    defaultMessage: 'Please select Sold to Account',
+  },
+})
 
 const SoldToValidationWrapper = () => {
   const CSS_HANDLES = [
@@ -16,6 +24,7 @@ const SoldToValidationWrapper = () => {
   ]
 
   const handles = useCssHandles(CSS_HANDLES)
+  const intl = useIntl()
 
   const {
     data: soldToAcctData,
@@ -41,7 +50,7 @@ const SoldToValidationWrapper = () => {
     return (
       <div className={handles.errorMessegeContainer}>
         <div className={handles.soldToAcctErrorMessage}>
-          Please select Sold to Account
+          {intl.formatMessage(messages.selectSoldToAccount)}
         </div>
       </div>
     )
