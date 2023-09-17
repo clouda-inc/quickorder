@@ -130,7 +130,7 @@ const QuickOrderAutocomplete: FunctionComponent<
           }),
     lastSearched: {
       value: lastSearched,
-      label: `${intl.formatMessage(messages.lastSearchedProduct)}`,
+      label: `${intl.formatMessage(messages.lastSearchProduct)}`,
       onChange: (option: never) =>
         option && setLastSearched([...new Set([...lastSearched, option])]),
     },
