@@ -70,6 +70,8 @@
   "store/quickorder.productNotFound": "Produto não encontrado",
   "store/quickorder.punchout.continue": "Continue",
   "store/quickorder.punchout.unavailable": "Items: {items} are not available for purchase in the online catalog.",
+  "store/quickorder.trade-centric.header.delivery-date": "A data de entrega solicitada pelo pedido é inválida.",
+  "store/quickorder.trade-centric.item.delivery-date": "Um ou mais itens contêm uma data de entrega solicitada inválida.",
   "store/toaster.cart.duplicated": "Item duplicado",
   "store/toaster.cart.error": "Erro adicionando produtos ao carrinho",
   "store/toaster.cart.seeCart": "Ver o carrinho",

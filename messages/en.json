@@ -70,6 +70,8 @@
   "store/quickorder.productNotFound": "Product Not Found",
   "store/quickorder.punchout.continue": "Continue",
   "store/quickorder.punchout.unavailable": "Items: {items} are not available for purchase in the online catalog.",
+  "store/quickorder.trade-centric.header.delivery-date": "Order requested delivery date is invalid.",
+  "store/quickorder.trade-centric.item.delivery-date": "One or more items contain an invalid requested delivery date.",
   "store/toaster.cart.duplicated": "Item duplicated",
   "store/toaster.cart.error": "Error adding products to the cart",
   "store/toaster.cart.seeCart": "See cart",
