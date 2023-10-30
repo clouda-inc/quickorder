@@ -70,6 +70,8 @@
   "store/quickorder.productNotFound": "store/quickorder.productNotFound",
   "store/quickorder.punchout.continue": "store/quickorder.punchout.continue",
   "store/quickorder.punchout.unavailable": "store/quickorder.punchout.unavailable",
+  "store/quickorder.trade-centric.header.delivery-date": "store/quickorder.trade-centric.header.delivery-date",
+  "store/quickorder.trade-centric.item.delivery-date": "store/quickorder.trade-centric.item.delivery-date",
   "store/toaster.cart.duplicated": "store/toaster.cart.duplicated",
   "store/toaster.cart.error": "store/toaster.cart.error",
   "store/toaster.cart.seeCart": "store/toaster.cart.seeCart",

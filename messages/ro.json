@@ -70,6 +70,8 @@
   "store/quickorder.productNotFound": "Produsul nu a fost găsit",
   "store/quickorder.punchout.continue": "Continue",
   "store/quickorder.punchout.unavailable": "Items: {items} are not available for purchase in the online catalog.",
+  "store/quickorder.trade-centric.header.delivery-date": "Data de livrare a comenzii este nevalidă.",
+  "store/quickorder.trade-centric.item.delivery-date": "Unul sau mai multe articole conțin o dată de livrare solicitată nevalidă.",
   "store/toaster.cart.duplicated": "Articol duplicat",
   "store/toaster.cart.error": "Eroare la adaugarea produselor in cos",
   "store/toaster.cart.seeCart": "Vezi cos",

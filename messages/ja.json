@@ -70,6 +70,8 @@
   "store/quickorder.productNotFound": "製品が見つかりません",
   "store/quickorder.punchout.continue": "続く",
   "store/quickorder.punchout.unavailable": "アイテム: {items} はオンライン カタログでは購入できません。",
+  "store/quickorder.trade-centric.header.delivery-date": "注文の配送希望日は無効です。",
+  "store/quickorder.trade-centric.item.delivery-date": "1 つ以上のアイテムに無効な配送希望日が含まれています。",
   "store/toaster.cart.duplicated": "アイテムが複製されました",
   "store/toaster.cart.error": "カートに商品を追加するときにエラーが発生しました",
   "store/toaster.cart.seeCart": "カートを見る",

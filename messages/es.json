@@ -70,6 +70,8 @@
   "store/quickorder.productNotFound": "Producto no encontrado",
   "store/quickorder.punchout.continue": "Continue",
   "store/quickorder.punchout.unavailable": "Items: {items} are not available for purchase in the online catalog.",
+  "store/quickorder.trade-centric.header.delivery-date": "La fecha de entrega solicitada del pedido no es válida.",
+  "store/quickorder.trade-centric.item.delivery-date": "Uno o más artículos contienen una fecha de entrega solicitada no válida.",
   "store/toaster.cart.duplicated": "Elemento duplicado",
   "store/toaster.cart.error": "Error al agregar productos al carrito",
   "store/toaster.cart.seeCart": "Ver el carrito",

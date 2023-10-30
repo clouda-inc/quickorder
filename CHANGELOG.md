@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Added multi language translations
+- Added support for requested delivery date
 
 ## [0.1.57] - 2023-07-27
 
