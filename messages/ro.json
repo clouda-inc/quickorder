@@ -80,5 +80,18 @@
   "editor/quick-order.punchout.title": "Punchout Quote Validation",
   "editor/quick-order.punchout.description": "Punchout quote validation",
   "editor/quick-order.punchout.enablePunchoutQuoteValidation.title": "Enable Punchout quote validation",
-  "editor/quick-order.punchout.enablePunchoutQuoteValidation.description": "Enable Punchout quote validation"
+  "editor/quick-order.punchout.enablePunchoutQuoteValidation.description": "Enable Punchout quote validation",
+  "store/quickorder.item-price.price": "PREȚ",
+  "store/quickorder.item-price.more": "Mai mult...",
+  "store/quickorder.item-price.loading": "Se încarcă...",
+  "store/quickorder.item-price.qty": "Cantitate",
+  "store/quickorder.item-price.complete-price": "Prețul complet",
+  "store/quickorder.autocomplete.lastSearchedProduct": "Ultimele produse căutate",
+  "store/quickorder.ordered-quantity": "Cantitate comandata: ",
+  "store/quickorder.stock-availablity.available": "disponibil",
+  "store/quickorder.stock-availablity.loading": "Se încarcă...",
+  "store/quickorder.category.unit-multiplier": "Multiplicatorul unitar al",
+  "store/quickorder.category.no-products": "Fara produse",
+  "store/sold-to-validation.select-sold-to-account": "Vă rugăm să selectați Vândut în cont",
+  "store/toaster.cart.loading-soldTo": "Se încarcă vândut către..."
 }

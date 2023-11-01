@@ -91,6 +91,7 @@
   "store/quickorder.stock-availablity.available": "disponibile",
   "store/quickorder.stock-availablity.loading": "caricamento...",
   "store/quickorder.category.unit-multiplier": "Moltiplicatore unitario di",
+  "store/quickorder.category.no-products": "Nessun prodotto",
   "store/sold-to-validation.select-sold-to-account": "Seleziona Venduto all'account",
   "store/toaster.cart.loading-soldTo": "Caricamento venduto a.."
 }

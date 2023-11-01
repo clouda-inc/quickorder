@@ -80,5 +80,18 @@
   "editor/quick-order.punchout.title": "editor/quick-order.punchout.title",
   "editor/quick-order.punchout.description": "editor/quick-order.punchout.description",
   "editor/quick-order.punchout.enablePunchoutQuoteValidation.title": "editor/quick-order.punchout.enablePunchoutQuoteValidation.title",
-  "editor/quick-order.punchout.enablePunchoutQuoteValidation.description": "editor/quick-order.punchout.enablePunchoutQuoteValidation.description"
+  "editor/quick-order.punchout.enablePunchoutQuoteValidation.description": "editor/quick-order.punchout.enablePunchoutQuoteValidation.description",
+  "store/quickorder.item-price.price": "store/quickorder.item-price.price",
+  "store/quickorder.item-price.more": "store/quickorder.item-price.more",
+  "store/quickorder.item-price.loading": "store/quickorder.item-price.loading",
+  "store/quickorder.item-price.qty": "store/quickorder.item-price.qty",
+  "store/quickorder.item-price.complete-price": "store/quickorder.item-price.complete-price",
+  "store/quickorder.autocomplete.lastSearchedProduct": "store/quickorder.autocomplete.lastSearchedProduct",
+  "store/quickorder.ordered-quantity": "store/quickorder.ordered-quantity",
+  "store/quickorder.stock-availablity.available": "store/quickorder.stock-availablity.available",
+  "store/quickorder.stock-availablity.loading": "store/quickorder.stock-availablity.loading",
+  "store/quickorder.category.unit-multiplier": "store/quickorder.category.unit-multiplier",
+  "store/quickorder.category.no-products": "store/quickorder.category.no-products",
+  "store/sold-to-validation.select-sold-to-account": "store/sold-to-validation.select-sold-to-account",
+  "store/toaster.cart.loading-soldTo": "store/toaster.cart.loading-soldTo"
 }
