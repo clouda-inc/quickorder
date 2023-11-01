@@ -91,6 +91,7 @@
   "store/quickorder.stock-availablity.available": "available",
   "store/quickorder.stock-availablity.loading": "loading...",
   "store/quickorder.category.unit-multiplier": "Unit Multiplier of",
+  "store/quickorder.category.no-products": "No products",
   "store/sold-to-validation.select-sold-to-account": "Please select Sold to Account",
   "store/toaster.cart.loading-soldTo": "Loading sold to.."
 }

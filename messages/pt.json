@@ -80,5 +80,18 @@
   "editor/quick-order.punchout.title": "Punchout Quote Validation",
   "editor/quick-order.punchout.description": "Punchout quote validation",
   "editor/quick-order.punchout.enablePunchoutQuoteValidation.title": "Enable Punchout quote validation",
-  "editor/quick-order.punchout.enablePunchoutQuoteValidation.description": "Enable Punchout quote validation"
+  "editor/quick-order.punchout.enablePunchoutQuoteValidation.description": "Enable Punchout quote validation",
+  "store/quickorder.item-price.price": "PREÇO",
+  "store/quickorder.item-price.more": "mais...",
+  "store/quickorder.item-price.loading": "carregando...",
+  "store/quickorder.item-price.qty": "Quantidade",
+  "store/quickorder.item-price.complete-price": "Preço completo",
+  "store/quickorder.autocomplete.lastSearchedProduct": "Últimos produtos pesquisados",
+  "store/quickorder.ordered-quantity": "Quantidade encomendada: ",
+  "store/quickorder.stock-availablity.available": "disponível",
+  "store/quickorder.stock-availablity.loading": "carregando...",
+  "store/quickorder.category.unit-multiplier": "Multiplicador de Unidade de",
+  "store/quickorder.category.no-products": "Nenhum produto",
+  "store/sold-to-validation.select-sold-to-account": "Selecione Vendido para conta",
+  "store/toaster.cart.loading-soldTo": "Carregamento vendido para.."
 }
