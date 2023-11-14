@@ -1,3 +1,5 @@
+import GET_SKU_REFID_WITH_CUSTOMER_PART_NUMBER from '../queries/getSkuRefIdWithCustomerpart.graphql'
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const GetText = (items: any) => {
   const joinLines = items
@@ -33,14 +35,15 @@ const removeDuplicates = (itemList: any) => {
  * @param textAreaValue
  * @constructor
  */
-export const ParseText = (textAreaValue: string) => {
+export const ParseText = async (textAreaValue: string, client:any, customerNumber:string) => {
+
   const rawText: any = String(textAreaValue || '')
   const arrText = String(rawText).split(/[\n\r]/)
   const items = arrText
     .filter((item: any) => {
       return String(item).trim() !== ''
     })
-    .map((line: any, index: number) => {
+    .map(async (line: any, index: number) => {
       const lineSplitted: any = line.split(',')
 
       if (lineSplitted.length === 2) {
@@ -50,14 +53,17 @@ export const ParseText = (textAreaValue: string) => {
           // eslint-disable-next-line no-restricted-globals
           !isNaN(lineSplitted[1])
         ) {
+          const {skuRefId, customerPartNumber } = await getRefIdWithCustomerpart(String(lineSplitted[0]).trim(), customerNumber, client)
+
           return {
             index,
             line: index,
             // Add endording to handle special characters in sku name , Due to encording sku name might be changed inside the project
-            sku: encodeURIComponent(String(lineSplitted[0]).trim()),
+            sku: skuRefId,
             quantity: parseFloat(String(lineSplitted[1]).trim()),
             content: line,
             error: null,
+            partNumber : customerPartNumber
           }
         }
       }
@@ -69,10 +75,11 @@ export const ParseText = (textAreaValue: string) => {
         sku: null,
         quantity: null,
         error: 'store/quickorder.invalidPattern',
+        partNumber: ''
       }
     })
-
-  return removeDuplicates(items)
+  const promises = await Promise.all(items)
+  return removeDuplicates(promises)
 }
 
 /**
@@ -123,4 +130,29 @@ export const getFormattedDate = (date: Date) => {
   const day = date.getDate().toString().padStart(2, '0')
 
   return `${month}/${day}/${year}`
+}
+
+
+export const getRefIdWithCustomerpart = async(partNumber:string, customerNumber:string, client:any)=> {
+    const query = {
+      query: GET_SKU_REFID_WITH_CUSTOMER_PART_NUMBER,
+      variables: {
+        partNumber,
+        customerNumber,
+      },
+    }
+
+    const {data} = await client.query(query)
+
+    if (data){
+      return {
+        skuRefId : data.getSkuRefIdWithCustomerPart.refId,
+        customerPartNumber : data.getSkuRefIdWithCustomerPart.customerPartNumber
+      }
+    } else {
+      return{
+        skuRefId : '',
+        customerPartNumber : ''
+      }
+    }
 }

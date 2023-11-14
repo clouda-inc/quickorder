@@ -1,0 +1,6 @@
+query getSkuRefIdWithCustomerPart($customerNumber: String!, $partNumber: String) {
+  getSkuRefIdWithCustomerPart(customerNumber: $customerNumber, partNumber: $partNumber) {
+    refId
+    customerPartNumber
+  }
+}

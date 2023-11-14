@@ -17,6 +17,7 @@ import ReviewBlock from './components/ReviewBlock'
 import { ParseText, GetText } from './utils'
 import { addToCartGTMEventData } from './utils/GTMEventDataHandler'
 import ItemListContext from './ItemListContext'
+import { useApolloClient } from 'react-apollo'
 
 const messages = defineMessages({
   success: {
@@ -58,6 +59,7 @@ const TextAreaBlock: FunctionComponent<
   const [refidLoading, setRefIdLoading] = useState<any>()
 
   const { textAreaValue, reviewItems, reviewState } = state
+  const apolloClient = useApolloClient();
 
   const [addToCart, { error: mutationError, loading: mutationLoading }] =
     useMutation<{ addToCart: OrderFormType }, { items: [] }>(ADD_TO_CART)
@@ -71,7 +73,7 @@ const TextAreaBlock: FunctionComponent<
   const { showToast } = useContext(ToastContext)
 
   const { useItemListState, useItemListDispatch } = ItemListContext
-  const { isLoadingCustomerInfo, showAddToCart } = useItemListState()
+  const { isLoadingCustomerInfo, showAddToCart, customerNumber } = useItemListState()
 
   const dispatch = useItemListDispatch()
 
@@ -193,8 +195,9 @@ const TextAreaBlock: FunctionComponent<
     return true
   }
 
-  const parseText = () => {
-    const items: any = ParseText(textAreaValue) || []
+  const parseText = async() => {
+    const items: any = await ParseText(textAreaValue, apolloClient, customerNumber) || []
+
     const error = !!items.filter((item: any) => {
       return item.error !== null
     }).length

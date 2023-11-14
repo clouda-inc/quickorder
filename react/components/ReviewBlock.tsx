@@ -500,7 +500,6 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
           2
         )
       )
-
       if (data) {
         validateRefids(data, reviewed)
       }
@@ -623,7 +622,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                       className={`${styles.customerPartValue} ml2 truncate`}
                     >
                       {/* Add decording to decord encorderd texts */}
-                      {decodeURIComponent(rowData.refid)}
+                      {decodeURIComponent(rowData?.partNumber)}
                     </span>
                   </div>
                 </div>

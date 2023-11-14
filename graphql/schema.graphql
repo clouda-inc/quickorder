@@ -24,4 +24,9 @@ type Query {
     customer: String
     thruDate: String
   ): StockAvailability
+
+  getSkuRefIdWithCustomerPart(
+    partNumber: String
+    customerNumber: String
+  ): RefIdResponse
 }

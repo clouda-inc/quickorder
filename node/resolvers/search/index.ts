@@ -15,6 +15,7 @@ import {
   // UMMOQ_CLIENT_SCHEMA,
 } from '../../utils/consts'
 import { formatUOMDescription } from '../../utils/searchFieldExtension'
+import { Validator } from '../../middlewares/validator'
 
 export const fieldResolvers = {
   ...refidsResolvers,
@@ -54,6 +55,28 @@ export const queries = {
     return {
       cacheId: 'sellers',
       items,
+    }
+  },
+  getSkuRefIdWithCustomerPart: async (
+    _: any,
+    args: {
+      partNumber: string
+      customerNumber: string
+    },
+    ctx: Context
+  ) => {
+    try{
+      const {skuRefId, customerPartNumber} = await Validator(ctx, args.customerNumber, args.partNumber)
+      return {
+        refId : skuRefId,
+        customerPartNumber
+      }
+    } catch (error){
+      console.log('error', error)
+      return {
+        refId: '',
+        customerPartNumber: ''
+      }
     }
   },
   getSkuAvailability: async (

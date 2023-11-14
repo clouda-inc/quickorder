@@ -1367,10 +1367,10 @@
     "@typescript-eslint/types" "4.33.0"
     eslint-visitor-keys "^2.0.0"
 
-"@vtex/api@6.45.24":
-  version "6.45.24"
-  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-6.45.24.tgz#5643d80de9b5ac9491c03a47be0329872896a6eb"
-  integrity sha512-BaNdncM2Jfqdu/DikxrDVH7fdek5vH02nvH4RCyNcZ3KSSYZaKk4QGr2EjEHI/rhkOIbJOlOAW5ol4uDcGbQjQ==
+"@vtex/api@6.46.0":
+  version "6.46.0"
+  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-6.46.0.tgz#208d14b96cbc8fd5eb6bd18fbd0c8424886e6154"
+  integrity sha512-XAvJlD1FG1GynhPXiMcayunahFCL2r3ilO5MHAWKxYvB/ljyxi4+U+rVpweeaQGpxHfhKHdfPe7qNEEh2oa2lw==
   dependencies:
     "@types/koa" "^2.11.0"
     "@types/koa-compose" "^3.2.3"
