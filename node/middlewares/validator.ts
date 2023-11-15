@@ -9,7 +9,7 @@ export async function Validator(ctx: Context, customer:string, itemNumber: strin
   const containsSquareBrackets = regex.test(decoredItemNumber);
   if (containsSquareBrackets){
      const customerPartNumber = removeSquareBrackets(decoredItemNumber)
-     const where = `customerSku=${customerPartNumber} AND customerNumber=${customer}`
+     const where = `customerSku='${customerPartNumber}' AND customerNumber='${customer}'`
      const res  = await customerSkuMasterData.searchCustomerSKUDocuments(where)
      const skuRefId = res.length > 0 ? encodeURIComponent(res[0].skuRefId) : 'NA'
      return {
