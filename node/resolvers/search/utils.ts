@@ -37,3 +37,4 @@ export const searchEncodeURI = (account: string) => (str: string) => {
 
   return str
 }
+

@@ -50,3 +50,15 @@ interface AppSettings {
   agoraBaseUrl: string
   agoraSubscriptionKey: string
 }
+
+interface SearchResponse {
+  skuRefId: string,
+  customerSku: string,
+  customerNumber: string
+}
+
+interface SkuRefIdWithCustomerPartArgs {
+  partNumber: string;
+  customerNumber: string;
+  targetSystem: string;
+}

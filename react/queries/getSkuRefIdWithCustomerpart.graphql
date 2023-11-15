@@ -1,6 +1,7 @@
-query getSkuRefIdWithCustomerPart($customerNumber: String!, $partNumber: String) {
-  getSkuRefIdWithCustomerPart(customerNumber: $customerNumber, partNumber: $partNumber) {
+query getSkuRefIdWithCustomerPart($customerNumber: String!, $partNumber: String, $targetSystem: String) {
+  getSkuRefIdWithCustomerPart(customerNumber: $customerNumber, partNumber: $partNumber, targetSystem: $targetSystem) {
     refId
     customerPartNumber
+    error
   }
 }

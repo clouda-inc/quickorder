@@ -93,5 +93,7 @@
   "store/quickorder.category.unit-multiplier": "Unit Multiplier of",
   "store/quickorder.category.no-products": "No products",
   "store/sold-to-validation.select-sold-to-account": "Please select Sold to Account",
-  "store/toaster.cart.loading-soldTo": "Loading sold to.."
+  "store/toaster.cart.loading-soldTo": "Loading sold to..",
+  "store/quickorder.invalidRefId": "No Ref Id exists for given customer Part Number",
+  "store/quickorder.invalidCustomerPart": "customer Part number is not exist"
 }

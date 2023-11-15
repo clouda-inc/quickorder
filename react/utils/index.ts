@@ -35,7 +35,7 @@ const removeDuplicates = (itemList: any) => {
  * @param textAreaValue
  * @constructor
  */
-export const ParseText = async (textAreaValue: string, client:any, customerNumber:string) => {
+export const ParseText = async (textAreaValue: string, client:any, customerNumber:string, targetSystem: string) => {
 
   const rawText: any = String(textAreaValue || '')
   const arrText = String(rawText).split(/[\n\r]/)
@@ -53,8 +53,18 @@ export const ParseText = async (textAreaValue: string, client:any, customerNumbe
           // eslint-disable-next-line no-restricted-globals
           !isNaN(lineSplitted[1])
         ) {
-          const {skuRefId, customerPartNumber } = await getRefIdWithCustomerpart(String(lineSplitted[0]).trim(), customerNumber, client)
-
+          const {skuRefId, customerPartNumber, error } = await getRefIdWithCustomerpart(String(lineSplitted[0]).trim(), customerNumber, client, targetSystem)
+          if (error) {
+            return {
+              index,
+              line: index,
+              content: line,
+              sku: '',
+              quantity: null,
+              error: error === 'No Ref_ID' ? 'store/quickorder.invalidCustomerPart': error === 'No customerPart' ? 'store/quickorder.invalidRefId' : 'store/quickorder.invalidPattern',
+              partNumber: ''
+            }
+          }
           return {
             index,
             line: index,
@@ -133,12 +143,13 @@ export const getFormattedDate = (date: Date) => {
 }
 
 
-export const getRefIdWithCustomerpart = async(partNumber:string, customerNumber:string, client:any)=> {
+export const getRefIdWithCustomerpart = async(partNumber:string, customerNumber:string, client:any, targetSystem: string)=> {
     const query = {
       query: GET_SKU_REFID_WITH_CUSTOMER_PART_NUMBER,
       variables: {
         partNumber,
         customerNumber,
+        targetSystem
       },
     }
 
@@ -147,12 +158,14 @@ export const getRefIdWithCustomerpart = async(partNumber:string, customerNumber:
     if (data){
       return {
         skuRefId : data.getSkuRefIdWithCustomerPart.refId,
-        customerPartNumber : data.getSkuRefIdWithCustomerPart.customerPartNumber
+        customerPartNumber : data.getSkuRefIdWithCustomerPart.customerPartNumber,
+        error: data.getSkuRefIdWithCustomerPart.error
       }
     } else {
       return{
         skuRefId : '',
-        customerPartNumber : ''
+        customerPartNumber : '',
+        error: 'No data Available'
       }
     }
 }

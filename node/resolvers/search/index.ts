@@ -10,12 +10,15 @@ import {
   PLANT_ACRONYM,
   PLANT_FIELDS,
   PLANT_SCHEMA,
+  CUSTOMER_SKU_FIELDS,
+  CUSTOMER_SKU_ACRONYM,
+  CUSTOMER_SKU_SCHEMA
   // UMMOQ_CLIENT_ACRONYM,
   // UMMOQ_CLIENT_FIELDS,
   // UMMOQ_CLIENT_SCHEMA,
 } from '../../utils/consts'
 import { formatUOMDescription } from '../../utils/searchFieldExtension'
-import { Validator } from '../../middlewares/validator'
+import { getCustomerPartNumbers } from '../../middlewares/getCustomerPartNumbers'
 
 export const fieldResolvers = {
   ...refidsResolvers,
@@ -57,28 +60,69 @@ export const queries = {
       items,
     }
   },
+
   getSkuRefIdWithCustomerPart: async (
     _: any,
-    args: {
-      partNumber: string
-      customerNumber: string
-    },
+    args: SkuRefIdWithCustomerPartArgs,
     ctx: Context
   ) => {
-    try{
-      const {skuRefId, customerPartNumber} = await Validator(ctx, args.customerNumber, args.partNumber)
-      return {
-        refId : skuRefId,
-        customerPartNumber
-      }
-    } catch (error){
-      console.log('error', error)
+    const {
+      clients: { masterdata },
+    } = ctx;
+
+    const { type, id, error } = await getCustomerPartNumbers(args.partNumber);
+
+    if (error) {
       return {
         refId: '',
-        customerPartNumber: ''
+        customerPartNumber: '',
+        error,
+      };
+    }
+
+    const callMasterdataClient = async (where: string)=>{
+      const res = await masterdata.searchDocumentsWithPaginationInfo<SearchResponse>({
+        dataEntity: CUSTOMER_SKU_ACRONYM,
+        schema: CUSTOMER_SKU_SCHEMA,
+        fields: CUSTOMER_SKU_FIELDS,
+        pagination: { pageSize: 100, page: 1 },
+        where,
+      });
+
+      return res.data
+    }
+
+    if (type === 'withCustomerPart') {
+      const where = `customerSku='${id}' AND customerNumber='${args.customerNumber}' AND targetSystem='${args.targetSystem}'`;
+
+
+      const response = await callMasterdataClient(where);
+
+      if (response.length > 0) {
+        return {
+          refId: response[0]?.skuRefId,
+          customerPartNumber: response[0]?.customerSku,
+          error: response[0]?.skuRefId ? '' : 'No Ref_ID',
+        };
+      } else {
+        return {
+          refId: '',
+          customerPartNumber: '',
+          error: 'No customerPart',
+        };
       }
+    } else {
+      const where = `skuRefId='${id}' AND customerNumber='${args.customerNumber}' AND targetSystem='${args.targetSystem}'`;
+      const response = await callMasterdataClient(where);
+
+      return {
+        refId: response[0]?.skuRefId,
+        customerPartNumber: response[0]?.customerSku ?? 'N/A',
+        error: '',
+      };
     }
   },
+
   getSkuAvailability: async (
     _: any,
     args: {

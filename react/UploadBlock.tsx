@@ -64,7 +64,7 @@ const UploadBlock: FunctionComponent<
   const apolloClient = useApolloClient();
 
   const { useItemListState, useItemListDispatch } = ItemListContext
-  const { isLoadingCustomerInfo, showAddToCart, customerNumber } = useItemListState()
+  const { isLoadingCustomerInfo, showAddToCart, customerNumber, targetSystem } = useItemListState()
 
   const dispatch = useItemListDispatch()
 
@@ -167,7 +167,7 @@ const UploadBlock: FunctionComponent<
       textAreaValue += `${element[0]},${element[1]}\n`
     })
 
-    const items: any = await ParseText(textAreaValue, apolloClient, customerNumber) || []
+    const items: any = await ParseText(textAreaValue, apolloClient, customerNumber, targetSystem) || []
     const error = !!items.filter((item: any) => {
       return item.error !== null
     }).length

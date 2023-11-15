@@ -73,7 +73,7 @@ const TextAreaBlock: FunctionComponent<
   const { showToast } = useContext(ToastContext)
 
   const { useItemListState, useItemListDispatch } = ItemListContext
-  const { isLoadingCustomerInfo, showAddToCart, customerNumber } = useItemListState()
+  const { isLoadingCustomerInfo, showAddToCart, customerNumber, targetSystem } = useItemListState()
 
   const dispatch = useItemListDispatch()
 
@@ -196,7 +196,7 @@ const TextAreaBlock: FunctionComponent<
   }
 
   const parseText = async() => {
-    const items: any = await ParseText(textAreaValue, apolloClient, customerNumber) || []
+    const items: any = await ParseText(textAreaValue, apolloClient, customerNumber, targetSystem) || []
 
     const error = !!items.filter((item: any) => {
       return item.error !== null

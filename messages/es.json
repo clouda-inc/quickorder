@@ -93,5 +93,7 @@
   "store/quickorder.category.unit-multiplier": "Unidad multiplicadora de",
   "store/quickorder.category.no-products": "sin productos",
   "store/sold-to-validation.select-sold-to-account": "Por favor seleccione Vendido a la cuenta",
-  "store/toaster.cart.loading-soldTo": "Cargando vendido a.."
+  "store/toaster.cart.loading-soldTo": "Cargando vendido a..",
+  "store/quickorder.invalidRefId": "No existe ningún ID de referencia para un número de pieza de cliente determinado",
+  "store/quickorder.invalidCustomerPart": "El número de pieza del cliente no existe."
 }

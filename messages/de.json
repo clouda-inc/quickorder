@@ -93,5 +93,7 @@
   "store/quickorder.category.unit-multiplier": "Einheitenmultiplikator von",
   "store/quickorder.category.no-products": "keine Produkte",
   "store/sold-to-validation.select-sold-to-account": "Bitte wählen Sie „An Konto verkauft“ aus",
-  "store/toaster.cart.loading-soldTo": "Laden verkauft an.."
+  "store/toaster.cart.loading-soldTo": "Laden verkauft an..",
+  "store/quickorder.invalidRefId": "Für die angegebene Kundenteilenummer ist keine Referenz-ID vorhanden",
+  "store/quickorder.invalidCustomerPart": "Kundenteilenummer ist nicht vorhanden"
 }

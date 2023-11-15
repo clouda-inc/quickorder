@@ -14,3 +14,7 @@ export const UMMOQ_CLIENT_FIELDS = [
   'minOrderQuantity',
   'unitMultiplier',
 ]
+
+export const CUSTOMER_SKU_FIELDS = ['skuRefId', 'customerSku', 'customerNumber'];
+export const CUSTOMER_SKU_SCHEMA = 'mdv1'
+export const CUSTOMER_SKU_ACRONYM = 'KU'

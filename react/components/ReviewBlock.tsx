@@ -180,7 +180,15 @@ const messages = defineMessages({
   orderedQuantity: {
     id: 'store/quickorder.ordered-quantity',
     defaultMessage: 'Ordered Quantity: '
-  }
+  },
+  noCustomerPart: {
+    id: 'store/quickorder.invalidCustomerPart',
+    defaultMessage: 'customerPart number is not exist'
+  },
+  noRefId: {
+    id: 'store/quickorder.invalidRefId',
+    defaultMessage: 'No Ref Id exists for given customerPart Number'
+  },
 })
 
 // let orderFormId = ''
@@ -303,6 +311,8 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     'store/quickorder.ORD029': messages.ORD029,
     'store/quickorder.ORD030': messages.ORD030,
     'store/quickorder.ORD031': messages.ORD031,
+    "store/quickorder.invalidRefId": messages.noRefId,
+    "store/quickorder.invalidCustomerPart": messages.noCustomerPart
   }
 
   const isEURegion = () => {

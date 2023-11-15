@@ -1,4 +1,5 @@
 type RefIdResponse {
   refId: String
   customerPartNumber: String
+  error: String
 }
