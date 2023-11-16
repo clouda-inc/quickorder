@@ -13,6 +13,7 @@ import { useMutation } from 'react-apollo'
 import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
 import XLSX from 'xlsx'
+import { useApolloClient } from 'react-apollo'
 
 import { ParseText, GetText } from './utils'
 import ReviewBlock from './components/ReviewBlock'
@@ -60,9 +61,10 @@ const UploadBlock: FunctionComponent<
 
   const [refidLoading, setRefIdLoading] = useState<any>()
   const { reviewItems, reviewState } = state
+  const apolloClient = useApolloClient();
 
   const { useItemListState, useItemListDispatch } = ItemListContext
-  const { isLoadingCustomerInfo, showAddToCart } = useItemListState()
+  const { isLoadingCustomerInfo, showAddToCart, customerNumber, targetSystem } = useItemListState()
 
   const dispatch = useItemListDispatch()
 
@@ -158,14 +160,14 @@ const UploadBlock: FunctionComponent<
     return true
   }
 
-  const parseText = () => {
+  const parseText = async () => {
     let textAreaValue = ''
 
     productsArray.forEach((element: any) => {
       textAreaValue += `${element[0]},${element[1]}\n`
     })
 
-    const items: any = ParseText(textAreaValue) || []
+    const items: any = await ParseText(textAreaValue, apolloClient, customerNumber, targetSystem) || []
     const error = !!items.filter((item: any) => {
       return item.error !== null
     }).length

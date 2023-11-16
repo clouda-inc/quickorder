@@ -93,5 +93,7 @@
   "store/quickorder.category.unit-multiplier": "Multiplicatorul unitar al",
   "store/quickorder.category.no-products": "Fara produse",
   "store/sold-to-validation.select-sold-to-account": "Vă rugăm să selectați Vândut în cont",
-  "store/toaster.cart.loading-soldTo": "Se încarcă vândut către..."
+  "store/toaster.cart.loading-soldTo": "Se încarcă vândut către...",
+  "store/quickorder.invalidRefId": "Nu există niciun ID de referință pentru un anumit număr de piesă a clientului",
+  "store/quickorder.invalidCustomerPart": "Numărul piesei clientului nu există"
 }

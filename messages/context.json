@@ -93,5 +93,7 @@
   "store/quickorder.category.unit-multiplier": "store/quickorder.category.unit-multiplier",
   "store/quickorder.category.no-products": "store/quickorder.category.no-products",
   "store/sold-to-validation.select-sold-to-account": "store/sold-to-validation.select-sold-to-account",
-  "store/toaster.cart.loading-soldTo": "store/toaster.cart.loading-soldTo"
+  "store/toaster.cart.loading-soldTo": "store/toaster.cart.loading-soldTo",
+  "store/quickorder.invalidRefId": "store/quickorder.invalidRefId",
+  "store/quickorder.invalidCustomerPart": "store/quickorder.invalidCustomerPart"
 }
