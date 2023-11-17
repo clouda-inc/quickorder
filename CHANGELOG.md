@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.60] - 2023-11-17
+
 ### Added
 
 - Added quick order functionalities with customer part number
