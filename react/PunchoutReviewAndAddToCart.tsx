@@ -242,7 +242,7 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
         if (unavailableItems.length > 0 || tcQuoteMessageList.length > 0) {
           setWarningModalOpen(true)
         } else {
-          // window.location.pathname = `${rootPath}/cart`
+          window.location.pathname = `${rootPath}/cart`
         }
       })
     }
@@ -250,7 +250,7 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
 
   useEffect(() => {
     if (error) {
-      // window.location.pathname = `${rootPath}/cart`
+      window.location.pathname = `${rootPath}/cart`
     }
   }, [error, rootPath])
 
@@ -277,7 +277,7 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
         isOpen={warningModalOpen}
         onClose={() => {
           setWarningModalOpen(false)
-          // window.location.pathname = `${rootPath}/cart`
+          window.location.pathname = `${rootPath}/cart`
         }}
         bottomBar={
           <div className="nowrap">
@@ -286,7 +286,7 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
                 variation="primary"
                 onClick={() => {
                   setWarningModalOpen(false)
-                  // window.location.pathname = `${rootPath}/cart`
+                  window.location.pathname = `${rootPath}/cart`
                 }}
               >
                 {intl.formatMessage({
