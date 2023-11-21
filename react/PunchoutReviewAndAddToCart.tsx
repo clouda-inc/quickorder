@@ -35,7 +35,7 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
   const [updateCustomFields] = useUpdateCustomField()
 
   const [setSoldTo] = useMutation<SetSoldToResponse>(SET_SOLD_TO)
-  const { rootPath = '' } = useRuntime()
+  const { rootPath, binding, navigate } = useRuntime()
   const [orgInfo, setOrgInfo] = useState<OrgInfo | null>(null)
   const [tcQuoteMessages, setTcQuoteMessages] = useState<
     Array<{ id: string; message: string }>
@@ -79,6 +79,11 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
     )?.fields.quoteItems ?? '[]'
   ) as QuoteItem[]
 
+  const quoteItemsAdded =
+    (orderForm.customData?.customApps ?? []).find(
+      (app) => app.id === 'punchout-to-go'
+    )?.fields.quoteItemsAdded ?? '0'
+
   const [warningModalOpen, setWarningModalOpen] = useState(false)
   const [invalidItems, setInvalidItems] = useState<any>([])
 
@@ -101,7 +106,10 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
   const { data, loading, error } = useQuery<{
     getSkuAvailability: Availability
   }>(GET_PRODUCT_DATA, {
-    skip: !enablePunchoutQuoteValidation || !soldToSelected,
+    skip:
+      !enablePunchoutQuoteValidation ||
+      !soldToSelected ||
+      quoteItemsAdded === '1',
     variables: {
       refIds: quoteItems.map((quoteItem) => quoteItem.sku),
       customerNumber: orgInfo?.soldTo,
@@ -218,16 +226,37 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
         }
 
         if (fieldsToUpdate.length > 0) {
-          await updateCustomFields({
-            appId: 'checkout-simulation',
-            fields: [
-              ...fieldsToUpdate,
-              {
-                name: 'isValidSimulation',
-                value: 'false',
-              },
-            ],
-          })
+          try {
+            await updateCustomFields({
+              appId: 'checkout-simulation',
+              fields: [
+                ...fieldsToUpdate,
+                {
+                  name: 'isValidSimulation',
+                  value: 'false',
+                },
+              ],
+            })
+            await updateCustomFields({
+              appId: 'punchout-to-go',
+              fields: [
+                {
+                  name: 'quoteItemsAdded',
+                  value: '1',
+                },
+              ],
+            })
+          } catch (metadataUpdateError) {
+            tcQuoteMessageList.push({
+              id: 'metadata-update-error',
+              message:
+                metadataUpdateError.graphQLErrors[0]?.message ??
+                metadataUpdateError.message ??
+                intl.formatMessage({
+                  id: 'store/quickorder.metadata.update.error',
+                }),
+            })
+          }
         }
 
         const unavailableItems = (data?.getSkuAvailability?.items ?? []).filter(
@@ -242,17 +271,43 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
         if (unavailableItems.length > 0 || tcQuoteMessageList.length > 0) {
           setWarningModalOpen(true)
         } else {
-          window.location.pathname = `${rootPath}/cart`
+          // window.location.pathname = `${rootPath}/cart`
+          navigate({
+            to: '/cart',
+            ...(!rootPath && binding?.canonicalBaseAddress
+              ? { query: { __bindingAddress: binding.canonicalBaseAddress } }
+              : {}),
+          })
         }
       })
     }
-  }, [addToCart, data])
+
+    if (error) {
+      setTcQuoteMessages([
+        {
+          id: 'item-availability-error',
+          message:
+            error.graphQLErrors[0]?.message ??
+            error.message ??
+            intl.formatMessage({
+              id: 'store/quickorder.availability.error',
+            }),
+        },
+      ])
+      setWarningModalOpen(true)
+    }
+  }, [addToCart, data, error])
 
   useEffect(() => {
-    if (error) {
-      window.location.pathname = `${rootPath}/cart`
+    if (quoteItemsAdded === '1') {
+      navigate({
+        to: '/cart',
+        ...(!rootPath && binding?.canonicalBaseAddress
+          ? { query: { __bindingAddress: binding.canonicalBaseAddress } }
+          : {}),
+      })
     }
-  }, [error, rootPath])
+  })
 
   if (!enablePunchoutQuoteValidation) {
     return null
@@ -277,7 +332,13 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
         isOpen={warningModalOpen}
         onClose={() => {
           setWarningModalOpen(false)
-          window.location.pathname = `${rootPath}/cart`
+          // window.location.pathname = `${rootPath}/cart`
+          navigate({
+            to: '/cart',
+            ...(!rootPath && binding?.canonicalBaseAddress
+              ? { query: { __bindingAddress: binding.canonicalBaseAddress } }
+              : {}),
+          })
         }}
         bottomBar={
           <div className="nowrap">
@@ -286,7 +347,17 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
                 variation="primary"
                 onClick={() => {
                   setWarningModalOpen(false)
-                  window.location.pathname = `${rootPath}/cart`
+                  // window.location.pathname = `${rootPath}/cart`
+                  navigate({
+                    to: '/cart',
+                    ...(!rootPath && binding?.canonicalBaseAddress
+                      ? {
+                          query: {
+                            __bindingAddress: binding.canonicalBaseAddress,
+                          },
+                        }
+                      : {}),
+                  })
                 }}
               >
                 {intl.formatMessage({
@@ -298,12 +369,16 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
         }
       >
         <div className="dark-gray">
-          <p>
-            {intl.formatMessage(
-              { id: 'store/quickorder.punchout.unavailable' },
-              { items: invalidItems.map((item: any) => item.refid).join(', ') }
-            )}
-          </p>
+          {invalidItems.length > 0 && (
+            <p>
+              {intl.formatMessage(
+                { id: 'store/quickorder.punchout.unavailable' },
+                {
+                  items: invalidItems.map((item: any) => item.refid).join(', '),
+                }
+              )}
+            </p>
+          )}
           {tcQuoteMessages.map((tcqm) => (
             <p key={tcqm.id}>{tcqm.message}</p>
           ))}
