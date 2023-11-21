@@ -95,5 +95,7 @@
   "store/sold-to-validation.select-sold-to-account": "Veuillez sélectionner Vendu au compte",
   "store/toaster.cart.loading-soldTo": "Chargement vendu à..",
   "store/quickorder.invalidRefId": "Aucun identifiant de référence n'existe pour le numéro de pièce du client donné.",
-  "store/quickorder.invalidCustomerPart": "Le numéro de pièce du client n'existe pas"
+  "store/quickorder.invalidCustomerPart": "Le numéro de pièce du client n'existe pas",
+  "store/quickorder.availability.error": "Une erreur s'est produite lors de la validation de la disponibilité",
+  "store/quickorder.metadata.update.error": "Une erreur s'est produite lors de la mise à jour des informations du panier"
 }
