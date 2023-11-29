@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.63] - 2023-11-29
+
 ### Fixed
 
 - Fixed multiple add to cart being fired
