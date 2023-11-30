@@ -281,7 +281,9 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
         }
       })
     }
+  }, [addToCart, data])
 
+  useEffect(() => {
     if (error) {
       setTcQuoteMessages([
         {
@@ -296,7 +298,7 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
       ])
       setWarningModalOpen(true)
     }
-  }, [addToCart, data, error])
+  }, [intl, error])
 
   useEffect(() => {
     if (quoteItemsAdded === '1') {

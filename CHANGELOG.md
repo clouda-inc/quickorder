@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Remove Thru_date property
 
+## [0.1.63] - 2023-11-29
+
+### Fixed
+
+- Fixed multiple add to cart being fired
+
 ## [0.1.62] - 2023-11-21
 
 ### Fixed
