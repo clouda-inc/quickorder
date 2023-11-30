@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.64] - 2023-11-30
+
 ### Changed
 
 - Remove Thru_date property
