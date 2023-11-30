@@ -4,7 +4,6 @@ import { useCssHandles } from 'vtex.css-handles'
 import { useIntl, defineMessages } from 'react-intl'
 
 import GET_STOCK_AVAILABILITY from '../queries/getStockAvailability.gql'
-import { getFormattedDate } from '../utils'
 import ItemListContext from '../ItemListContext'
 
 import './ItemPricing.css'
@@ -51,7 +50,7 @@ const StockAvailability = ({
       variables: {
         itemNumber,
         customer: customerNumber,
-        thruDate: getFormattedDate(new Date()),
+        thruDate: '',
       },
     }
   )
