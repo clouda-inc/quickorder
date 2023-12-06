@@ -115,7 +115,6 @@ export const queries = {
       const where = `skuRefId='${id}' AND customerNumber='${args.customerNumber}' AND targetSystem='${args.targetSystem}'`;
       const response = await callMasterdataClient(where);
 
-      console.log('test', where)
       return {
         refId: id,
         customerPartNumber: response[0]?.customerSku ?? 'N/A',
