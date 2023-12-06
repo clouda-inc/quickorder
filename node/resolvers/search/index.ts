@@ -98,7 +98,7 @@ export const queries = {
 
       const response = await callMasterdataClient(where);
 
-      if (response.length > 0) {
+      if (response.length > 0 && response[0]?.skuRefId) {
         return {
           refId: response[0]?.skuRefId,
           customerPartNumber: response[0]?.customerSku,
@@ -116,7 +116,7 @@ export const queries = {
       const response = await callMasterdataClient(where);
 
       return {
-        refId: response[0]?.skuRefId,
+        refId: id,
         customerPartNumber: response[0]?.customerSku ?? 'N/A',
         error: '',
       };
