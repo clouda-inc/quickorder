@@ -9,11 +9,10 @@ import { OrderForm } from 'vtex.order-manager'
 import type { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
 import { useCssHandles } from 'vtex.css-handles'
-import { useMutation } from 'react-apollo'
+import { useMutation, useApolloClient } from 'react-apollo'
 import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
 import XLSX from 'xlsx'
-import { useApolloClient } from 'react-apollo'
 
 import { ParseText, GetText } from './utils'
 import ReviewBlock from './components/ReviewBlock'
@@ -61,10 +60,11 @@ const UploadBlock: FunctionComponent<
 
   const [refidLoading, setRefIdLoading] = useState<any>()
   const { reviewItems, reviewState } = state
-  const apolloClient = useApolloClient();
+  const apolloClient = useApolloClient()
 
   const { useItemListState, useItemListDispatch } = ItemListContext
-  const { isLoadingCustomerInfo, showAddToCart, customerNumber, targetSystem } = useItemListState()
+  const { isLoadingCustomerInfo, showAddToCart, customerNumber, targetSystem } =
+    useItemListState()
 
   const dispatch = useItemListDispatch()
 
@@ -167,7 +167,14 @@ const UploadBlock: FunctionComponent<
       textAreaValue += `${element[0]},${element[1]}\n`
     })
 
-    const items: any = await ParseText(textAreaValue, apolloClient, customerNumber, targetSystem) || []
+    const items: any =
+      (await ParseText(
+        textAreaValue,
+        apolloClient,
+        customerNumber,
+        targetSystem
+      )) || []
+
     const error = !!items.filter((item: any) => {
       return item.error !== null
     }).length
@@ -285,6 +292,21 @@ const UploadBlock: FunctionComponent<
       toastMessage({ success: false, isNewItem: false })
 
       return
+    }
+
+    if (
+      mutationResult.data?.addToCart?.messages?.generalMessages &&
+      mutationResult.data.addToCart.messages.generalMessages.length
+    ) {
+      mutationResult.data.addToCart.messages.generalMessages.map((msg: any) => {
+        return showToast({
+          message: msg.text,
+          action: undefined,
+          duration: 30000,
+        })
+      })
+    } else {
+      toastMessage({ success: true, isNewItem: true })
     }
 
     push({

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Showed feedback of cart addition with file upload
+
 ## [0.1.66] - 2023-12-06
 
 ### Fixed
