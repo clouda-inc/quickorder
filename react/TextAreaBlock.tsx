@@ -14,6 +14,7 @@ import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
 
 import ReviewBlock from './components/ReviewBlock'
+import { SpecialBrandHandleModal } from './components/modals/SpecialBrandHandle'
 import { ParseText, GetText } from './utils'
 import { addToCartGTMEventData } from './utils/GTMEventDataHandler'
 import ItemListContext from './ItemListContext'
@@ -47,6 +48,8 @@ interface ItemType {
   quantity: number
 }
 
+const SPECAIL_BRAND_NAME = 'SPIRALOCK'
+
 const TextAreaBlock: FunctionComponent<
   TextAreaBlockInterface & WrappedComponentProps
 > = ({ intl, value, text, description, componentOnly }: any) => {
@@ -57,6 +60,7 @@ const TextAreaBlock: FunctionComponent<
   })
 
   const [refidLoading, setRefIdLoading] = useState<any>()
+  const [isModalOpen, setIsModelOpen] = useState<boolean>(false)
 
   const { textAreaValue, reviewItems, reviewState } = state
   const apolloClient = useApolloClient();
@@ -246,7 +250,18 @@ const TextAreaBlock: FunctionComponent<
   const handles = useCssHandles(CSS_HANDLES)
 
   const addToCartCopyNPaste = () => {
-    const items: any = reviewItems
+    const currentItemsInCart = orderForm.orderForm.items
+
+    const isSpecialBrandItemExistInCurrentCart = (currentItemsInCart ?? []).find((item:any)=>item?.additionalInfo?.brandName?.toUpperCase() === SPECAIL_BRAND_NAME)
+    const specialBrandItemInReviewItems = (reviewItems ?? []).filter((item:any)=> item.brand.toUpperCase() === SPECAIL_BRAND_NAME)
+
+    const cond1 = currentItemsInCart.length > 0 && !!isSpecialBrandItemExistInCurrentCart && specialBrandItemInReviewItems.length === reviewItems.length
+    const cond2 = currentItemsInCart.length === 0  && specialBrandItemInReviewItems.length === reviewItems.length
+    const cond3 = currentItemsInCart.length === 0  && specialBrandItemInReviewItems.length === 0
+    const cond4 = currentItemsInCart.length > 0  && !isSpecialBrandItemExistInCurrentCart && specialBrandItemInReviewItems.length === 0
+
+    if (cond1 || cond2 || cond3 || cond4) {
+      const items: any = reviewItems
       .filter((item: any) => item.error === null && item.vtexSku !== null)
       .map(({ vtexSku, quantity, seller, unit }: any) => {
         return {
@@ -256,24 +271,27 @@ const TextAreaBlock: FunctionComponent<
         }
       })
 
-    const merge = (internalItems: any) => {
-      return internalItems.reduce((acc, val) => {
-        const { id, quantity }: ItemType = val
-        const ind = acc.findIndex((el: any) => el.id === id)
+      const merge = (internalItems: any) => {
+        return internalItems.reduce((acc, val) => {
+          const { id, quantity }: ItemType = val
+          const ind = acc.findIndex((el: any) => el.id === id)
 
-        if (ind !== -1) {
-          acc[ind].quantity += quantity
-        } else {
-          acc.push(val)
-        }
+          if (ind !== -1) {
+            acc[ind].quantity += quantity
+          } else {
+            acc.push(val)
+          }
 
-        return acc
-      }, [])
+          return acc
+        }, [])
+      }
+
+      const mergedItems = merge(items)
+
+      callAddToCart(mergedItems)
+    } else {
+      setIsModelOpen(true)
     }
-
-    const mergedItems = merge(items)
-
-    callAddToCart(mergedItems)
   }
 
   const onRefidLoading = (data: boolean) => {
@@ -293,6 +311,7 @@ const TextAreaBlock: FunctionComponent<
 
   return (
     <div className={`${handles.textContainerMain} flex flex-column`}>
+       <SpecialBrandHandleModal isModalOpen={isModalOpen} setIsModelOpen={setIsModelOpen}/>
       {!componentOnly && (
         <div className={`${handles.textContainer} w-100 fl-l`}>
           <h2

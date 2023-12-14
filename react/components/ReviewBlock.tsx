@@ -452,6 +452,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
           unitMultiplier: itm?.unitMultiplier,
           moq: itm?.moq,
           refid: itm?.refid,
+          brand: itm?.brand
         }
       })
 
