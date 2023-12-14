@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- Added validator to add to cart funtion to validate SPIRALOCK brand
+
 ## [0.1.67] - 2023-12-12
 
 ### Fixed
