@@ -11,11 +11,14 @@ export async function health(ctx: Context, next: () => Promise<any>) {
   const timeLiteral = moment().format('YYYY-MM-DD HH:mm:ss.SSSSSSSSS')
 
   logger.info(`Bulk order service is up and running at ${timeLiteral}.`)
-  await mdClient.searchDocuments({
-    dataEntity: 'UO',
-    fields: ['email', 'soldToCustomerNumber', 'targetSystem'],
-    pagination: { pageSize: 10, page: 1 },
-  })
+
+  try {
+    await mdClient.searchDocuments({
+      dataEntity: 'UO',
+      fields: ['email', 'soldToCustomerNumber', 'targetSystem'],
+      pagination: { pageSize: 10, page: 1 },
+    })
+  } catch (error) {}
 
   ctx.status = 200
   ctx.set('Cache-Control', 'No-Cache')
