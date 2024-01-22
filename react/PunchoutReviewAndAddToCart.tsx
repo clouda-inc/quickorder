@@ -41,6 +41,8 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
     Array<{ id: string; message: string }>
   >([])
 
+  const [showRetry, setShowRetry] = useState(false)
+
   useEffect(() => {
     const { soldTo, soldToCustomerNumber, soldToInfo, targetSystem } =
       (orderForm.customData?.customApps ?? []).find(
@@ -103,7 +105,7 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
     )
   }, [orgInfo])
 
-  const { data, loading, error } = useQuery<{
+  const { data, loading, error, refetch } = useQuery<{
     getSkuAvailability: Availability
   }>(GET_PRODUCT_DATA, {
     skip:
@@ -268,6 +270,10 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
         setInvalidItems(unavailableItems)
         setTcQuoteMessages(tcQuoteMessageList)
 
+        if (!data?.getSkuAvailability) {
+          return
+        }
+
         if (unavailableItems.length > 0 || tcQuoteMessageList.length > 0) {
           setWarningModalOpen(true)
         } else {
@@ -284,20 +290,23 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
   }, [addToCart, data])
 
   useEffect(() => {
-    if (error) {
-      setTcQuoteMessages([
-        {
-          id: 'item-availability-error',
-          message:
-            error.graphQLErrors[0]?.message ??
-            error.message ??
-            intl.formatMessage({
-              id: 'store/quickorder.availability.error',
-            }),
-        },
-      ])
-      setWarningModalOpen(true)
+    if (!error) {
+      return
     }
+
+    setTcQuoteMessages([
+      {
+        id: 'item-availability-error',
+        message:
+          error.graphQLErrors[0]?.message ??
+          error.message ??
+          intl.formatMessage({
+            id: 'store/quickorder.availability.error',
+          }),
+      },
+    ])
+    setShowRetry(true)
+    setWarningModalOpen(true)
   }, [intl, error])
 
   useEffect(() => {
@@ -329,63 +338,112 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
 
   if (warningModalOpen) {
     return (
-      <Modal
-        centered
-        isOpen={warningModalOpen}
-        onClose={() => {
-          setWarningModalOpen(false)
-          // window.location.pathname = `${rootPath}/cart`
-          navigate({
-            to: '/cart',
-            ...(!rootPath && binding?.canonicalBaseAddress
-              ? { query: { __bindingAddress: binding.canonicalBaseAddress } }
-              : {}),
-          })
-        }}
-        bottomBar={
-          <div className="nowrap">
-            <span>
-              <Button
-                variation="primary"
-                onClick={() => {
-                  setWarningModalOpen(false)
-                  // window.location.pathname = `${rootPath}/cart`
-                  navigate({
-                    to: '/cart',
-                    ...(!rootPath && binding?.canonicalBaseAddress
-                      ? {
-                          query: {
-                            __bindingAddress: binding.canonicalBaseAddress,
-                          },
-                        }
-                      : {}),
-                  })
-                }}
-              >
-                {intl.formatMessage({
-                  id: 'store/quickorder.punchout.continue',
-                })}
-              </Button>
-            </span>
+      <>
+        {showRetry && (
+          <div className="mw9 center">
+            <Button
+              isLoading={loading}
+              variation="secondary"
+              onClick={async () => {
+                await refetch({
+                  refIds: quoteItems.map((quoteItem) => quoteItem.sku),
+                  customerNumber: orgInfo?.soldTo,
+                  targetSystem: orgInfo?.targetSystem,
+                  salesOrganizationCode:
+                    JSON.parse(orgInfo?.soldToInfo ?? '{}')
+                      .salesOrganizationCode ?? '',
+                })
+              }}
+            >
+              {intl.formatMessage({
+                id: 'store/quickorder.punchout.retry',
+              })}
+            </Button>
           </div>
-        }
-      >
-        <div className="dark-gray">
-          {invalidItems.length > 0 && (
-            <p>
-              {intl.formatMessage(
-                { id: 'store/quickorder.punchout.unavailable' },
-                {
-                  items: invalidItems.map((item: any) => item.refid).join(', '),
-                }
+        )}
+        <Modal
+          centered
+          isOpen={warningModalOpen}
+          onClose={() => {
+            setWarningModalOpen(false)
+            // window.location.pathname = `${rootPath}/cart`
+            navigate({
+              to: '/cart',
+              ...(!rootPath && binding?.canonicalBaseAddress
+                ? { query: { __bindingAddress: binding.canonicalBaseAddress } }
+                : {}),
+            })
+          }}
+          bottomBar={
+            <div className="flex w-50-ns w-100">
+              {showRetry && (
+                <span className="w-50-ns w-100 mr2-ns">
+                  <Button
+                    block
+                    variation="primary"
+                    onClick={async () => {
+                      await refetch({
+                        refIds: quoteItems.map((quoteItem) => quoteItem.sku),
+                        customerNumber: orgInfo?.soldTo,
+                        targetSystem: orgInfo?.targetSystem,
+                        salesOrganizationCode:
+                          JSON.parse(orgInfo?.soldToInfo ?? '{}')
+                            .salesOrganizationCode ?? '',
+                      })
+                    }}
+                  >
+                    {intl.formatMessage({
+                      id: 'store/quickorder.punchout.retry',
+                    })}
+                  </Button>
+                </span>
               )}
-            </p>
-          )}
-          {tcQuoteMessages.map((tcqm) => (
-            <p key={tcqm.id}>{tcqm.message}</p>
-          ))}
-        </div>
-      </Modal>
+              <span className="w-50-ns w-100">
+                <Button
+                  block
+                  variation="primary"
+                  onClick={() => {
+                    setWarningModalOpen(false)
+                    // window.location.pathname = `${rootPath}/cart`
+                    navigate({
+                      to: '/cart',
+                      ...(!rootPath && binding?.canonicalBaseAddress
+                        ? {
+                            query: {
+                              __bindingAddress: binding.canonicalBaseAddress,
+                            },
+                          }
+                        : {}),
+                    })
+                  }}
+                >
+                  {intl.formatMessage({
+                    id: 'store/quickorder.punchout.continue',
+                  })}
+                </Button>
+              </span>
+            </div>
+          }
+        >
+          <div className="dark-gray">
+            {invalidItems.length > 0 && (
+              <p>
+                {intl.formatMessage(
+                  { id: 'store/quickorder.punchout.unavailable' },
+                  {
+                    items: invalidItems
+                      .map((item: any) => item.refid)
+                      .join(', '),
+                  }
+                )}
+              </p>
+            )}
+            {tcQuoteMessages.map((tcqm) => (
+              <p key={tcqm.id}>{tcqm.message}</p>
+            ))}
+          </div>
+        </Modal>
+      </>
     )
   }
 
