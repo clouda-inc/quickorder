@@ -291,9 +291,6 @@ const TextAreaBlock: FunctionComponent<
     return <p>{intl.formatMessage(messages.loadingSoldTo)}</p>
   }
 
-  console.log('description', description)
-  console.log('text', text)
-
   return (
     <div className={`${handles.textContainerMain} flex flex-column`}>
       {!componentOnly && (
