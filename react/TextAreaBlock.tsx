@@ -303,7 +303,7 @@ const TextAreaBlock: FunctionComponent<
           <div
             className={`t-body lh-copy c-muted-1 mb7 ml3 false ${handles.textContainerDescription}`}
           >
-            {description}
+            <div dangerouslySetInnerHTML={{ __html: description }} />
           </div>
         </div>
       )}
