@@ -38,4 +38,16 @@ const UploadBlockWrapper = ({
   )
 }
 
+UploadBlockWrapper.schema = {
+  "title": "Upload area inputs",
+  "type": "object",
+  "properties": {
+    "description": {
+      "type": "string",
+      "title": "description",
+      "description": "The label for the text input"
+    },
+  }
+}
+
 export default UploadBlockWrapper
