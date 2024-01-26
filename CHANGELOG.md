@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## Fixed
+
+- Add fixing to the quickorder textarea information in public domain
+
 ## [0.1.69] - 2024-01-24
 
 ## Changed
