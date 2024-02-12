@@ -43,3 +43,9 @@
 .quickOrderTableRowWithIssues {
   background-color: #ffd6d6;
 }
+
+.customerPartValue,
+.customerPartLabel {
+  color: #027A48;
+  font-size: 12px;
+}

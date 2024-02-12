@@ -7,9 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-### Fixed
+## Fixed
 
+- Add fixing to the quickorder textarea information in public domain
 - Fixed redirect, added retry for TC error cases
+
+## [0.1.69] - 2024-01-24
+
+## Changed
+
+- Changed the stylings in Customer part number text
+
+## Added
+
+- Add schema to text area block
 
 ## [0.1.68] - 2024-01-11
 
@@ -85,7 +96,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Added encording and decording to handle special characters 
+- Added encording and decording to handle special characters
 
 ### Fixed
 

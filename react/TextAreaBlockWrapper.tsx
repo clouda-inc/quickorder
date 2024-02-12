@@ -42,4 +42,16 @@ const TextAreaBlockWrapper = ({
   )
 }
 
+TextAreaBlockWrapper.schema = {
+  title: 'Text area inputs',
+  type: 'object',
+  properties: {
+    description: {
+      type: 'string',
+      title: 'description',
+      description: 'The label for the text input',
+    },
+  },
+}
+
 export default TextAreaBlockWrapper
