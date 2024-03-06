@@ -2,16 +2,19 @@ import { UserInputError } from '@vtex/api'
 
 const stringToNumber = (numberToFormat: string, decimalPoints: number) => {
   return numberToFormat != null && numberToFormat !== ''
-    ? parseFloat(numberToFormat)
-        .toFixed(decimalPoints)
-        .toString()
+    ? parseFloat(numberToFormat).toFixed(decimalPoints).toString()
     : '0.00'
 }
 
 export const queries = {
   getItemPricing: async (
     _: any,
-    args: { customer: string; itemNumber: string; effectiveDate: string },
+    args: {
+      customer: string
+      itemNumber: string
+      effectiveDate: string
+      branch: string
+    },
     ctx: Context
   ): Promise<any> => {
     const {
@@ -31,6 +34,7 @@ export const queries = {
         Customer: args.customer,
         Item_Number: args.itemNumber,
         Effective_Date: args.effectiveDate,
+        Branch: args.branch,
       },
       settings
     )

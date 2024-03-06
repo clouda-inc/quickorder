@@ -1,7 +1,17 @@
-query getItemPricing($itemNumber: String!, $customer: String, $effectiveDate: String) {
-  getItemPricing(itemNumber: $itemNumber, customer: $customer, effectiveDate: $effectiveDate) {
-   	itemPrices {
-    	adjustment
+query getItemPricing(
+  $itemNumber: String!
+  $customer: String
+  $effectiveDate: String
+  $branch: String
+) {
+  getItemPricing(
+    itemNumber: $itemNumber
+    customer: $customer
+    effectiveDate: $effectiveDate
+    branch: $branch
+  ) {
+    itemPrices {
+      adjustment
       cB
       currency
       customerGroup
@@ -11,6 +21,6 @@ query getItemPricing($itemNumber: String!, $customer: String, $effectiveDate: St
       price
       quantity
       uom
-  	}
+    }
   }
 }

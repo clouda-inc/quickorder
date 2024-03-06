@@ -1,0 +1,10 @@
+query getBrandInfoBySkyRefId($skuRefId: String!, $brandNameToCompare: String) {
+  getBrandInfoBySkyRefId(
+    skuRefId: $skuRefId
+    brandNameToCompare: $brandNameToCompare
+  ) {
+    brandName
+    brandId
+    isSameBrand
+  }
+}

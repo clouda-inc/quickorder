@@ -4,7 +4,7 @@
     "alwaysStrict": true,
     "esModuleInterop": true,
     "jsx": "react",
-    "lib": ["es2017", "dom", "es2018.promise"],
+    "lib": ["es2017", "dom", "es2018.promise", "ES2020.Promise"],
     "module": "esnext",
     "moduleResolution": "node",
     "noImplicitAny": false,

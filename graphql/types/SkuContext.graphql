@@ -1,0 +1,5 @@
+type SkuBrandInfo {
+  brandName: String
+  brandId: String
+  isSameBrand: Boolean
+}

@@ -1,4 +1,5 @@
 import GET_SKU_REFID_WITH_CUSTOMER_PART_NUMBER from '../queries/getSkuRefIdWithCustomerpart.graphql'
+import GET_BRAND_DETAILS_BY_SKU_REFID from '../queries/getBrandInfoBySkyRefId.graphql'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const GetText = (items: any) => {
@@ -30,13 +31,75 @@ const removeDuplicates = (itemList: any) => {
   return Array.from(map, ([, value]) => value)
 }
 
+export const getRefIdWithCustomerpart = async (
+  partNumber: string,
+  customerNumber: string,
+  client: any,
+  targetSystem: string
+) => {
+  const query = {
+    query: GET_SKU_REFID_WITH_CUSTOMER_PART_NUMBER,
+    variables: {
+      partNumber,
+      customerNumber,
+      targetSystem,
+    },
+  }
+
+  const { data } = await client.query(query)
+
+  if (data) {
+    return {
+      skuRefId: data.getSkuRefIdWithCustomerPart.refId,
+      customerPartNumber: data.getSkuRefIdWithCustomerPart.customerPartNumber,
+      error: data.getSkuRefIdWithCustomerPart.error,
+    }
+  }
+
+  return {
+    skuRefId: '',
+    customerPartNumber: '',
+    error: 'No data Available',
+  }
+}
+
+export const getBrandRestrictions = async (
+  skuRefId: string,
+  client: any,
+  brandNameToCompare?: string
+) => {
+  const query = {
+    query: GET_BRAND_DETAILS_BY_SKU_REFID,
+    variables: {
+      skuRefId,
+      brandNameToCompare,
+    },
+  }
+
+  const { data } = await client.query(query)
+
+  if (data) {
+    return {
+      isSameBrand: data.getBrandInfoBySkyRefId?.isSameBrand,
+    }
+  }
+
+  return {
+    isSameBrand: undefined,
+  }
+}
+
 /**
  *
  * @param textAreaValue
  * @constructor
  */
-export const ParseText = async (textAreaValue: string, client:any, customerNumber:string, targetSystem: string) => {
-
+export const ParseText = async (
+  textAreaValue: string,
+  client: any,
+  customerNumber: string,
+  targetSystem: string
+) => {
   const rawText: any = String(textAreaValue || '')
   const arrText = String(rawText).split(/[\n\r]/)
   const items = arrText
@@ -53,7 +116,14 @@ export const ParseText = async (textAreaValue: string, client:any, customerNumbe
           // eslint-disable-next-line no-restricted-globals
           !isNaN(lineSplitted[1])
         ) {
-          const {skuRefId, customerPartNumber, error } = await getRefIdWithCustomerpart(String(lineSplitted[0]).trim(), customerNumber, client, targetSystem)
+          const { skuRefId, customerPartNumber, error } =
+            await getRefIdWithCustomerpart(
+              String(lineSplitted[0]).trim(),
+              customerNumber,
+              client,
+              targetSystem
+            )
+
           if (error) {
             return {
               index,
@@ -61,10 +131,23 @@ export const ParseText = async (textAreaValue: string, client:any, customerNumbe
               content: line,
               sku: '',
               quantity: null,
-              error: error === 'No Ref_ID' ? 'store/quickorder.invalidCustomerPart': error === 'No customerPart' ? 'store/quickorder.invalidRefId' : 'store/quickorder.invalidPattern',
-              partNumber: ''
+              error:
+                error === 'No Ref_ID'
+                  ? 'store/quickorder.invalidCustomerPart'
+                  : error === 'No customerPart'
+                  ? 'store/quickorder.invalidRefId'
+                  : 'store/quickorder.invalidPattern',
+              partNumber: '',
+              branch: '',
             }
           }
+
+          const { isSameBrand: isSpiraLockItem } = await getBrandRestrictions(
+            skuRefId,
+            client,
+            'SPIRALOCK'
+          )
+
           return {
             index,
             line: index,
@@ -73,7 +156,8 @@ export const ParseText = async (textAreaValue: string, client:any, customerNumbe
             quantity: parseFloat(String(lineSplitted[1]).trim()),
             content: line,
             error: null,
-            partNumber : customerPartNumber
+            partNumber: customerPartNumber,
+            branch: isSpiraLockItem ? '6100' : '2100',
           }
         }
       }
@@ -85,10 +169,13 @@ export const ParseText = async (textAreaValue: string, client:any, customerNumbe
         sku: null,
         quantity: null,
         error: 'store/quickorder.invalidPattern',
-        partNumber: ''
+        partNumber: '',
+        branch: '',
       }
     })
+
   const promises = await Promise.all(items)
+
   return removeDuplicates(promises)
 }
 
@@ -97,7 +184,7 @@ export const ParseText = async (textAreaValue: string, client:any, customerNumbe
  * @param orderFormItems
  * @param itemsList
  */
-export const itemsInSystem = (orderFormItems, itemsList) => {
+export const itemsInSystem = (orderFormItems: any[], itemsList: any[]) => {
   return itemsList.filter((item: any) =>
     // eslint-disable-next-line eqeqeq
     orderFormItems.some((data: any) => data.id == item.id)
@@ -109,7 +196,7 @@ export const itemsInSystem = (orderFormItems, itemsList) => {
  * @param orderFormItems
  * @param itemsList
  */
-export const getNewItems = (orderFormItems, itemsList) => {
+export const getNewItems = (orderFormItems: any[], itemsList: any[]) => {
   return itemsList.filter(
     (item: any) =>
       // eslint-disable-next-line eqeqeq
@@ -140,32 +227,4 @@ export const getFormattedDate = (date: Date) => {
   const day = date.getDate().toString().padStart(2, '0')
 
   return `${month}/${day}/${year}`
-}
-
-
-export const getRefIdWithCustomerpart = async(partNumber:string, customerNumber:string, client:any, targetSystem: string)=> {
-    const query = {
-      query: GET_SKU_REFID_WITH_CUSTOMER_PART_NUMBER,
-      variables: {
-        partNumber,
-        customerNumber,
-        targetSystem
-      },
-    }
-
-    const {data} = await client.query(query)
-
-    if (data){
-      return {
-        skuRefId : data.getSkuRefIdWithCustomerPart.refId,
-        customerPartNumber : data.getSkuRefIdWithCustomerPart.customerPartNumber,
-        error: data.getSkuRefIdWithCustomerPart.error
-      }
-    } else {
-      return{
-        skuRefId : '',
-        customerPartNumber : '',
-        error: 'No data Available'
-      }
-    }
 }

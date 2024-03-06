@@ -4,6 +4,7 @@ import {
 } from './search'
 import { queries as priceQueries } from './pricing/pricing'
 import { queries as stockAvailabilityQueries } from './stockAvailability/stockAvailability'
+import { queries as skuQueries } from './sku/sku'
 
 export const resolvers = {
   ...searchFieldResolvers,
@@ -11,5 +12,6 @@ export const resolvers = {
     ...searchQueries,
     ...priceQueries,
     ...stockAvailabilityQueries,
+    ...skuQueries,
   },
 }
