@@ -53,6 +53,8 @@ const ItemPricing = ({ itemNumber, customerNumber }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const intl = useIntl()
 
+  console.log('itemno >>> ', itemNumber)
+
   const { data: itemPricingInfo, loading } = useQuery(GET_ITEM_PRICING, {
     skip: !itemNumber || itemNumber === '',
     variables: {
@@ -69,7 +71,9 @@ const ItemPricing = ({ itemNumber, customerNumber }: Props) => {
   }
 
   return loading ? (
-    <div className={`${styles.priceTable}`}>{intl.formatMessage(messages.loading)}</div>
+    <div className={`${styles.priceTable}`}>
+      {intl.formatMessage(messages.loading)}
+    </div>
   ) : (
     <div className={`${styles.priceTable} flex flex-column`}>
       <div className={`${styles.priceTableHeader} flex w-100`}>
@@ -111,7 +115,7 @@ const ItemPricing = ({ itemNumber, customerNumber }: Props) => {
       <Modal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        title= {intl.formatMessage(messages.completePrice)}
+        title={intl.formatMessage(messages.completePrice)}
       >
         <div className={`${styles.priceTableModal}`}>
           <div className={`${styles.priceTableHeader} flex w-100`}>

@@ -208,6 +208,7 @@ const TextAreaBlock: FunctionComponent<
       return item.error !== null
     }).length
 
+    console.log('items >>> ', items)
     setState({
       ...state,
       reviewItems: items,

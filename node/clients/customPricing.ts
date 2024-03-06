@@ -12,6 +12,7 @@ interface ItemPricingInput {
   Customer: string
   Item_Number: string
   Effective_Date: string
+  // Branch: string
 }
 
 export class CustomPricing extends ExternalClient {

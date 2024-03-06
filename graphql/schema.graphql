@@ -30,4 +30,9 @@ type Query {
     customerNumber: String
     targetSystem: String
   ): RefIdResponse
+
+  getBrandInfoBySkyRefId(
+    skuRefId: String!
+    brandNameToCompare: String
+  ): SkuBrandInfo
 }
