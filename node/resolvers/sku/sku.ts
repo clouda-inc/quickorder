@@ -16,7 +16,6 @@ export const queries = {
 
     const skuContextResponse = await catalog.getSkuContextByRefId(args.skuRefId)
 
-    console.log('skucontext >>> ', skuContextResponse.BrandName)
     return {
       brandName: skuContextResponse?.BrandName ?? '',
       brandId: skuContextResponse?.BrandId ?? '',

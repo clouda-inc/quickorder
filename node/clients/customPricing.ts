@@ -1,10 +1,6 @@
 /* eslint-disable max-params */
-import {
-  InstanceOptions,
-  IOContext,
-  RequestConfig,
-  ExternalClient,
-} from '@vtex/api'
+import type { InstanceOptions, IOContext, RequestConfig } from '@vtex/api'
+import { ExternalClient } from '@vtex/api'
 
 import { statusToError } from '../utils'
 
@@ -12,7 +8,7 @@ interface ItemPricingInput {
   Customer: string
   Item_Number: string
   Effective_Date: string
-  // Branch: string
+  Branch: string
 }
 
 export class CustomPricing extends ExternalClient {

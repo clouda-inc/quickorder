@@ -17,6 +17,7 @@ type Query {
     itemNumber: String!
     customer: String
     effectiveDate: String
+    branch: String
   ): ItemPrices
 
   getStockAvailability(

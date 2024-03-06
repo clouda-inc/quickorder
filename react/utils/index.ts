@@ -78,11 +78,9 @@ export const getBrandRestrictions = async (
 
   const { data } = await client.query(query)
 
-  console.log('brandquery >>> ', data)
-
   if (data) {
     return {
-      isSameBrand: data.isSameBrand,
+      isSameBrand: data.getBrandInfoBySkyRefId?.isSameBrand,
     }
   }
 
@@ -147,7 +145,7 @@ export const ParseText = async (
           const { isSameBrand: isSpiraLockItem } = await getBrandRestrictions(
             skuRefId,
             client,
-            'pop rivet'
+            'SPIRALOCK'
           )
 
           return {
@@ -161,62 +159,6 @@ export const ParseText = async (
             partNumber: customerPartNumber,
             branch: isSpiraLockItem ? '6100' : '2100',
           }
-
-          // let skuRefId
-          // let customerPartNumber
-
-          // await getRefIdWithCustomerpart(
-          //   String(lineSplitted[0]).trim(),
-          //   customerNumber,
-          //   client,
-          //   targetSystem
-          // )
-          //   .then(async (response) => {
-          //     console.log('res >>>', response)
-          //     skuRefId = response?.skuRefId
-          //     customerNumber = response?.customerPartNumber
-
-          //     const { isSameBrand: isSpiraLockItem } =
-          //       await getBrandRestrictions(skuRefId, client, 'pop rivet')
-          //     console.log('testthen >>> ', isSpiraLockItem)
-          //   })
-          //   .catch((error) => console.log('error >>> ', error))
-
-          // // if (error) {
-          // //   return {
-          // //     index,
-          // //     line: index,
-          // //     content: line,
-          // //     sku: '',
-          // //     quantity: null,
-          // //     error:
-          // //       error === 'No Ref_ID'
-          // //         ? 'store/quickorder.invalidCustomerPart'
-          // //         : error === 'No customerPart'
-          // //         ? 'store/quickorder.invalidRefId'
-          // //         : 'store/quickorder.invalidPattern',
-          // //     partNumber: '',
-          // //     branch: '',
-          // //   }
-          // // }
-
-          // // const { isSameBrand: isSpiraLockItem } = await getBrandRestrictions(
-          // //   skuRefId,
-          // //   client,
-          // //   'pop rivet'
-          // // )
-
-          // return {
-          //   index,
-          //   line: index,
-          //   // Add endording to handle special characters in sku name , Due to encording sku name might be changed inside the project
-          //   sku: skuRefId,
-          //   quantity: parseFloat(String(lineSplitted[1]).trim()),
-          //   content: line,
-          //   error: null,
-          //   partNumber: customerPartNumber,
-          //   // branch: isSpiraLockItem ? '6100' : '2100',
-          // }
         }
       }
 
@@ -242,7 +184,7 @@ export const ParseText = async (
  * @param orderFormItems
  * @param itemsList
  */
-export const itemsInSystem = (orderFormItems, itemsList) => {
+export const itemsInSystem = (orderFormItems: any[], itemsList: any[]) => {
   return itemsList.filter((item: any) =>
     // eslint-disable-next-line eqeqeq
     orderFormItems.some((data: any) => data.id == item.id)
@@ -254,7 +196,7 @@ export const itemsInSystem = (orderFormItems, itemsList) => {
  * @param orderFormItems
  * @param itemsList
  */
-export const getNewItems = (orderFormItems, itemsList) => {
+export const getNewItems = (orderFormItems: any[], itemsList: any[]) => {
   return itemsList.filter(
     (item: any) =>
       // eslint-disable-next-line eqeqeq

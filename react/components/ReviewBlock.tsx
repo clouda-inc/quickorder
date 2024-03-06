@@ -1,12 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable vtex/prefer-early-return */
 /* eslint no-shadow: "error" */
-import React, {
-  useState,
-  FunctionComponent,
-  useCallback,
-  useEffect,
-} from 'react'
+import type { FunctionComponent } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import {
   ButtonWithIcon,
   IconDelete,
@@ -16,7 +12,8 @@ import {
   Tooltip,
 } from 'vtex.styleguide'
 import { useRuntime } from 'vtex.render-runtime'
-import { defineMessages, injectIntl, WrappedComponentProps } from 'react-intl'
+import type { WrappedComponentProps } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import PropTypes from 'prop-types'
 import { useApolloClient } from 'react-apollo'
 import { useCssHandles } from 'vtex.css-handles'
@@ -250,8 +247,6 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   // const targetSystem = soldToAccount?.getOrderSoldToAccount?.targetSystem ?? ''
   // const salesOrganizationCode =
   //   soldToAccount?.getOrderSoldToAccount?.salesOrganizationCode ?? ''
-
-  console.log('reveiwed >>> ', reviewedItems)
 
   const { useItemListState } = ItemListContext
   const { customerNumber, targetSystem, salesOrganizationCode, itemStatuses } =
@@ -679,6 +674,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                     <ItemPricing
                       itemNumber={rowData?.sku}
                       customerNumber={customerNumber}
+                      branch={rowData?.branch}
                     />
                   </div>
                 ) : (

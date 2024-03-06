@@ -46,14 +46,13 @@ const messages = defineMessages({
 interface Props {
   itemNumber: string
   customerNumber: string
+  branch: string
 }
 
-const ItemPricing = ({ itemNumber, customerNumber }: Props) => {
+const ItemPricing = ({ itemNumber, customerNumber, branch }: Props) => {
   const styles = useCssHandles(CSS_HANDLES)
   const [isOpen, setIsOpen] = useState(false)
   const intl = useIntl()
-
-  console.log('itemno >>> ', itemNumber)
 
   const { data: itemPricingInfo, loading } = useQuery(GET_ITEM_PRICING, {
     skip: !itemNumber || itemNumber === '',
@@ -61,6 +60,7 @@ const ItemPricing = ({ itemNumber, customerNumber }: Props) => {
       itemNumber,
       customer: customerNumber,
       effectiveDate: getFormattedDate(new Date()),
+      branch,
     },
   })
 
