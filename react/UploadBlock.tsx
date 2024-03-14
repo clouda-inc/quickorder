@@ -59,6 +59,7 @@ const UploadBlock: FunctionComponent<
   })
 
   const [refidLoading, setRefIdLoading] = useState<any>()
+  const [loading, setLoading] = useState<boolean>(false)
   const { reviewItems, reviewState } = state
   const apolloClient = useApolloClient()
 
@@ -162,6 +163,7 @@ const UploadBlock: FunctionComponent<
   }
 
   const parseText = async () => {
+    setLoading(true)
     let textAreaValue = ''
 
     productsArray.forEach((element: any) => {
@@ -175,6 +177,7 @@ const UploadBlock: FunctionComponent<
         customerNumber,
         targetSystem
       )) || []
+    setLoading(false)
 
     const error = !!items.filter((item: any) => {
       return item.error !== null
@@ -443,6 +446,7 @@ const UploadBlock: FunctionComponent<
                 <Button
                   variation="secondary"
                   size="regular"
+                  isLoading={loading}
                   onClick={() => {
                     parseText()
                   }}

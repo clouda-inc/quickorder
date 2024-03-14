@@ -56,6 +56,7 @@ const TextAreaBlock: FunctionComponent<
   })
 
   const [refidLoading, setRefIdLoading] = useState<any>()
+  const [loading, setLoading] = useState<boolean>(false)
 
   const { textAreaValue, reviewItems, reviewState } = state
   const apolloClient = useApolloClient()
@@ -196,6 +197,7 @@ const TextAreaBlock: FunctionComponent<
   }
 
   const parseText = async () => {
+    setLoading(true)
     const items: any =
       (await ParseText(
         textAreaValue,
@@ -203,6 +205,7 @@ const TextAreaBlock: FunctionComponent<
         customerNumber,
         targetSystem
       )) || []
+    setLoading(false)
 
     const error = !!items.filter((item: any) => {
       return item.error !== null
@@ -336,6 +339,7 @@ const TextAreaBlock: FunctionComponent<
                 <Button
                   variation="secondary"
                   size="regular"
+                  isLoading={loading}
                   onClick={() => {
                     parseText()
                   }}
