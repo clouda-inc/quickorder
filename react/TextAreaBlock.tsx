@@ -9,7 +9,7 @@ import { OrderForm } from 'vtex.order-manager'
 import type { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
 import { useCssHandles } from 'vtex.css-handles'
-import { useMutation } from 'react-apollo'
+import { useMutation, useApolloClient } from 'react-apollo'
 import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
 
@@ -18,7 +18,6 @@ import { SpecialBrandHandleModal } from './components/modals/SpecialBrandHandle'
 import { ParseText, GetText } from './utils'
 import { addToCartGTMEventData } from './utils/GTMEventDataHandler'
 import ItemListContext from './ItemListContext'
-import { useApolloClient } from 'react-apollo'
 
 const messages = defineMessages({
   success: {
@@ -63,7 +62,7 @@ const TextAreaBlock: FunctionComponent<
   const [isModalOpen, setIsModelOpen] = useState<boolean>(false)
 
   const { textAreaValue, reviewItems, reviewState } = state
-  const apolloClient = useApolloClient();
+  const apolloClient = useApolloClient()
 
   const [addToCart, { error: mutationError, loading: mutationLoading }] =
     useMutation<{ addToCart: OrderFormType }, { items: [] }>(ADD_TO_CART)
@@ -77,7 +76,8 @@ const TextAreaBlock: FunctionComponent<
   const { showToast } = useContext(ToastContext)
 
   const { useItemListState, useItemListDispatch } = ItemListContext
-  const { isLoadingCustomerInfo, showAddToCart, customerNumber, targetSystem } = useItemListState()
+  const { isLoadingCustomerInfo, showAddToCart, customerNumber, targetSystem } =
+    useItemListState()
 
   const dispatch = useItemListDispatch()
 
@@ -199,8 +199,14 @@ const TextAreaBlock: FunctionComponent<
     return true
   }
 
-  const parseText = async() => {
-    const items: any = await ParseText(textAreaValue, apolloClient, customerNumber, targetSystem) || []
+  const parseText = async () => {
+    const items: any =
+      (await ParseText(
+        textAreaValue,
+        apolloClient,
+        customerNumber,
+        targetSystem
+      )) || []
 
     const error = !!items.filter((item: any) => {
       return item.error !== null
@@ -322,7 +328,11 @@ const TextAreaBlock: FunctionComponent<
           <div
             className={`t-body lh-copy c-muted-1 mb7 ml3 false ${handles.textContainerDescription}`}
           >
-            {description}
+            <div
+              dangerouslySetInnerHTML={{
+                __html: `<div> ${description} </div>`,
+              }}
+            />
           </div>
         </div>
       )}

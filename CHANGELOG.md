@@ -11,6 +11,32 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Added validator to add to cart funtion to validate SPIRALOCK brand
 
+## [0.1.70] - 2024-03-06
+
+### Added
+
+- Added 'Branch' field in the price and availability request based on brand
+
+## Fixed
+
+- Add fixing to the quickorder textarea information in public domain
+
+## [0.1.69] - 2024-01-24
+
+## Changed
+
+- Changed the stylings in Customer part number text
+
+## Added
+
+- Add schema to text area block
+
+## [0.1.68] - 2024-01-11
+
+### Fixed
+
+- Fixed health check and service config
+
 ## [0.1.67] - 2023-12-12
 
 ### Fixed

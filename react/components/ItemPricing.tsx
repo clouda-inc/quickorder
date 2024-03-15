@@ -46,9 +46,10 @@ const messages = defineMessages({
 interface Props {
   itemNumber: string
   customerNumber: string
+  branch: string
 }
 
-const ItemPricing = ({ itemNumber, customerNumber }: Props) => {
+const ItemPricing = ({ itemNumber, customerNumber, branch }: Props) => {
   const styles = useCssHandles(CSS_HANDLES)
   const [isOpen, setIsOpen] = useState(false)
   const intl = useIntl()
@@ -59,6 +60,7 @@ const ItemPricing = ({ itemNumber, customerNumber }: Props) => {
       itemNumber,
       customer: customerNumber,
       effectiveDate: getFormattedDate(new Date()),
+      branch,
     },
   })
 
@@ -69,7 +71,9 @@ const ItemPricing = ({ itemNumber, customerNumber }: Props) => {
   }
 
   return loading ? (
-    <div className={`${styles.priceTable}`}>{intl.formatMessage(messages.loading)}</div>
+    <div className={`${styles.priceTable}`}>
+      {intl.formatMessage(messages.loading)}
+    </div>
   ) : (
     <div className={`${styles.priceTable} flex flex-column`}>
       <div className={`${styles.priceTableHeader} flex w-100`}>
@@ -111,7 +115,7 @@ const ItemPricing = ({ itemNumber, customerNumber }: Props) => {
       <Modal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        title= {intl.formatMessage(messages.completePrice)}
+        title={intl.formatMessage(messages.completePrice)}
       >
         <div className={`${styles.priceTableModal}`}>
           <div className={`${styles.priceTableHeader} flex w-100`}>

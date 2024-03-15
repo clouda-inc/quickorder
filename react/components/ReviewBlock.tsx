@@ -1,12 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable vtex/prefer-early-return */
 /* eslint no-shadow: "error" */
-import React, {
-  useState,
-  FunctionComponent,
-  useCallback,
-  useEffect,
-} from 'react'
+import type { FunctionComponent } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import {
   ButtonWithIcon,
   IconDelete,
@@ -16,7 +12,8 @@ import {
   Tooltip,
 } from 'vtex.styleguide'
 import { useRuntime } from 'vtex.render-runtime'
-import { defineMessages, injectIntl, WrappedComponentProps } from 'react-intl'
+import type { WrappedComponentProps } from 'react-intl'
+import { defineMessages, injectIntl } from 'react-intl'
 import PropTypes from 'prop-types'
 import { useApolloClient } from 'react-apollo'
 import { useCssHandles } from 'vtex.css-handles'
@@ -179,15 +176,15 @@ const messages = defineMessages({
   },
   orderedQuantity: {
     id: 'store/quickorder.ordered-quantity',
-    defaultMessage: 'Ordered Quantity: '
+    defaultMessage: 'Ordered Quantity: ',
   },
   noCustomerPart: {
     id: 'store/quickorder.invalidCustomerPart',
-    defaultMessage: 'customerPart number is not exist'
+    defaultMessage: 'customerPart number is not exist',
   },
   noRefId: {
     id: 'store/quickorder.invalidRefId',
-    defaultMessage: 'No Ref Id exists for given customerPart Number'
+    defaultMessage: 'No Ref Id exists for given customerPart Number',
   },
 })
 
@@ -311,8 +308,8 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     'store/quickorder.ORD029': messages.ORD029,
     'store/quickorder.ORD030': messages.ORD030,
     'store/quickorder.ORD031': messages.ORD031,
-    "store/quickorder.invalidRefId": messages.noRefId,
-    "store/quickorder.invalidCustomerPart": messages.noCustomerPart
+    'store/quickorder.invalidRefId': messages.noRefId,
+    'store/quickorder.invalidCustomerPart': messages.noCustomerPart,
   }
 
   const isEURegion = () => {
@@ -678,6 +675,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                     <ItemPricing
                       itemNumber={rowData?.sku}
                       customerNumber={customerNumber}
+                      branch={rowData?.branch}
                     />
                   </div>
                 ) : (
