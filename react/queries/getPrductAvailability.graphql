@@ -29,6 +29,7 @@ query getAvbProduct(
       productName
       price
       unitMultiplier
+      brand
     }
     performanceData {
       key
