@@ -373,7 +373,6 @@ export const queries = {
           )
 
           const unitMultiplier = skuItem?.unitMultiplier ?? 1
-
           return {
             refid: skuRefId,
             sku: itemId,
@@ -393,6 +392,7 @@ export const queries = {
             },
             availability: isAuthorized ? 'authorized' : 'unauthorized',
             unitMultiplier,
+            brand: product.brand
           }
         })
 
