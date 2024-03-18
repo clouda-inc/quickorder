@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.73] - 2024-03-18
+
 ### Added
 
 - Added loading state to validate buttons
+
+## [0.1.72] - 2024-03-18
 
 ## [0.1.71] - 2024-03-15
 
