@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Added loading state to validate buttons
+- Added a fix for infinite loading state when user enters skus in lower case
 
 ## [0.1.71] - 2024-03-15
 
