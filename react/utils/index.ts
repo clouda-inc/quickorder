@@ -50,7 +50,7 @@ export const getRefIdWithCustomerpart = async (
 
   if (data) {
     return {
-      skuRefId: data.getSkuRefIdWithCustomerPart.refId,
+      skuRefId: data.getSkuRefIdWithCustomerPart.refId.toUpperCase(),
       customerPartNumber: data.getSkuRefIdWithCustomerPart.customerPartNumber,
       error: data.getSkuRefIdWithCustomerPart.error,
     }
