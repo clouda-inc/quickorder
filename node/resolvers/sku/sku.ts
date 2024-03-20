@@ -17,11 +17,11 @@ export const queries = {
     const skuContextResponse = await catalog.getSkuContextByRefId(args.skuRefId)
 
     return {
-      brandName: skuContextResponse?.BrandName ?? '',
-      brandId: skuContextResponse?.BrandId ?? '',
+      brandName: skuContextResponse?.name ?? '',
+      brandId: skuContextResponse?.id ?? '',
       isSameBrand: args?.brandNameToCompare
         ? args.brandNameToCompare.toUpperCase() ===
-          skuContextResponse?.BrandName?.toUpperCase()
+          skuContextResponse?.name?.toUpperCase()
         : undefined,
     }
   },

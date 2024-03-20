@@ -29,23 +29,39 @@ export class Catalog extends ExternalClient {
     })
   }
 
-  public getSkuContextByRefId = (refId: string ) => {
+  public getSkuContextByRefId = async (refId: string ) => {
     this.context.logger.debug({
       auth: this.context.authToken,
       url: this.context.host,
     })
-    const endpoint = `${this.options?.baseURL}/api/catalog_system/pvt/sku/stockkeepingunitbyalternateId/${refId}`
 
-    return this.http.get(`/api/catalog_system/pvt/sku/stockkeepingunitbyalternateId/${refId}`, {
+    const productEndpoint = `${this.options?.baseURL}/api/catalog_system/pvt/products/productgetbyrefid/${refId}`
+    const productResponse = await this.http.get(productEndpoint, {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
         VtexIdclientAutCookie: `${this.context.authToken}`,
         'Proxy-Authorization': this.context.authToken,
-        'X-Vtex-Proxy-To': endpoint,
+        'X-Vtex-Proxy-To': productEndpoint,
         'X-Vtex-Use-Https': true,
         'Cache-Control': 'no-cache',
       },
     })
+
+    const brandId = productResponse?.BrandId
+
+    const brandEndpoint = `${this.options?.baseURL}/api/catalog_system/pvt/brand/${brandId}`
+    const brandResponse = await this.http.get(brandEndpoint, {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        VtexIdclientAutCookie: `${this.context.authToken}`,
+        'Proxy-Authorization': this.context.authToken,
+        'X-Vtex-Proxy-To': brandEndpoint,
+        'X-Vtex-Use-Https': true,
+        'Cache-Control': 'no-cache',
+      },
+    })
+    return brandResponse
   }
 }
