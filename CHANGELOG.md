@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Fixed infinite validation loading in brand validation
 
+## [0.1.75] - 2024-03-21
+
+## [0.1.74] - 2024-03-21
+
 ## [0.1.73] - 2024-03-18
 
 ### Added
@@ -121,7 +125,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Added encording and decording to handle special characters 
+- Added encording and decording to handle special characters
 
 ### Fixed
 
