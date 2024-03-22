@@ -14,7 +14,13 @@ export const queries = {
       throw new UserInputError('No refids provided')
     }
 
-    const skuContextResponse = await catalog.getSkuContextByRefId(args.skuRefId)
+    let skuContextResponse = null
+
+    try {
+      skuContextResponse = await catalog.getSkuContextByRefId(args.skuRefId)
+    } catch (error) {
+      console.error(error)
+    }
 
     return {
       brandName: skuContextResponse?.name ?? '',
