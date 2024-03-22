@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed infinite validation loading in brand validation
+
 ## [0.1.73] - 2024-03-18
 
 ### Added
