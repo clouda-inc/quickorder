@@ -1,4 +1,5 @@
-import { InstanceOptions, IOContext, ExternalClient } from '@vtex/api'
+import type { InstanceOptions, IOContext } from '@vtex/api'
+import { ExternalClient } from '@vtex/api'
 
 export class Catalog extends ExternalClient {
   constructor(context: IOContext, options?: InstanceOptions) {
@@ -29,7 +30,7 @@ export class Catalog extends ExternalClient {
     })
   }
 
-  public getSkuContextByRefId = async (refId: string ) => {
+  public getSkuContextByRefId = async (refId: string) => {
     this.context.logger.debug({
       auth: this.context.authToken,
       url: this.context.host,
@@ -62,6 +63,7 @@ export class Catalog extends ExternalClient {
         'Cache-Control': 'no-cache',
       },
     })
+
     return brandResponse
   }
 }
