@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed all items unavailability when certain items are validated
+
 ## [0.1.76] - 2024-03-22
 
 ### Fixed

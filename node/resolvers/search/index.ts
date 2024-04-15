@@ -12,7 +12,7 @@ import {
   PLANT_SCHEMA,
   CUSTOMER_SKU_FIELDS,
   CUSTOMER_SKU_ACRONYM,
-  CUSTOMER_SKU_SCHEMA
+  CUSTOMER_SKU_SCHEMA,
   // UMMOQ_CLIENT_ACRONYM,
   // UMMOQ_CLIENT_FIELDS,
   // UMMOQ_CLIENT_SCHEMA,
@@ -68,58 +68,58 @@ export const queries = {
   ) => {
     const {
       clients: { masterdata },
-    } = ctx;
+    } = ctx
 
-    const { type, id, error } = await getCustomerPartNumbers(args.partNumber);
+    const { type, id, error } = await getCustomerPartNumbers(args.partNumber)
 
     if (error) {
       return {
         refId: '',
         customerPartNumber: '',
         error,
-      };
+      }
     }
 
-    const callMasterdataClient = async (where: string)=>{
-      const res = await masterdata.searchDocumentsWithPaginationInfo<SearchResponse>({
-        dataEntity: CUSTOMER_SKU_ACRONYM,
-        schema: CUSTOMER_SKU_SCHEMA,
-        fields: CUSTOMER_SKU_FIELDS,
-        pagination: { pageSize: 100, page: 1 },
-        where,
-      });
+    const callMasterdataClient = async (where: string) => {
+      const res =
+        await masterdata.searchDocumentsWithPaginationInfo<SearchResponse>({
+          dataEntity: CUSTOMER_SKU_ACRONYM,
+          schema: CUSTOMER_SKU_SCHEMA,
+          fields: CUSTOMER_SKU_FIELDS,
+          pagination: { pageSize: 100, page: 1 },
+          where,
+        })
 
       return res.data
     }
 
     if (type === 'withCustomerPart') {
-      const where = `customerSku='${id}' AND customerNumber='${args.customerNumber}' AND targetSystem='${args.targetSystem}'`;
+      const where = `customerSku='${id}' AND customerNumber='${args.customerNumber}' AND targetSystem='${args.targetSystem}'`
 
-
-      const response = await callMasterdataClient(where);
+      const response = await callMasterdataClient(where)
 
       if (response.length > 0 && response[0]?.skuRefId) {
         return {
           refId: response[0]?.skuRefId,
           customerPartNumber: response[0]?.customerSku,
           error: response[0]?.skuRefId ? '' : 'No Ref_ID',
-        };
-      } else {
-        return {
-          refId: '',
-          customerPartNumber: '',
-          error: 'No customerPart',
-        };
+        }
       }
-    } else {
-      const where = `skuRefId='${id}' AND customerNumber='${args.customerNumber}' AND targetSystem='${args.targetSystem}'`;
-      const response = await callMasterdataClient(where);
 
       return {
-        refId: id,
-        customerPartNumber: response[0]?.customerSku ?? 'N/A',
-        error: '',
-      };
+        refId: '',
+        customerPartNumber: '',
+        error: 'No customerPart',
+      }
+    }
+
+    const where = `skuRefId='${id}' AND customerNumber='${args.customerNumber}' AND targetSystem='${args.targetSystem}'`
+    const response = await callMasterdataClient(where)
+
+    return {
+      refId: id,
+      customerPartNumber: response[0]?.customerSku ?? 'N/A',
+      error: '',
     }
   },
 
@@ -204,7 +204,7 @@ export const queries = {
 
       const plants = await Promise.all(
         refIds.map((refId: string) => {
-          const where = `skuRefId=${refId} ${
+          const where = `skuRefId='${refId}' ${
             salesOrganizationCode
               ? `AND salesOrganizationCode=${salesOrganizationCode}`
               : ''
@@ -373,6 +373,7 @@ export const queries = {
           )
 
           const unitMultiplier = skuItem?.unitMultiplier ?? 1
+
           return {
             refid: skuRefId,
             sku: itemId,
@@ -392,7 +393,7 @@ export const queries = {
             },
             availability: isAuthorized ? 'authorized' : 'unauthorized',
             unitMultiplier,
-            brand: product.brand
+            brand: product.brand,
           }
         })
 
