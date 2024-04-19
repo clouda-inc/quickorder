@@ -66,6 +66,11 @@ const ItemPricing = ({ itemNumber, customerNumber, branch }: Props) => {
 
   const priceList = itemPricingInfo?.getItemPricing?.itemPrices ?? []
 
+  const uomSuffixForTitles =
+    priceList && priceList.length > 0 && priceList[0].uom
+      ? ` (${priceList[0].uom})`
+      : ''
+
   const openModal = () => {
     setIsOpen(true)
   }
@@ -78,10 +83,10 @@ const ItemPricing = ({ itemNumber, customerNumber, branch }: Props) => {
     <div className={`${styles.priceTable} flex flex-column`}>
       <div className={`${styles.priceTableHeader} flex w-100`}>
         <div className={`${styles.priceTableHeaderQty} flex mr3 w-60 b`}>
-          {intl.formatMessage(messages.qty)}
+          {intl.formatMessage(messages.qty)} {uomSuffixForTitles}
         </div>
         <div className={`${styles.priceTableHeaderPrice} flex w-40 b mr3`}>
-          {intl.formatMessage(messages.price)}
+          {intl.formatMessage(messages.price)} {uomSuffixForTitles}
         </div>
       </div>
       {priceList.map((item: ItemPrices, index: number) => {
@@ -120,10 +125,10 @@ const ItemPricing = ({ itemNumber, customerNumber, branch }: Props) => {
         <div className={`${styles.priceTableModal}`}>
           <div className={`${styles.priceTableHeader} flex w-100`}>
             <div className={`${styles.priceTableHeaderQty} flex mr3 w-60 b`}>
-              {intl.formatMessage(messages.qty)}
+              {intl.formatMessage(messages.qty)} {uomSuffixForTitles}
             </div>
             <div className={`${styles.priceTableHeaderPrice} flex w-40 b mr3`}>
-              {intl.formatMessage(messages.price)}
+              {intl.formatMessage(messages.price)} {uomSuffixForTitles}
             </div>
           </div>
           {priceList.map((item: ItemPrices) => {
