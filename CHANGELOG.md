@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.78] - 2024-04-19
+
 ### Added
 
 - Added UOM measurements to the price tables and modals
