@@ -116,7 +116,6 @@ const UploadBlock: FunctionComponent<
       { SKU: '[AB123]', Quantity: 10 },
       { SKU: '[AB124]', Quantity: 1 },
       { SKU: '[AB125]', Quantity: 20 },
-
     ]
 
     const ws = XLSX.utils.json_to_sheet(data, { header: finalHeaders })
@@ -181,6 +180,7 @@ const UploadBlock: FunctionComponent<
         customerNumber,
         targetSystem
       )) || []
+
     setLoading(false)
 
     const error = !!items.filter((item: any) => {
@@ -337,27 +337,47 @@ const UploadBlock: FunctionComponent<
   }
 
   const addToCartUpload = () => {
-
     const currentItemsInCart = orderForm.orderForm.items
 
-    const isSpecialBrandItemExistInCurrentCart = (currentItemsInCart ?? []).find((item:any)=>item?.additionalInfo?.brandName?.toUpperCase() === SPECAIL_BRAND_NAME)
-    const specialBrandItemInReviewItems = (reviewItems ?? []).filter((item:any)=> item.brand.toUpperCase() === SPECAIL_BRAND_NAME)
+    const isSpecialBrandItemExistInCurrentCart = (
+      currentItemsInCart ?? []
+    ).find(
+      (item: any) =>
+        item?.additionalInfo?.brandName?.toUpperCase() === SPECAIL_BRAND_NAME
+    )
 
-    const cond1 = currentItemsInCart.length > 0 && !!isSpecialBrandItemExistInCurrentCart && specialBrandItemInReviewItems.length === reviewItems.length
-    const cond2 = currentItemsInCart.length === 0  && specialBrandItemInReviewItems.length === reviewItems.length
-    const cond3 = currentItemsInCart.length === 0  && specialBrandItemInReviewItems.length === 0
-    const cond4 = currentItemsInCart.length > 0  && !isSpecialBrandItemExistInCurrentCart && specialBrandItemInReviewItems.length === 0
+    const specialBrandItemInReviewItems = (reviewItems ?? []).filter(
+      (item: any) => item.brand.toUpperCase() === SPECAIL_BRAND_NAME
+    )
 
-    if (cond1 || cond2 || cond3 || cond4){
+    const cond1 =
+      currentItemsInCart.length > 0 &&
+      !!isSpecialBrandItemExistInCurrentCart &&
+      specialBrandItemInReviewItems.length === reviewItems.length
+
+    const cond2 =
+      currentItemsInCart.length === 0 &&
+      specialBrandItemInReviewItems.length === reviewItems.length
+
+    const cond3 =
+      currentItemsInCart.length === 0 &&
+      specialBrandItemInReviewItems.length === 0
+
+    const cond4 =
+      currentItemsInCart.length > 0 &&
+      !isSpecialBrandItemExistInCurrentCart &&
+      specialBrandItemInReviewItems.length === 0
+
+    if (cond1 || cond2 || cond3 || cond4) {
       const items: any = reviewItems
-      .filter((item: any) => item.error === null && item.vtexSku !== null)
-      .map(({ vtexSku, quantity, seller, unit }: any) => {
-        return {
-          id: parseInt(vtexSku, 10),
-          quantity: parseFloat(quantity) / unit,
-          seller,
-        }
-      })
+        .filter((item: any) => item.error === null && item.vtexSku !== null)
+        .map(({ vtexSku, quantity, seller, unit }: any) => {
+          return {
+            id: parseInt(vtexSku, 10),
+            quantity: parseFloat(quantity) / unit,
+            seller,
+          }
+        })
 
       const merge = (internalItems: any) => {
         return internalItems.reduce((acc: any, val) => {
@@ -407,7 +427,10 @@ const UploadBlock: FunctionComponent<
 
   return (
     <div className={`${handles.textContainerMain}`}>
-      <SpecialBrandHandleModal isModalOpen={isModalOpen} setIsModelOpen={setIsModelOpen}/>
+      <SpecialBrandHandleModal
+        isModalOpen={isModalOpen}
+        setIsModelOpen={setIsModelOpen}
+      />
       {!componentOnly && (
         <div className={`${handles.textContainer} w-100 fl-l`}>
           <h2
