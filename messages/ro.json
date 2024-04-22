@@ -97,5 +97,6 @@
   "store/quickorder.invalidRefId": "Nu există niciun ID de referință pentru un anumit număr de piesă a clientului",
   "store/quickorder.invalidCustomerPart": "Numărul piesei clientului nu există",
   "store/quickorder.availability.error": "A apărut o eroare în timpul validării disponibilității",
-  "store/quickorder.metadata.update.error": "A apărut o eroare la actualizarea informațiilor despre coș"
+  "store/quickorder.metadata.update.error": "A apărut o eroare la actualizarea informațiilor despre coș",
+  "store/quickorder.invalidUom": "Unită de masă nevalidă"
 }

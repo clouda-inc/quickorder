@@ -97,5 +97,6 @@
   "store/quickorder.invalidRefId": "指定された顧客部品番号の参照 ID が存在しません",
   "store/quickorder.invalidCustomerPart": "お客様の部品番号は存在しません",
   "store/quickorder.availability.error": "可用性の検証中にエラーが発生しました",
-  "store/quickorder.metadata.update.error": "カート情報の更新中にエラーが発生しました"
+  "store/quickorder.metadata.update.error": "カート情報の更新中にエラーが発生しました",
+  "store/quickorder.invalidUom": "無効な単位"
 }
