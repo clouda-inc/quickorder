@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable vtex/prefer-early-return */
 /* eslint no-shadow: "error" */
@@ -327,6 +328,9 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
 
   const validateRefids = (refidData: any, reviewed: any) => {
     let error = false
+
+    console.log('reviewed', reviewed)
+    console.log('refidData', refidData)
 
     reviewed = reviewed.map((i: any) => {
       const unit = refidData.getSkuAvailability?.items?.find(

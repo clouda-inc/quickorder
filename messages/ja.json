@@ -34,7 +34,7 @@
   "store/quickorder.available": "利用可能",
   "store/quickorder.unauthorized": "オンラインでは利用できません",
   "store/quickorder.unauthorized.catalog-eu": "お住まいの地域では利用できません",
-  "store/quickorder.unauthorizedError": "製品が見つかりません",
+  "store/quickorder.unauthorizedError": "この製品を閲覧する権限がありません",
   "store/quickorder.back": "戻る",
   "store/quickorder.cannotBeDelivered": "配達できません",
   "store/quickorder.category.addButton": "カートに商品を追加する",

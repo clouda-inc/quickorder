@@ -34,7 +34,7 @@
   "store/quickorder.available": "Verfügbar",
   "store/quickorder.unauthorized": "Nicht online verfügbar",
   "store/quickorder.unauthorized.catalog-eu": "In Ihrer Region nicht verfügbar",
-  "store/quickorder.unauthorizedError": "Produkt nicht gefunden",
+  "store/quickorder.unauthorizedError": "Nicht berechtigt, dieses Produkt hinzufügen",
   "store/quickorder.back": "Zurück",
   "store/quickorder.cannotBeDelivered": "Kann nicht geliefert werden",
   "store/quickorder.category.addButton": "In den Warenkorb",
