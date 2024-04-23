@@ -209,6 +209,7 @@ const TextAreaBlock: FunctionComponent<
         customerNumber,
         targetSystem
       )) || []
+
     setLoading(false)
 
     const error = !!items.filter((item: any) => {
@@ -261,24 +262,45 @@ const TextAreaBlock: FunctionComponent<
   const addToCartCopyNPaste = () => {
     const currentItemsInCart = orderForm.orderForm.items
 
-    const isSpecialBrandItemExistInCurrentCart = (currentItemsInCart ?? []).find((item:any)=>item?.additionalInfo?.brandName?.toUpperCase() === SPECAIL_BRAND_NAME)
-    const specialBrandItemInReviewItems = (reviewItems ?? []).filter((item:any)=> item.brand.toUpperCase() === SPECAIL_BRAND_NAME)
+    const isSpecialBrandItemExistInCurrentCart = (
+      currentItemsInCart ?? []
+    ).find(
+      (item: any) =>
+        item?.additionalInfo?.brandName?.toUpperCase() === SPECAIL_BRAND_NAME
+    )
 
-    const cond1 = currentItemsInCart.length > 0 && !!isSpecialBrandItemExistInCurrentCart && specialBrandItemInReviewItems.length === reviewItems.length
-    const cond2 = currentItemsInCart.length === 0  && specialBrandItemInReviewItems.length === reviewItems.length
-    const cond3 = currentItemsInCart.length === 0  && specialBrandItemInReviewItems.length === 0
-    const cond4 = currentItemsInCart.length > 0  && !isSpecialBrandItemExistInCurrentCart && specialBrandItemInReviewItems.length === 0
+    const specialBrandItemInReviewItems = (reviewItems ?? []).filter(
+      (item: any) => item.brand.toUpperCase() === SPECAIL_BRAND_NAME
+    )
+
+    const cond1 =
+      currentItemsInCart.length > 0 &&
+      !!isSpecialBrandItemExistInCurrentCart &&
+      specialBrandItemInReviewItems.length === reviewItems.length
+
+    const cond2 =
+      currentItemsInCart.length === 0 &&
+      specialBrandItemInReviewItems.length === reviewItems.length
+
+    const cond3 =
+      currentItemsInCart.length === 0 &&
+      specialBrandItemInReviewItems.length === 0
+
+    const cond4 =
+      currentItemsInCart.length > 0 &&
+      !isSpecialBrandItemExistInCurrentCart &&
+      specialBrandItemInReviewItems.length === 0
 
     if (cond1 || cond2 || cond3 || cond4) {
       const items: any = reviewItems
-      .filter((item: any) => item.error === null && item.vtexSku !== null)
-      .map(({ vtexSku, quantity, seller, unit }: any) => {
-        return {
-          id: parseInt(vtexSku, 10),
-          quantity: parseFloat(quantity) / unit,
-          seller,
-        }
-      })
+        .filter((item: any) => item.error === null && item.vtexSku !== null)
+        .map(({ vtexSku, quantity, seller, unit }: any) => {
+          return {
+            id: parseInt(vtexSku, 10),
+            quantity: parseFloat(quantity) / unit,
+            seller,
+          }
+        })
 
       const merge = (internalItems: any) => {
         return internalItems.reduce((acc, val) => {
@@ -320,7 +342,10 @@ const TextAreaBlock: FunctionComponent<
 
   return (
     <div className={`${handles.textContainerMain} flex flex-column`}>
-       <SpecialBrandHandleModal isModalOpen={isModalOpen} setIsModelOpen={setIsModelOpen}/>
+      <SpecialBrandHandleModal
+        isModalOpen={isModalOpen}
+        setIsModelOpen={setIsModelOpen}
+      />
       {!componentOnly && (
         <div className={`${handles.textContainer} w-100 fl-l`}>
           <h2

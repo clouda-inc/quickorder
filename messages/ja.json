@@ -34,7 +34,7 @@
   "store/quickorder.available": "利用可能",
   "store/quickorder.unauthorized": "オンラインでは利用できません",
   "store/quickorder.unauthorized.catalog-eu": "お住まいの地域では利用できません",
-  "store/quickorder.unauthorizedError": "製品が見つかりません",
+  "store/quickorder.unauthorizedError": "この製品を閲覧する権限がありません",
   "store/quickorder.back": "戻る",
   "store/quickorder.cannotBeDelivered": "配達できません",
   "store/quickorder.category.addButton": "カートに商品を追加する",
@@ -97,5 +97,6 @@
   "store/quickorder.invalidRefId": "指定された顧客部品番号の参照 ID が存在しません",
   "store/quickorder.invalidCustomerPart": "お客様の部品番号は存在しません",
   "store/quickorder.availability.error": "可用性の検証中にエラーが発生しました",
-  "store/quickorder.metadata.update.error": "カート情報の更新中にエラーが発生しました"
+  "store/quickorder.metadata.update.error": "カート情報の更新中にエラーが発生しました",
+  "store/quickorder.invalidUnitMultiplier": "無効な単位乗数"
 }

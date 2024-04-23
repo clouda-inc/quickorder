@@ -34,7 +34,7 @@
   "store/quickorder.available": "Disponível",
   "store/quickorder.unauthorized": "Não disponível on-line",
   "store/quickorder.unauthorized.catalog-eu": "ão disponível em sua região",
-  "store/quickorder.unauthorizedError": "Produto não encontrado",
+  "store/quickorder.unauthorizedError": "Não autorizado a visualizar este produto",
   "store/quickorder.back": "Voltar",
   "store/quickorder.cannotBeDelivered": "Não pode ser entregue",
   "store/quickorder.category.addButton": "Adicionar itens ao carrinho",
@@ -97,5 +97,6 @@
   "store/quickorder.invalidRefId": "Não existe nenhum ID de referência para determinado número de peça do cliente",
   "store/quickorder.invalidCustomerPart": "O número da peça do cliente não existe",
   "store/quickorder.availability.error": "Ocorreu um erro durante a validação de disponibilidade",
-  "store/quickorder.metadata.update.error": "Ocorreu um erro ao atualizar as informações do carrinho"
+  "store/quickorder.metadata.update.error": "Ocorreu um erro ao atualizar as informações do carrinho",
+  "store/quickorder.invalidUnitMultiplier": "Multiplicador de Unidade inválido"
 }
