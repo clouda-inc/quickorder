@@ -186,9 +186,9 @@ const messages = defineMessages({
     id: 'store/quickorder.invalidRefId',
     defaultMessage: 'No Ref Id exists for given customerPart Number',
   },
-  invalidUom: {
-    id: 'store/quickorder.invalidUom',
-    defaultMessage: 'Invalid UOM',
+  invalidUnitMultiplier: {
+    id: 'store/quickorder.invalidUnitMultiplier',
+    defaultMessage: 'Invalid Unit multiplier',
   },
 })
 
@@ -314,7 +314,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     'store/quickorder.ORD031': messages.ORD031,
     'store/quickorder.invalidRefId': messages.noRefId,
     'store/quickorder.invalidCustomerPart': messages.noCustomerPart,
-    'store/quickorder.invalidUom': messages.invalidUom,
+    'store/quickorder.invalidUnitMultiplier': messages.invalidUnitMultiplier,
   }
 
   const isEURegion = () => {
@@ -418,14 +418,15 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
           return curr.refid === item.sku && curr.sku !== null
         })
 
-        const uomIssue = !Number.isInteger(item?.uom ?? 1)
+        const uomIssue = !Number.isInteger(item.unitMultiplier ?? 1)
+        // const uomIssue = !Number.isInteger(0.01 ?? 1)
 
         ret = notfound
           ? 'store/quickorder.skuNotFound'
           : found?.availability && found.availability === 'unauthorized'
           ? 'store/quickorder.unauthorizedError'
           : uomIssue
-          ? 'store/quickorder.invalidUom'
+          ? 'store/quickorder.invalidUnitMultiplier'
           : item.error
 
         return ret

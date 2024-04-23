@@ -98,5 +98,5 @@
   "store/quickorder.invalidCustomerPart": "Il codice prodotto del cliente non esiste",
   "store/quickorder.availability.error": "Si è verificato un errore durante la convalida della disponibilità",
   "store/quickorder.metadata.update.error": "Si è verificato un errore durante l'aggiornamento delle informazioni del carrello",
-  "store/quickorder.invalidUom": "Unità di misura non valida"
+  "store/quickorder.invalidUnitMultiplier": "Moltiplicatore unitario non valido"
 }

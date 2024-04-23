@@ -98,5 +98,5 @@
   "store/quickorder.invalidCustomerPart": "store/quickorder.invalidCustomerPart",
   "store/quickorder.availability.error": "store/quickorder.availability.error",
   "store/quickorder.metadata.update.error": "store/quickorder.metadata.update.error",
-  "store/quickorder.invalidUom": "store/quickorder.invalidUom"
+  "store/quickorder.invalidUnitMultiplier": "store/quickorder.invalidUnitMultiplier"
 }

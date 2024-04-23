@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- Updated the block validation to handel the unit multiplier
+
 ## [0.1.78] - 2024-04-19
 
 ### Added

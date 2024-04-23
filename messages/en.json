@@ -98,5 +98,5 @@
   "store/quickorder.invalidCustomerPart": "customer Part number is not exist",
   "store/quickorder.availability.error": "Error occurred during availability validation",
   "store/quickorder.metadata.update.error": "Error occurred while updating cart information",
-  "store/quickorder.invalidUom": "Invalid UOM"
+  "store/quickorder.invalidUnitMultiplier": "Invalid Unit multiplier"
 }

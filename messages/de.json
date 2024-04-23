@@ -98,5 +98,5 @@
   "store/quickorder.invalidCustomerPart": "Kundenteilenummer ist nicht vorhanden",
   "store/quickorder.availability.error": "Bei der Verfügbarkeitsüberprüfung ist ein Fehler aufgetreten",
   "store/quickorder.metadata.update.error": "Se produjo un error al actualizar la información del carrito",
-  "store/quickorder.invalidUom": "Ungültige Mengeneinheit"
+  "store/quickorder.invalidUnitMultiplier": "Ungültiger Einheitenmultiplikator"
 }
