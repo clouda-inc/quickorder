@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useQuery } from 'react-apollo'
 import { useCssHandles } from 'vtex.css-handles'
 import { useIntl, defineMessages } from 'react-intl'
 
 import GET_STOCK_AVAILABILITY from '../queries/getStockAvailability.gql'
 import ItemListContext from '../ItemListContext'
+import { TableDataContext, TableData } from '../utils/context'
 
 import './ItemPricing.css'
 
@@ -40,6 +41,7 @@ const StockAvailability = ({
   const styles = useCssHandles(CSS_HANDLES)
   const intl = useIntl()
   const { useItemListDispatch } = ItemListContext
+  const { handleExtractData } = useContext(TableDataContext) as TableData
 
   const dispatch = useItemListDispatch()
 
@@ -74,10 +76,18 @@ const StockAvailability = ({
         },
       },
     })
+
   }, [stockAvailability, itemIndex, itemNumber, loading, dispatch])
 
   const primaryUoM =
     stockAvailabilityInfo?.getStockAvailability?.primaryUoM ?? ''
+
+  useEffect(() => {
+    if (!loading) {
+      console.log('add stock availability to context');
+      handleExtractData(itemNumber, stockAvailability, 'stockAvailability');
+    }
+  }, [stockAvailability]);
 
   return loading ? (
     <div className={`${styles.itemAvailability}`}>{intl.formatMessage(messages.loading)}</div>

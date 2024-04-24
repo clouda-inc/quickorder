@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { useQuery } from 'react-apollo'
 import { useCssHandles } from 'vtex.css-handles'
 import getSymbolFromCurrency from 'currency-symbol-map'
@@ -7,6 +7,7 @@ import { useIntl, defineMessages } from 'react-intl'
 
 import GET_ITEM_PRICING from '../queries/getItemPricing.gql'
 import { getFormattedDate } from '../utils'
+import { TableDataContext, TableData } from '../utils/context'
 
 import './ItemPricing.css'
 
@@ -53,6 +54,7 @@ const ItemPricing = ({ itemNumber, customerNumber, branch }: Props) => {
   const styles = useCssHandles(CSS_HANDLES)
   const [isOpen, setIsOpen] = useState(false)
   const intl = useIntl()
+  const { handleExtractData } = useContext(TableDataContext) as TableData
 
   const { data: itemPricingInfo, loading } = useQuery(GET_ITEM_PRICING, {
     skip: !itemNumber || itemNumber === '',
@@ -69,6 +71,14 @@ const ItemPricing = ({ itemNumber, customerNumber, branch }: Props) => {
   const openModal = () => {
     setIsOpen(true)
   }
+
+  useEffect(() => {
+    if (!loading) {
+      console.log('adding price list to context');
+      handleExtractData(itemNumber, priceList, 'priceList')
+    }
+  }, [priceList]);
+
 
   return loading ? (
     <div className={`${styles.priceTable}`}>

@@ -9,6 +9,7 @@
     "classnames": "^2.2.6",
     "currency-symbol-map": "^5.0.1",
     "debounce": "^1.2.0",
+    "exceljs": "^4.4.0",
     "lodash": "^4.17.15",
     "moment": "^2.29.4",
     "prop-types": "^15.7.2",

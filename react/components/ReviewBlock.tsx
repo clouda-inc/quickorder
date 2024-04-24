@@ -264,6 +264,8 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
 
   const { reviewItems } = state
 
+  console.log('reviewItems', reviewItems);
+
   // if (orderFormData?.orderForm?.orderFormId) {
   //   orderFormId = orderFormData.orderForm.orderFormId
   // }

@@ -12,12 +12,14 @@ import { useCssHandles } from 'vtex.css-handles'
 import { useMutation, useApolloClient } from 'react-apollo'
 import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
+import * as XLSX from 'xlsx';
 
 import ReviewBlock from './components/ReviewBlock'
 import { SpecialBrandHandleModal } from './components/modals/SpecialBrandHandle'
 import { ParseText, GetText } from './utils'
 import { addToCartGTMEventData } from './utils/GTMEventDataHandler'
 import ItemListContext from './ItemListContext'
+import { TableDataContext, TableData } from './utils/context'
 
 const messages = defineMessages({
   success: {
@@ -61,6 +63,10 @@ const TextAreaBlock: FunctionComponent<
   const [refidLoading, setRefIdLoading] = useState<any>()
   const [loading, setLoading] = useState<boolean>(false)
   const [isModalOpen, setIsModelOpen] = useState<boolean>(false)
+
+  const { tableData, handleExtractData } = useContext(TableDataContext) as TableData;
+
+  console.log('context data: ', tableData);
 
   const { textAreaValue, reviewItems, reviewState } = state
   const apolloClient = useApolloClient()
@@ -180,6 +186,9 @@ const TextAreaBlock: FunctionComponent<
         showAddToCart: show,
         textAreaValue: GetText(items),
       })
+
+      console.log('adding items to context');
+      handleExtractData('-1', items, ' ')
 
       dispatch({
         type: 'UPDATE_ALL_STATUSES',
@@ -318,6 +327,62 @@ const TextAreaBlock: FunctionComponent<
     return <p>{intl.formatMessage(messages.loadingSoldTo)}</p>
   }
 
+  const downloadExcelFile = () => {
+    const data = tableData.flatMap((item: any) => {
+      if (!item?.priceList) {
+        return {
+          'STANLEY PART NUMBER': item.skuName,
+          'Description': item.description,
+          'LEAD TIME': item.leadTime,
+          'STOCKING UOM': item.uom,
+          'PRICING UOM': item.uom,
+          'CARTON QTY': item.uomDescription,
+          'Weight': item.seller,
+          'TARIFF CODE': item.availability,
+          'ORIGIN': item.error,
+          'Qty': item.quantity,
+          'Price': item.price,
+          'Avaliability': item.stockAvailability,
+        }
+      }
+      return item.priceList.map((priceItem: any) => {
+        return {
+          'STANLEY PART NUMBER': item.skuName,
+          'Description': item.description,
+          'LEAD TIME': item.leadTime,
+          'STOCKING UOM': item.uom,
+          'PRICING UOM': item.uom,
+          'CARTON QTY': item.uomDescription,
+          'Weight': item.seller,
+          'TARIFF CODE': item.availability,
+          'ORIGIN': item.error,
+          'Qty': priceItem.quantity,
+          'Price': priceItem.price,
+          'Avaliability': item.stockAvailability,
+        }
+      })
+    })
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+
+  // Color the headers
+  const range = XLSX.utils.decode_range(worksheet['!ref'] as string);
+  for(let C = range.s.c; C <= range.e.c; ++C) {
+    const address = XLSX.utils.encode_col(C) + "1";
+    if(!worksheet[address]) continue;
+    worksheet[address].s = {
+      fill: {
+        fgColor: {rgb: "FFFF00"} // <-- yellow fill
+      }
+    };
+  }
+
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'OrderItems');
+  XLSX.writeFile(workbook, 'OrderItems.xlsx');
+  };
+
+
   return (
     <div className={`${handles.textContainerMain} flex flex-column`}>
        <SpecialBrandHandleModal isModalOpen={isModalOpen} setIsModelOpen={setIsModelOpen}/>
@@ -396,6 +461,16 @@ const TextAreaBlock: FunctionComponent<
                 <FormattedMessage id="store/quickorder.back" />
               </Button>
               {refidLoading && <Spinner />}
+              <div>
+              <Button
+                variation="primary"
+                size="small"
+                style={{ marginRight: '15px' }}
+                onClick={downloadExcelFile}
+              >
+                <FormattedMessage id="store/quickorder.download" />
+              </Button>
+
               <Button
                 variation="primary"
                 size="small"
@@ -404,10 +479,12 @@ const TextAreaBlock: FunctionComponent<
                   addToCartCopyNPaste()
                 }}
                 disabled={!showAddToCart}
+                style={{ marginLeft: '12px' }}
               >
                 <FormattedMessage id="store/quickorder.addToCart" />
               </Button>
-            </div>
+              </div>
+              </div>
           </div>
         )}
       </div>
