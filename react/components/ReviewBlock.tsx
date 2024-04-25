@@ -438,8 +438,8 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
           ? 'store/quickorder.unauthorizedError'
           : uomIssue
           ? 'store/quickorder.invalidUnitMultiplier'
-          : errorData[0]
-          ? errorData[0]
+          : errorData?.[0]
+          ? errorData?.[0]
           : item.error
 
         return ret
