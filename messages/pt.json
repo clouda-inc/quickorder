@@ -98,5 +98,6 @@
   "store/quickorder.invalidCustomerPart": "O número da peça do cliente não existe",
   "store/quickorder.availability.error": "Ocorreu um erro durante a validação de disponibilidade",
   "store/quickorder.metadata.update.error": "Ocorreu um erro ao atualizar as informações do carrinho",
-  "store/quickorder.invalidUnitMultiplier": "Multiplicador de Unidade inválido"
+  "store/quickorder.invalidUnitMultiplier": "Multiplicador de Unidade inválido",
+  "store/quickorder.invalidMoq": "MOQ inválido"
 }

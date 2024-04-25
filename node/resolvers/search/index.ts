@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { UserInputError } from '@vtex/api'
@@ -270,6 +271,8 @@ export const queries = {
         value: Date.now().toString(),
       })
 
+      const dataError: any = []
+
       const allSkus = (products ?? [])
         .filter((r: any) => Object.entries(r).length > 0)
         .map((product: any) => {
@@ -365,14 +368,31 @@ export const queries = {
             )
           )
 
-          const moq =
+          const moq = Number(
             (product[moqKey] ?? []).find((i: string) => i && i !== '') ?? '1'
+          )
 
           const leadTime = (product[leadTimeKey] ?? []).find(
             (i: string) => i && i !== ''
           )
 
           const unitMultiplier = skuItem?.unitMultiplier ?? 1
+
+          const tempError: string[] = [
+            Number.isInteger(moq) ? '' : 'store/quickorder.invalidMoq',
+            Number.isInteger(unitMultiplier)
+              ? ''
+              : 'store/quickorder.invalidUnitMultiplier',
+          ]
+
+          const errorObject = {
+            sku: itemId,
+            productId,
+            refid: skuRefId,
+            productError: tempError.filter((i: string) => i !== ''),
+          }
+
+          dataError.push(errorObject)
 
           return {
             refid: skuRefId,
@@ -382,7 +402,7 @@ export const queries = {
             skuName: skuItem?.name,
             uom,
             uomDescription,
-            moq,
+            moq: Number.isInteger(moq) ? moq : null,
             leadTime,
             linkText: product.linkText,
             price,
@@ -435,6 +455,7 @@ export const queries = {
       return {
         items: itemsRequested,
         performanceData: performanceArray,
+        dataErrors: dataError,
       }
     } catch (error) {
       logger.info('Something went wrong while fetching product availability')

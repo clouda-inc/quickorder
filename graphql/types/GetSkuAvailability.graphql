@@ -1,6 +1,7 @@
 type AvailableItems {
   items: [AvailableItem]
   performanceData: [KeyValue]
+  dataErrors: [ProductError]
 }
 type AvailableItem {
   refid: String
@@ -24,4 +25,11 @@ type AvailableItem {
 type KeyValue {
   key: String
   value: String
+}
+
+type ProductError {
+  sku: String
+  productId: String
+  refid: String
+  productError: [String]
 }
