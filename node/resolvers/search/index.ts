@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { UserInputError } from '@vtex/api'
@@ -81,14 +82,15 @@ export const queries = {
     }
 
     const callMasterdataClient = async (where: string) => {
-      const res =
-        await masterdata.searchDocumentsWithPaginationInfo<SearchResponse>({
-          dataEntity: CUSTOMER_SKU_ACRONYM,
-          schema: CUSTOMER_SKU_SCHEMA,
-          fields: CUSTOMER_SKU_FIELDS,
-          pagination: { pageSize: 100, page: 1 },
-          where,
-        })
+      const res = await masterdata.searchDocumentsWithPaginationInfo<
+        SearchResponse
+      >({
+        dataEntity: CUSTOMER_SKU_ACRONYM,
+        schema: CUSTOMER_SKU_SCHEMA,
+        fields: CUSTOMER_SKU_FIELDS,
+        pagination: { pageSize: 100, page: 1 },
+        where,
+      })
 
       return res.data
     }
@@ -150,8 +152,12 @@ export const queries = {
         value: Date.now().toString(),
       })
 
-      const { refIds, customerNumber, targetSystem, salesOrganizationCode } =
-        args
+      const {
+        refIds,
+        customerNumber,
+        targetSystem,
+        salesOrganizationCode,
+      } = args
 
       const {
         clients: { search, catalog },
@@ -237,16 +243,16 @@ export const queries = {
         key: 'START Get Brand Info',
         value: Date.now().toString(),
       })
-      const brands =
-        await masterdata.searchDocumentsWithPaginationInfo<BrandForClients>({
-          dataEntity: BRAND_CLIENT_ACRONYM,
-          schema: BRAND_CLIENT_SCHEMA,
-          fields: BRNAD_CLIENT_FIELDS,
-          where: `(user=${customerNumber ?? ''} AND targetSystem=${
-            targetSystem ?? ''
-          })`,
-          pagination: { pageSize: 100, page: 1 },
-        })
+      const brands = await masterdata.searchDocumentsWithPaginationInfo<
+        BrandForClients
+      >({
+        dataEntity: BRAND_CLIENT_ACRONYM,
+        schema: BRAND_CLIENT_SCHEMA,
+        fields: BRNAD_CLIENT_FIELDS,
+        where: `(user=${customerNumber ?? ''} AND targetSystem=${targetSystem ??
+          ''})`,
+        pagination: { pageSize: 100, page: 1 },
+      })
 
       const brandsList = brands?.data ?? []
 
@@ -270,6 +276,8 @@ export const queries = {
         value: Date.now().toString(),
       })
 
+      const dataError: any = []
+
       const allSkus = (products ?? [])
         .filter((r: any) => Object.entries(r).length > 0)
         .map((product: any) => {
@@ -285,9 +293,8 @@ export const queries = {
           // One item has one sku
           const skuItem = items[0]
           const itemId = skuItem?.itemId
-          const skuRefId = (skus ?? []).find(
-            (sku: any) => sku.skuId === itemId
-          )?.refId
+          const skuRefId = (skus ?? []).find((sku: any) => sku.skuId === itemId)
+            ?.refId
 
           // const refId = (items[0]?.referenceId ?? []).find((ref: any) => ref.Key === 'RefId')?.Value ?? ''
           const { commertialOffer, sellerId, sellerName } = items[0].sellers[0]
@@ -365,14 +372,31 @@ export const queries = {
             )
           )
 
-          const moq =
+          const moq = Number(
             (product[moqKey] ?? []).find((i: string) => i && i !== '') ?? '1'
+          )
 
           const leadTime = (product[leadTimeKey] ?? []).find(
             (i: string) => i && i !== ''
           )
 
           const unitMultiplier = skuItem?.unitMultiplier ?? 1
+
+          const tempError: string[] = [
+            Number.isInteger(moq) ? '' : 'store/quickorder.invalidMoq',
+            Number.isInteger(unitMultiplier)
+              ? ''
+              : 'store/quickorder.invalidUnitMultiplier',
+          ]
+
+          const temp = {
+            sku: itemId,
+            productId,
+            refid: skuRefId,
+            productError: tempError.filter((i: string) => i !== ''),
+          }
+
+          dataError.push(temp)
 
           return {
             refid: skuRefId,
@@ -382,7 +406,7 @@ export const queries = {
             skuName: skuItem?.name,
             uom,
             uomDescription,
-            moq,
+            moq: Number.isInteger(moq) ? moq : null,
             leadTime,
             linkText: product.linkText,
             price,
@@ -435,6 +459,7 @@ export const queries = {
       return {
         items: itemsRequested,
         performanceData: performanceArray,
+        dataErrors: dataError,
       }
     } catch (error) {
       logger.info('Something went wrong while fetching product availability')

@@ -35,5 +35,11 @@ query getAvbProduct(
       key
       value
     }
+    dataErrors {
+      sku
+      productId
+      refid
+      productError
+    }
   }
 }
