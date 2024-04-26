@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.80] - 2024-04-25
+
 ### Fixed
 
 - Fixing the graphql error on MOQ.
