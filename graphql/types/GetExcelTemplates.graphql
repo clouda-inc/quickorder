@@ -1,4 +1,5 @@
 type TemplatesResponse {
-  sampleJDE: String,
-  sampleSAP: String,
+  sampleJDE: String
+  sampleSAP: String
+  id: String
 }
