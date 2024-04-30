@@ -1,0 +1,4 @@
+type TemplatesResponse {
+  sampleJDE: String,
+  sampleSAP: String,
+}

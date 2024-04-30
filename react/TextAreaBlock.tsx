@@ -12,7 +12,9 @@ import { useCssHandles } from 'vtex.css-handles'
 import { useMutation, useApolloClient } from 'react-apollo'
 import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
-import * as XLSX from 'xlsx';
+import XLSX from 'xlsx';
+// import ExcelJS from 'exceljs';
+// import GET_TEMPLATES from './queries/getTemplate.graphql'
 
 import ReviewBlock from './components/ReviewBlock'
 import { SpecialBrandHandleModal } from './components/modals/SpecialBrandHandle'
@@ -327,60 +329,220 @@ const TextAreaBlock: FunctionComponent<
     return <p>{intl.formatMessage(messages.loadingSoldTo)}</p>
   }
 
-  const downloadExcelFile = () => {
+  // const { data } = useQuery(GET_TEMPLATES, {
+  //   variables: {
+  //     subDomain: `subDomainName=${subdomain}`,
+  //   },
+  //   ssr: false,
+  // });
+
+  // const downloadExcelFile = async () => {
+  //   try {
+  //     const workbook = new ExcelJS.Workbook();
+  //     const worksheet = workbook.addWorksheet('OrderItems');
+
+  //     const data = tableData.flatMap((item) => {
+  //       if (!item?.priceList) {
+  //         return {
+  //           'STANLEY PART NUMBER': item.skuName,
+  //           'Description': item.productName,
+  //           'LEAD TIME': item.leadTime,
+  //           'STOCKING UOM': item.uom,
+  //           'QTY PER UNIT': item.uomDescription,
+  //           'MOQ': item.moq,
+  //           'Qty': item.quantity,
+  //           'Price': `$ ${item.price}`,
+  //           'Avaliability': `${item.stockAvailability} M`,
+  //         };
+  //       }
+  //       return item.priceList.map((priceItem) => ({
+  //         'STANLEY PART NUMBER': item.skuName,
+  //         'Description': item.productName,
+  //         'LEAD TIME': item.leadTime,
+  //         'STOCKING UOM': item.uom,
+  //         'QTY PER UNIT': item.uomDescription,
+  //         'MOQ': item.moq,
+  //         'Qty': priceItem.quantity,
+  //         'Price': `$ ${priceItem.price}`,
+  //         'PRICING UOM': priceItem.uom,
+  //         'Avaliability': `${item.stockAvailability} M`,
+  //       }));
+  //     });
+
+  //     worksheet.addRows(data);
+
+  //     const headerRow = worksheet.getRow(1);
+  //     headerRow.eachCell((cell) => {
+  //       cell.fill = {
+  //         type: 'pattern',
+  //         pattern: 'solid',
+  //         fgColor: { argb: 'FF007FFF' },
+  //       };
+  //       cell.font = { color: { argb: 'FFFFFFFF' }, bold: true };
+  //     });
+
+  //     const imageId = workbook.addImage({
+  //       filename: './logo.png',
+  //       extension: 'png',
+  //     });
+
+  //     worksheet.addImage(imageId, {
+  //       tl: { col: 0, row: 0 },
+  //       ext: { width: 200, height: 100 }
+  //     });
+
+  //     await workbook.xlsx.writeFile('OrderItems.xlsx');
+
+  //     // const buffer = await workbook.xlsx.writeBuffer();
+  //     // const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  //     // const url = URL.createObjectURL(blob);
+  //     // const a = document.createElement('a');
+  //     // a.href = url;
+  //     // a.download = 'OrderItems.xlsx';
+  //     // a.click();
+  //   } catch (error) {
+  //     console.error('Error creating Excel file:', error);
+  //   }
+  // };
+
+
+  const downloadExcelFile = async () => {
     const data = tableData.flatMap((item: any) => {
       if (!item?.priceList) {
         return {
           'STANLEY PART NUMBER': item.skuName,
-          'Description': item.description,
+          'Description': item.productName,
           'LEAD TIME': item.leadTime,
           'STOCKING UOM': item.uom,
-          'PRICING UOM': item.uom,
-          'CARTON QTY': item.uomDescription,
-          'Weight': item.seller,
-          'TARIFF CODE': item.availability,
-          'ORIGIN': item.error,
+          'QTY PER UNIT': item.uomDescription,
+          'MOQ': item.moq,
+          // 'Weight': item.seller,
+          // 'TARIFF CODE': item.availability,
+          // 'ORIGIN': item.error,
           'Qty': item.quantity,
-          'Price': item.price,
-          'Avaliability': item.stockAvailability,
+          'Price': `$ ${item.price}`,
+          // 'Avaliability': `${item.stockAvailability} M`,
         }
       }
       return item.priceList.map((priceItem: any) => {
         return {
           'STANLEY PART NUMBER': item.skuName,
-          'Description': item.description,
+          'Description': item.productName,
           'LEAD TIME': item.leadTime,
           'STOCKING UOM': item.uom,
-          'PRICING UOM': item.uom,
-          'CARTON QTY': item.uomDescription,
-          'Weight': item.seller,
-          'TARIFF CODE': item.availability,
-          'ORIGIN': item.error,
+          'QTY PER UNIT': item.uomDescription,
+          'MOQ': item.moq,
+          // 'Weight': item.seller,
+          // 'TARIFF CODE': item.availability,
+          // 'ORIGIN': item.error,
           'Qty': priceItem.quantity,
-          'Price': priceItem.price,
-          'Avaliability': item.stockAvailability,
+          'Price': `$ ${priceItem.price}`,
+          'PRICING UOM': priceItem.uom,
+          'Avaliability': `${item.stockAvailability} M`,
         }
       })
     })
 
-    const worksheet = XLSX.utils.json_to_sheet(data);
 
-  // Color the headers
-  const range = XLSX.utils.decode_range(worksheet['!ref'] as string);
-  for(let C = range.s.c; C <= range.e.c; ++C) {
-    const address = XLSX.utils.encode_col(C) + "1";
-    if(!worksheet[address]) continue;
-    worksheet[address].s = {
-      fill: {
-        fgColor: {rgb: "FFFF00"} // <-- yellow fill
-      }
-    };
-  }
+    // Without Styles
+    // const worksheet = XLSX.utils.json_to_sheet(data);
+    // const workbook = XLSX.utils.book_new();
+    // XLSX.utils.book_append_sheet(workbook, worksheet, 'Pricing and Availability');
+    // XLSX.writeFile(workbook, 'Pricing and Availability Export.xlsx');
 
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'OrderItems');
-  XLSX.writeFile(workbook, 'OrderItems.xlsx');
+    // const workbook = XLSX.readFile('./Tiered Pricing and Availability Export.xlsx');
+    // console.log('workbook', workbook, typeof(workbook));
+
+    // const worksheet = XLSX.utils.json_to_sheet(data);
+    // workbook.Sheets['Pricing and Availability'] = worksheet;
+    // XLSX.writeFile(workbook, 'Pricing and Availability Export.xlsx');
+
+    // const response = await fetch('https://spartaawsbucket.s3.eu-north-1.amazonaws.com/Tiered+Pricing+and+Availability+Export.xlsx');
+    // const arrayBuffer = await response.arrayBuffer();
+
+    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    const targetUrl = 'https://spartaawsbucket.s3.eu-north-1.amazonaws.com/Tiered+Pricing+and+Availability+Export.xlsx';
+    const response = await fetch(proxyUrl + targetUrl);
+    const arrayBuffer = await response.arrayBuffer();
+
+    const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
+    console.log('workbook', workbook, typeof(workbook));
+
+    console.log('data', data);
+
+    // const worksheet = XLSX.utils.json_to_sheet(data);
+    // XLSX.utils.book_append_sheet(workbook, worksheet, 'Pricing and Availability');
+
+    XLSX.write(workbook, { type: 'binary', bookType: 'xlsx' });
+
+    // const url = window.URL.createObjectURL(new Blob([newFile], { type: 'application/octet-stream' }));
+    // const link = document.createElement('a');
+    // link.href = url;
+    // link.setAttribute('download', 'Pricing and Availability.xlsx');
+    // document.body.appendChild(link);
+    // link.click();
+
   };
+
+
+
+  // const downloadExcelFile = async () => {
+  //   const workbook = new ExcelJS.Workbook();
+  //   const worksheet = workbook.addWorksheet('OrderItems');
+
+  //   const columns = [
+  //     { header: 'STANLEY PART NUMBER', key: 'partNumber', width: 15 },
+  //     { header: 'Description', key: 'description', width: 15 },
+  //     { header: 'LEAD TIME', key: 'leadTime', width: 15 },
+  //     { header: 'STOCKING UOM', key: 'uom', width: 15 },
+  //     { header: 'PRICING UOM', key: 'uom', width: 15 },
+  //     { header: 'CARTON QTY', key: 'uomDescription', width: 15 },
+  //     { header: 'Weight', key:'seller', width: 15 },
+  //     { header: 'TARIFF CODE', key: 'availability', width: 15 },
+  //     { header: 'ORIGIN', key: 'error', width: 15 },
+  //     { header: 'Qty', key: 'quantity', width: 15 },
+  //     { header: 'Price', key: 'price', width: 15 },
+  //     { header: 'Avaliability', key:'stockAvailability', width: 15 },
+  //   ];
+  //   worksheet.columns = columns;
+
+  //   worksheet.getRow(1).eachCell((cell) => {
+  //     cell.fill = {
+  //       type: 'pattern',
+  //       pattern: 'solid',
+  //       fgColor: { argb: 'FFFF00' },
+  //     };
+  //   });
+
+  //   tableData.forEach((item: any) => {
+  //     if (!item?.priceList) {
+  //       worksheet.addRow({
+  //         partNumber: item.skuName,
+  //         description: item.description,
+  //         leadTime: item.leadTime,
+  //         uom: item.uom,
+  //         uomDescription: item.uomDescription,
+  //         seller: item.seller,
+  //         availability: item.availability,
+  //       });
+  //     } else {
+  //       item.priceList.forEach((priceItem: any) => {
+  //         worksheet.addRow({
+  //           partNumber: item.skuName,
+  //           description: item.description,
+  //           leadTime: item.leadTime,
+  //           uom: item.uom,
+  //           uomDescription: item.uomDescription,
+  //           seller: item.seller,
+  //           availability: item.availability,
+  //         });
+  //       });
+  //     }
+  //   });
+
+  //   // Write to file
+  //   await workbook.xlsx.writeFile('OrderItems.xlsx');
+  // };
 
 
   return (
@@ -461,28 +623,30 @@ const TextAreaBlock: FunctionComponent<
                 <FormattedMessage id="store/quickorder.back" />
               </Button>
               {refidLoading && <Spinner />}
+              <div className={'flex justify-between'}>
+                <div style={{ marginRight: '12px' }}>
+                  <Button
+                    variation="primary"
+                    size="small"
+                    onClick={downloadExcelFile}
+                  >
+                    <FormattedMessage id="store/quickorder.download" />
+                  </Button>
+                </div>
               <div>
-              <Button
-                variation="primary"
-                size="small"
-                style={{ marginRight: '15px' }}
-                onClick={downloadExcelFile}
-              >
-                <FormattedMessage id="store/quickorder.download" />
-              </Button>
-
-              <Button
-                variation="primary"
-                size="small"
-                isLoading={mutationLoading}
-                onClick={() => {
-                  addToCartCopyNPaste()
-                }}
-                disabled={!showAddToCart}
-                style={{ marginLeft: '12px' }}
-              >
-                <FormattedMessage id="store/quickorder.addToCart" />
-              </Button>
+                <Button
+                  variation="primary"
+                  size="small"
+                  isLoading={mutationLoading}
+                  onClick={() => {
+                    addToCartCopyNPaste()
+                  }}
+                  disabled={!showAddToCart}
+                  style={{ marginLeft: '12px' }}
+                >
+                  <FormattedMessage id="store/quickorder.addToCart" />
+                </Button>
+              </div>
               </div>
               </div>
           </div>

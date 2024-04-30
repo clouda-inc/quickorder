@@ -38,7 +38,7 @@ const TextAreaBlockWrapper = ({
       setTableData(newData)
     }else {
       setTableData((prevData) => {
-        return prevData.map((item) => {
+        return prevData?.map((item) => {
           if (item.sku === itemNumber) {
             return {
               ...item,

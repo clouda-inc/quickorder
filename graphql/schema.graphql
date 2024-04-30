@@ -36,4 +36,6 @@ type Query {
     skuRefId: String!
     brandNameToCompare: String
   ): SkuBrandInfo
+
+  getTemplates
 }

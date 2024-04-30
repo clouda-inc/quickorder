@@ -12,10 +12,13 @@ import {
   PLANT_SCHEMA,
   CUSTOMER_SKU_FIELDS,
   CUSTOMER_SKU_ACRONYM,
-  CUSTOMER_SKU_SCHEMA
+  CUSTOMER_SKU_SCHEMA,
   // UMMOQ_CLIENT_ACRONYM,
   // UMMOQ_CLIENT_FIELDS,
   // UMMOQ_CLIENT_SCHEMA,
+  EXCEL_TEMPLATE_ACRONYM,
+  EXCEL_TEMPLATE_SCHEMA,
+  EXCEL_TEMPLATE_FIELDS,
 } from '../../utils/consts'
 import { formatUOMDescription } from '../../utils/searchFieldExtension'
 import { getCustomerPartNumbers } from '../../middlewares/getCustomerPartNumbers'
@@ -458,5 +461,24 @@ export const queries = {
         performanceData: [],
       }
     }
+  },
+
+  getTemplates: async (_: any, _args: any, ctx: any) => {
+    const {
+      clients: { masterdata },
+    } = ctx;
+
+    const res = await masterdata.searchDocumentsWithPaginationInfo({
+      dataEntity: EXCEL_TEMPLATE_ACRONYM,
+      schema: EXCEL_TEMPLATE_SCHEMA,
+      fields: EXCEL_TEMPLATE_FIELDS,
+      pagination: { pageSize: 100, page: 1 },
+
+    });
+
+    console.log('respond-temp', res);
+
+
+    return 'file';
   },
 }
