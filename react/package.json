@@ -10,13 +10,15 @@
     "currency-symbol-map": "^5.0.1",
     "debounce": "^1.2.0",
     "exceljs": "^4.4.0",
+    "file-saver": "^2.0.5",
     "lodash": "^4.17.15",
     "moment": "^2.29.4",
     "prop-types": "^15.7.2",
     "ramda": "^0.26.1",
     "react-dom": "^16.9.2",
     "react-intl": "3.9.1",
-    "xlsx": "^0.15.6"
+    "sheetjs-style": "^0.15.8",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.7",

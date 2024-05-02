@@ -9,12 +9,17 @@ import { OrderForm } from 'vtex.order-manager'
 import type { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
 import { useCssHandles } from 'vtex.css-handles'
-import { useMutation, useApolloClient } from 'react-apollo'
+import { useMutation, useApolloClient, useQuery } from 'react-apollo'
 import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
-import XLSX from 'xlsx';
-// import ExcelJS from 'exceljs';
-// import GET_TEMPLATES from './queries/getTemplate.graphql'
+// import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+// import XLSX from 'sheetjs-style';
+import ExcelJS from 'exceljs';
+// import { saveAs } from 'file-saver';
+
+import GET_TEMPLATES from './queries/getTemplate.graphql'
+import { buildURL } from './utils/buildURL'
 
 import ReviewBlock from './components/ReviewBlock'
 import { SpecialBrandHandleModal } from './components/modals/SpecialBrandHandle'
@@ -329,12 +334,20 @@ const TextAreaBlock: FunctionComponent<
     return <p>{intl.formatMessage(messages.loadingSoldTo)}</p>
   }
 
-  // const { data } = useQuery(GET_TEMPLATES, {
-  //   variables: {
-  //     subDomain: `subDomainName=${subdomain}`,
-  //   },
-  //   ssr: false,
-  // });
+  const { data: templateData } = useQuery(GET_TEMPLATES, {
+    ssr: false,
+  });
+
+  console.log('templateData', templateData?.getTemplates);
+
+  console.log('url:', buildURL(
+    "sbdsefuat",
+    "ET",
+    templateData?.getTemplates.id,
+    "sampleJDE",
+    templateData?.getTemplates.sampleJDE
+  ));
+
 
   // const downloadExcelFile = async () => {
   //   try {
@@ -407,48 +420,114 @@ const TextAreaBlock: FunctionComponent<
 
 
   const downloadExcelFile = async () => {
-    const data = tableData.flatMap((item: any) => {
-      if (!item?.priceList) {
-        return {
-          'STANLEY PART NUMBER': item.skuName,
-          'Description': item.productName,
-          'LEAD TIME': item.leadTime,
-          'STOCKING UOM': item.uom,
-          'QTY PER UNIT': item.uomDescription,
-          'MOQ': item.moq,
-          // 'Weight': item.seller,
-          // 'TARIFF CODE': item.availability,
-          // 'ORIGIN': item.error,
-          'Qty': item.quantity,
-          'Price': `$ ${item.price}`,
-          // 'Avaliability': `${item.stockAvailability} M`,
-        }
-      }
-      return item.priceList.map((priceItem: any) => {
-        return {
-          'STANLEY PART NUMBER': item.skuName,
-          'Description': item.productName,
-          'LEAD TIME': item.leadTime,
-          'STOCKING UOM': item.uom,
-          'QTY PER UNIT': item.uomDescription,
-          'MOQ': item.moq,
-          // 'Weight': item.seller,
-          // 'TARIFF CODE': item.availability,
-          // 'ORIGIN': item.error,
-          'Qty': priceItem.quantity,
-          'Price': `$ ${priceItem.price}`,
-          'PRICING UOM': priceItem.uom,
-          'Avaliability': `${item.stockAvailability} M`,
-        }
-      })
-    })
+    // const data = tableData.flatMap((item: any) => {
+    //   if (!item?.priceList) {
+    //     return {
+    //       'STANLEY PART NUMBER': item.skuName,
+    //       'Description': item.productName,
+    //       'LEAD TIME': item.leadTime,
+    //       'STOCKING UOM': item.uom,
+    //       'QTY PER UNIT': item.uomDescription,
+    //       'MOQ': item.moq,
+    //       // 'Weight': item.seller,
+    //       // 'TARIFF CODE': item.availability,
+    //       // 'ORIGIN': item.error,
+    //       'Qty': item.quantity,
+    //       'Price': `$ ${item.price}`,
+    //       // 'Avaliability': `${item.stockAvailability} M`,
+    //     }
+    //   }
+    //   return item.priceList.map((priceItem: any) => {
+    //     return {
+    //       'STANLEY PART NUMBER': item.skuName,
+    //       'Description': item.productName,
+    //       'LEAD TIME': item.leadTime,
+    //       'STOCKING UOM': item.uom,
+    //       'QTY PER UNIT': item.uomDescription,
+    //       'MOQ': item.moq,
+    //       // 'Weight': item.seller,
+    //       // 'TARIFF CODE': item.availability,
+    //       // 'ORIGIN': item.error,
+    //       'Qty': priceItem.quantity,
+    //       'Price': `$ ${priceItem.price}`,
+    //       'PRICING UOM': priceItem.uom,
+    //       'Avaliability': `${item.stockAvailability} M`,
+    //     }
+    //   })
+    // })
 
+    // console.log('table data', data);
 
-    // Without Styles
+    // // Without Styles
     // const worksheet = XLSX.utils.json_to_sheet(data);
     // const workbook = XLSX.utils.book_new();
     // XLSX.utils.book_append_sheet(workbook, worksheet, 'Pricing and Availability');
     // XLSX.writeFile(workbook, 'Pricing and Availability Export.xlsx');
+
+    // With Styles
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("My Sheet");
+
+    // tableData.forEach((item: any) => {
+    //   if (!item?.priceList) {
+    //     sheet.addRow({
+    //       'STANLEY PART NUMBER': item.skuName,
+    //       'Description': item.productName,
+    //       'LEAD TIME': item.leadTime,
+    //       'STOCKING UOM': item.uom,
+    //       'QTY PER UNIT': item.uomDescription,
+    //       'MOQ': item.moq,
+    //       'Qty': item.quantity,
+    //       'Price': `$ ${item.price}`,
+    //     });
+    //   } else {
+    //     item.priceList.forEach((priceItem: any) => {
+    //       sheet.addRow({
+    //         'STANLEY PART NUMBER': item.skuName,
+    //         'Description': item.productName,
+    //         'LEAD TIME': item.leadTime,
+    //         'STOCKING UOM': item.uom,
+    //         'QTY PER UNIT': item.uomDescription,
+    //         'MOQ': item.moq,
+    //         'Qty': priceItem.quantity,
+    //         'Price': `$ ${priceItem.price}`,
+    //         'PRICING UOM': priceItem.uom,
+    //         'Avaliability': `${item.stockAvailability} MMMMM`,
+    //       });
+    //     });
+    //   }
+    // });
+
+    tableData.forEach((item: any) => {
+      if (item?.products) {
+        item.products.map((product: any) => {
+          sheet.addRow({
+            id: product?.id,
+            title: product?.title,
+            brand: product?.brand,
+            category: product?.category,
+            price: product?.price,
+            rating: product?.rating,
+          });
+        });
+      }
+    });
+
+    const style = workbook.addStyle({
+      name: "myStyle",
+      font: {
+        color: "red",
+      },
+      fill: {
+        fgColor: { rgb: "FF0000" },
+      },
+    });
+
+    sheet.getCell("A1").style = style;
+
+    const excelBuffer = await workbook.xlsx.writeBuffer();
+    const data = new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    saveAs(data, "My Excel File.xlsx");
 
     // const workbook = XLSX.readFile('./Tiered Pricing and Availability Export.xlsx');
     // console.log('workbook', workbook, typeof(workbook));
@@ -457,23 +536,39 @@ const TextAreaBlock: FunctionComponent<
     // workbook.Sheets['Pricing and Availability'] = worksheet;
     // XLSX.writeFile(workbook, 'Pricing and Availability Export.xlsx');
 
-    // const response = await fetch('https://spartaawsbucket.s3.eu-north-1.amazonaws.com/Tiered+Pricing+and+Availability+Export.xlsx');
+    // const response = await fetch(
+    //   buildURL(
+    //   "sbdsefuat",
+    //   "ET",
+    //   templateData?.getTemplates.id,
+    //   "sampleJDE",
+    //   templateData?.getTemplates.sampleJDE
+    // ));
     // const arrayBuffer = await response.arrayBuffer();
 
-    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-    const targetUrl = 'https://spartaawsbucket.s3.eu-north-1.amazonaws.com/Tiered+Pricing+and+Availability+Export.xlsx';
-    const response = await fetch(proxyUrl + targetUrl);
-    const arrayBuffer = await response.arrayBuffer();
+    // const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    // const targetUrl = buildURL(
+    //   "sbdsefuat",
+    //   "ET",
+    //   templateData?.getTemplates.id,
+    //   "sampleJDE",
+    //   templateData?.getTemplates.sampleJDE
+    // );
+    // const response = await fetch(proxyUrl + targetUrl);
+    // const arrayBuffer = await response.arrayBuffer();
 
-    const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
-    console.log('workbook', workbook, typeof(workbook));
+    // const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    // const targetUrl = 'https://spartaawsbucket.s3.eu-north-1.amazonaws.com/Tiered+Pricing+and+Availability+Export.xlsx';
+    // const response = await fetch(proxyUrl + targetUrl);
+    // const arrayBuffer = await response.arrayBuffer();
 
-    console.log('data', data);
+    // const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
+    // console.log('workbook', workbook, typeof(workbook));
 
     // const worksheet = XLSX.utils.json_to_sheet(data);
     // XLSX.utils.book_append_sheet(workbook, worksheet, 'Pricing and Availability');
 
-    XLSX.write(workbook, { type: 'binary', bookType: 'xlsx' });
+    // const newFile = XLSX.write(workbook, { type: 'binary', bookType: 'xlsx' });
 
     // const url = window.URL.createObjectURL(new Blob([newFile], { type: 'application/octet-stream' }));
     // const link = document.createElement('a');
@@ -535,13 +630,21 @@ const TextAreaBlock: FunctionComponent<
   //           uomDescription: item.uomDescription,
   //           seller: item.seller,
   //           availability: item.availability,
+  //           price: priceItem.price,
+  //           quantity: priceItem.quantity,
   //         });
   //       });
   //     }
   //   });
 
-  //   // Write to file
-  //   await workbook.xlsx.writeFile('OrderItems.xlsx');
+  //   // // Write to file
+  //   // await workbook.xlsx.writeFile('OrderItems.xlsx');
+
+  //   // Generate Excel file
+  //   const buffer = await workbook.xlsx.writeBuffer();
+  //   const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  //   saveAs(blob, 'data.xlsx');
+
   // };
 
 

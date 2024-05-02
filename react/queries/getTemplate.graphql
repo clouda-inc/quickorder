@@ -1,5 +1,6 @@
-query getTemplates($slug: String) {
-  getTemplates(slug: $slug) {
+query getTemplates {
+  getTemplates {
+    id
     sampleJDE
     sampleSAP
   }
