@@ -36,4 +36,9 @@ type Query {
     skuRefId: String!
     brandNameToCompare: String
   ): SkuBrandInfo
+
+  getProductSpecificationByName(
+    skuRefId: String!
+    skuSpecName: String!
+  ): ProductSpecification
 }

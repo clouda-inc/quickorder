@@ -1,0 +1,9 @@
+query GetProductSpecificationByName($skuRefId: String!, $skuSpecName: String!) {
+  getProductSpecificationByName(
+    skuRefId: $skuRefId
+    skuSpecName: $skuSpecName
+  ) {
+    spec
+    value
+  }
+}

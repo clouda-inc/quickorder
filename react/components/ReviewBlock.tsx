@@ -802,6 +802,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                       itemIndex={rowData?.index}
                       itemNumber={rowData?.sku}
                       customerNumber={customerNumber}
+                      thruDate={rowData?.thruDate}
                     />
                   ) : (
                     <div />
