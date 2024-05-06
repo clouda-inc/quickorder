@@ -1,6 +1,7 @@
 import GET_SKU_REFID_WITH_CUSTOMER_PART_NUMBER from '../queries/getSkuRefIdWithCustomerpart.graphql'
 import GET_BRAND_DETAILS_BY_SKU_REFID from '../queries/getBrandInfoBySkyRefId.graphql'
 import GET_PRODUCT_SPECIFICATION_BY_NAME from '../queries/getProductSpecificationByName.graphql'
+import { TARGET_SYSTEM } from './const'
 
 const RESTRICTED_BRAND_SPIRALOCK = 'SPIRALOCK'
 const SPEC_JDE_LEAD_TIME_DAYS = 'JDE_Lead_Time_Days'
@@ -190,11 +191,14 @@ export const ParseText = async (
             RESTRICTED_BRAND_SPIRALOCK
           )
 
-          const thruDate = await getProductThruDate(
-            skuRefId,
-            client,
-            SPEC_JDE_LEAD_TIME_DAYS
-          )
+          const thruDate =
+            targetSystem === TARGET_SYSTEM.JDE
+              ? await getProductThruDate(
+                  skuRefId,
+                  client,
+                  SPEC_JDE_LEAD_TIME_DAYS
+                )
+              : ''
 
           return {
             index,
