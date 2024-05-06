@@ -60,11 +60,9 @@ export class Catalog extends ExternalClient {
 
     const productResponse = await this.getProductByRefId(refId)
 
-    await this.getSpecificationByName(refId, 'JDE_Lead_Time_Days')
-
     const brandId = productResponse?.BrandId
-
     const brandEndpoint = `${this.options?.baseURL}/api/catalog_system/pvt/brand/${brandId}`
+
     const brandResponse = await this.http.get(brandEndpoint, {
       headers: {
         'Content-Type': 'application/json',
@@ -88,6 +86,7 @@ export class Catalog extends ExternalClient {
       auth: this.context.authToken,
       url: this.context.host,
     })
+
     const productResponse = await this.getProductByRefId(skuRefId)
 
     if (!productResponse || !productResponse?.Id) {
@@ -95,6 +94,7 @@ export class Catalog extends ExternalClient {
     }
 
     const productSpecificationsEndpoint = `${this.options?.baseURL}/api/catalog_system/pvt/products/${productResponse.Id}/specification`
+
     const productSpecificationsResponse = await this.http.get(
       productSpecificationsEndpoint,
       {
