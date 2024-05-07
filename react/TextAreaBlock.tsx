@@ -514,7 +514,7 @@ const TextAreaBlock: FunctionComponent<
     handleExcelFileCreation(data)
     setTimeout(() => {
       setExcelDownloading(false)
-    }, 500)
+    }, 1000)
   }
 
   return (

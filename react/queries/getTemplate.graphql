@@ -1,7 +1,0 @@
-query getTemplates {
-  getTemplates {
-    id
-    sampleJDE
-    sampleSAP
-  }
-}

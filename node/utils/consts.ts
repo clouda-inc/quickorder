@@ -19,6 +19,3 @@ export const CUSTOMER_SKU_FIELDS = ['skuRefId', 'customerSku', 'customerNumber']
 export const CUSTOMER_SKU_SCHEMA = 'mdv1'
 export const CUSTOMER_SKU_ACRONYM = 'KU'
 
-export const EXCEL_TEMPLATE_ACRONYM = 'ET'
-export const EXCEL_TEMPLATE_SCHEMA = 'mdv1'
-export const EXCEL_TEMPLATE_FIELDS = ['id', 'sampleJDE', 'sampleSAP']
