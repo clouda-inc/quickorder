@@ -21,7 +21,7 @@ import { addToCartGTMEventData } from './utils/GTMEventDataHandler'
 import ItemListContext from './ItemListContext'
 import type { TableData } from './utils/context'
 import { TableDataContext } from './utils/context'
-import { EMAIL_TEMPLATE_LOGO, LEGACY_SYSTEM_TABLE } from './utils/const'
+import { EMAIL_TEMPLATE_LOGO, LEGACY_SYSTEM_TABLE_SAP, LEGACY_SYSTEM_TABLE_JDE, TARGET_SYSTEM } from './utils/const'
 
 const messages = defineMessages({
   success: {
@@ -66,6 +66,7 @@ const TextAreaBlock: FunctionComponent<
   const [loading, setLoading] = useState<boolean>(false)
   const [isModalOpen, setIsModelOpen] = useState<boolean>(false)
   const [base64Image, setBase64Image] = useState('')
+  const [exceldownloading, setExcelDownloading] = useState<boolean>(false)
 
   const { tableData, handleExtractData } = useContext(
     TableDataContext
@@ -376,6 +377,8 @@ const TextAreaBlock: FunctionComponent<
       return
     }
 
+    const system = data[0]?.system
+
     const workbook = new ExcelJS.Workbook()
     const sheet = workbook.addWorksheet('Items')
 
@@ -395,7 +398,7 @@ const TextAreaBlock: FunctionComponent<
       color: { argb: 'FFFFFF' },
     }
 
-    sheet.columns = LEGACY_SYSTEM_TABLE
+    sheet.columns = system === TARGET_SYSTEM.JDE ? LEGACY_SYSTEM_TABLE_JDE : LEGACY_SYSTEM_TABLE_SAP
 
     sheet.insertRow(1, {}, 'i')
 
@@ -413,21 +416,36 @@ const TextAreaBlock: FunctionComponent<
       })
     }
 
-    sheet.mergeCells('A1:H1')
+    system === TARGET_SYSTEM.JDE ? sheet.mergeCells('A1:J1') : sheet.mergeCells('A1:H1')
 
     const promise = Promise.all(
       data?.map(async (product) => {
         try {
-          sheet.addRow({
-            skuName: product.skuName,
-            productName: product.productName,
-            leadTime: product.leadTime,
-            uom: product.uom,
-            uomDescription: product.uomDescription,
-            moq: product.moq,
-            quantity: product.quantity,
-            price: product.price,
-          })
+          if (system === TARGET_SYSTEM.JDE) {
+            sheet.addRow({
+                  skuName: product.skuName,
+                  productName: product.productName,
+                  leadTime: product.leadTime,
+                  uom: product.uom,
+                  uomDescription: product.uomDescription,
+                  moq: product.moq,
+                  quantity: product.quantity,
+                  price: product.price,
+                  priceUom: product.priceUom,
+                  stockAvailability: product.stockAvailability,
+                })
+          } else {
+            sheet.addRow({
+                  skuName: product.skuName,
+                  productName: product.productName,
+                  leadTime: product.leadTime,
+                  uom: product.uom,
+                  uomDescription: product.uomDescription,
+                  moq: product.moq,
+                  quantity: product.quantity,
+                  price: product.price,
+                })
+          }
         } catch (error) {
           console.error('Error adding rows: ', error)
 
@@ -455,13 +473,48 @@ const TextAreaBlock: FunctionComponent<
   }
 
   const downloadExcelFile = async () => {
-    tableData.flatMap((item: any) => {
+    setExcelDownloading(true)
+    const data = tableData.flatMap((item: any) => {
       if (!item?.priceList) {
-        return handleExcelFileCreation([item])
+        return {
+          skuName: item.skuName,
+          productName: item.productName,
+          leadTime: item.leadTime,
+          uom: item.uom,
+          uomDescription: item.uomDescription,
+          moq: item.moq,
+          // weight
+          // tariffCode
+          // origin
+          quantity: item.quantity,
+          price: `$ ${item.price}`,
+          system: TARGET_SYSTEM.SAP
+        }
       }
-
-      return handleExcelFileCreation(item.priceList)
+      return item.priceList.map((priceItem: any) => {
+        return {
+          skuName: item.skuName,
+          productName: item.productName,
+          leadTime: item.leadTime,
+          uom: item.uom,
+          uomDescription: item.uomDescription,
+          moq: item.moq,
+          // weight
+          // tariffCode
+          // origin
+          quantity: priceItem.quantity,
+          price: `$ ${priceItem.price}`,
+          priceUom: priceItem.uom,
+          stockAvailability: `${item.stockAvailability} M`,
+          system: TARGET_SYSTEM.JDE
+        }
+      })
     })
+
+    handleExcelFileCreation(data)
+    setTimeout(() => {
+      setExcelDownloading(false)
+    }, 500)
   }
 
   return (
@@ -551,6 +604,8 @@ const TextAreaBlock: FunctionComponent<
                     variation="primary"
                     size="small"
                     onClick={downloadExcelFile}
+                    isLoading={exceldownloading}
+                    disabled={!showAddToCart}
                   >
                     <FormattedMessage id="store/quickorder.download" />
                   </Button>
