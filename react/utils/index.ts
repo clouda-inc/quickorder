@@ -36,6 +36,14 @@ const removeDuplicates = (itemList: any) => {
   return Array.from(map, ([, value]) => value)
 }
 
+export const getFormattedDate = (date: Date) => {
+  const year = date.getFullYear()
+  const month = (1 + date.getMonth()).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
+
+  return `${month}/${day}/${year}`
+}
+
 export const getRefIdWithCustomerpart = async (
   partNumber: string,
   customerNumber: string,
@@ -125,10 +133,7 @@ export const getProductThruDate = async (
     today.setDate(today.getDate() + diff)
   }
 
-  return `${(today.getMonth() + 1).toString().padStart(2, '0')}\\${today
-    .getDate()
-    .toString()
-    .padStart(2, '0')}\\${today.getFullYear()}`
+  return getFormattedDate(today)
 }
 
 /**
@@ -273,12 +278,4 @@ export const validateQuantity = (minQty: number, unit: number, qty: number) => {
       : actualQty
 
   return quantity
-}
-
-export const getFormattedDate = (date: Date) => {
-  const year = date.getFullYear()
-  const month = (1 + date.getMonth()).toString().padStart(2, '0')
-  const day = date.getDate().toString().padStart(2, '0')
-
-  return `${month}/${day}/${year}`
 }
