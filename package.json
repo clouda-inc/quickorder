@@ -43,5 +43,8 @@
   "intl-equalizer": {
     "referenceLocale": "en",
     "localeDirectory": "messages"
+  },
+  "dependencies": {
+    "moment": "^2.30.1"
   }
 }

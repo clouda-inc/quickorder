@@ -1,5 +1,10 @@
 import GET_SKU_REFID_WITH_CUSTOMER_PART_NUMBER from '../queries/getSkuRefIdWithCustomerpart.graphql'
 import GET_BRAND_DETAILS_BY_SKU_REFID from '../queries/getBrandInfoBySkyRefId.graphql'
+import GET_PRODUCT_SPECIFICATION_BY_NAME from '../queries/getProductSpecificationByName.graphql'
+import { TARGET_SYSTEM } from './const'
+
+const RESTRICTED_BRAND_SPIRALOCK = 'SPIRALOCK'
+const SPEC_JDE_LEAD_TIME_DAYS = 'JDE_Lead_Time_Days'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const GetText = (items: any) => {
@@ -29,6 +34,14 @@ const removeDuplicates = (itemList: any) => {
   })
 
   return Array.from(map, ([, value]) => value)
+}
+
+export const getFormattedDate = (date: Date) => {
+  const year = date.getFullYear()
+  const month = (1 + date.getMonth()).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
+
+  return `${month}/${day}/${year}`
 }
 
 export const getRefIdWithCustomerpart = async (
@@ -89,6 +102,40 @@ export const getBrandRestrictions = async (
   }
 }
 
+export const getProductThruDate = async (
+  refId: string,
+  client: any,
+  skuSpecName: string
+) => {
+  const query = {
+    query: GET_PRODUCT_SPECIFICATION_BY_NAME,
+    variables: {
+      refId,
+      skuSpecName,
+    },
+  }
+
+  const { data } = await client.query(query)
+
+  const today = new Date()
+
+  if (
+    data?.getProductSpecificationByName?.value &&
+    data.getProductSpecificationByName?.value?.length > 0
+  ) {
+    const diff =
+      data.getProductSpecificationByName.value[0] &&
+      // eslint-disable-next-line no-restricted-globals
+      !isNaN(data.getProductSpecificationByName.value[0])
+        ? parseInt(data.getProductSpecificationByName.value[0], 10)
+        : 0
+
+    today.setDate(today.getDate() + diff)
+  }
+
+  return getFormattedDate(today)
+}
+
 /**
  *
  * @param textAreaValue
@@ -139,25 +186,36 @@ export const ParseText = async (
                   : 'store/quickorder.invalidPattern',
               partNumber: '',
               branch: '',
+              thruDate: '',
             }
           }
 
           const { isSameBrand: isSpiraLockItem } = await getBrandRestrictions(
             skuRefId,
             client,
-            'SPIRALOCK'
+            RESTRICTED_BRAND_SPIRALOCK
           )
+
+          const thruDate =
+            targetSystem === TARGET_SYSTEM.JDE
+              ? await getProductThruDate(
+                  skuRefId,
+                  client,
+                  SPEC_JDE_LEAD_TIME_DAYS
+                )
+              : ''
 
           return {
             index,
             line: index,
-            // Add endording to handle special characters in sku name , Due to encording sku name might be changed inside the project
+            // Add encoding to handle special characters in sku name , Due to encoding sku name might be changed inside the project
             sku: skuRefId,
             quantity: parseFloat(String(lineSplitted[1]).trim()),
             content: line,
             error: null,
             partNumber: customerPartNumber,
             branch: isSpiraLockItem ? '6100' : '2100',
+            thruDate,
           }
         }
       }
@@ -171,6 +229,7 @@ export const ParseText = async (
         error: 'store/quickorder.invalidPattern',
         partNumber: '',
         branch: '',
+        thruDate: '',
       }
     })
 
@@ -219,12 +278,4 @@ export const validateQuantity = (minQty: number, unit: number, qty: number) => {
       : actualQty
 
   return quantity
-}
-
-export const getFormattedDate = (date: Date) => {
-  const year = date.getFullYear()
-  const month = (1 + date.getMonth()).toString().padStart(2, '0')
-  const day = date.getDate().toString().padStart(2, '0')
-
-  return `${month}/${day}/${year}`
 }
