@@ -30,7 +30,7 @@ export class Catalog extends ExternalClient {
     })
   }
 
-  public getSkuContextByRefId = async (refId: string) => {
+  public getProductByRefId = async (refId: string) => {
     this.context.logger.debug({
       auth: this.context.authToken,
       url: this.context.host,
@@ -49,9 +49,20 @@ export class Catalog extends ExternalClient {
       },
     })
 
-    const brandId = productResponse?.BrandId
+    return productResponse
+  }
 
+  public getSkuContextByRefId = async (refId: string) => {
+    this.context.logger.debug({
+      auth: this.context.authToken,
+      url: this.context.host,
+    })
+
+    const productResponse = await this.getProductByRefId(refId)
+
+    const brandId = productResponse?.BrandId
     const brandEndpoint = `${this.options?.baseURL}/api/catalog_system/pvt/brand/${brandId}`
+
     const brandResponse = await this.http.get(brandEndpoint, {
       headers: {
         'Content-Type': 'application/json',
@@ -65,5 +76,52 @@ export class Catalog extends ExternalClient {
     })
 
     return brandResponse
+  }
+
+  public getProductSpecificationByName = async (
+    refId: string,
+    skuSpecName: string
+  ) => {
+    this.context.logger.debug({
+      auth: this.context.authToken,
+      url: this.context.host,
+    })
+
+    const productResponse = await this.getProductByRefId(refId)
+
+    if (!productResponse || !productResponse?.Id) {
+      return null
+    }
+
+    const productSpecificationsEndpoint = `${this.options?.baseURL}/api/catalog_system/pvt/products/${productResponse.Id}/specification`
+
+    const productSpecificationsResponse = await this.http.get(
+      productSpecificationsEndpoint,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          VtexIdclientAutCookie: `${this.context.authToken}`,
+          'Proxy-Authorization': this.context.authToken,
+          'X-Vtex-Proxy-To': productSpecificationsEndpoint,
+          'X-Vtex-Use-Https': true,
+          'Cache-Control': 'no-cache',
+        },
+      }
+    )
+
+    if (
+      !productSpecificationsResponse ||
+      !productSpecificationsResponse?.length
+    ) {
+      return null
+    }
+
+    const specValue = productSpecificationsResponse.find(
+      (el: { Name: string }) =>
+        el?.Name?.toUpperCase().trim() === skuSpecName?.toUpperCase().trim()
+    )?.Value
+
+    return specValue
   }
 }

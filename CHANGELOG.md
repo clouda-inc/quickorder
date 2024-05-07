@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.81] - 2024-05-07
+
+### Added
+
+- Added thruDate as [DATE_TODAY + DATEADD(JDE_LEAD_TIME_DAYS)] (mm/dd/yyyy)
+
+## [0.1.80] - 2024-04-25
+
+### Fixed
+
+- Fixing the graphql error on MOQ.
+
+## [0.1.79] - 2024-04-23
+
+### Added
+
+- Updated the block validation to handel the unit multiplier
+
+## [0.1.78] - 2024-04-19
+
+### Added
+
+- Added UOM measurements to the price tables and modals
+
+## [0.1.77] - 2024-04-15
+
+### Fixed
+
+- Fixed all items unavailability when certain items are validated
+
 ## [0.1.76] - 2024-03-22
 
 ### Fixed

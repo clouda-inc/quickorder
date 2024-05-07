@@ -20,6 +20,7 @@ interface Props {
   itemIndex: number
   itemNumber: string
   customerNumber: string
+  thruDate: string
 }
 
 const messages = defineMessages({
@@ -37,6 +38,7 @@ const StockAvailability = ({
   itemIndex,
   itemNumber,
   customerNumber,
+  thruDate,
 }: Props) => {
   const styles = useCssHandles(CSS_HANDLES)
   const intl = useIntl()
@@ -52,7 +54,7 @@ const StockAvailability = ({
       variables: {
         itemNumber,
         customer: customerNumber,
-        thruDate: '',
+        thruDate,
       },
     }
   )
@@ -90,14 +92,18 @@ const StockAvailability = ({
   }, [stockAvailability]);
 
   return loading ? (
-    <div className={`${styles.itemAvailability}`}>{intl.formatMessage(messages.loading)}</div>
+    <div className={`${styles.itemAvailability}`}>
+      {intl.formatMessage(messages.loading)}
+    </div>
   ) : stockAvailability > 0 ? (
     <div className={`${styles.itemAvailability}`}>
       <span className={`${styles.availableQuantity} f3 mr2`}>
         {stockAvailability}
       </span>
       <span className={`${styles.availableQuantity} f3 mr3`}>{primaryUoM}</span>
-      <span className={`${styles.availableLabel} f6 ttu`}>{intl.formatMessage(messages.available)}</span>
+      <span className={`${styles.availableLabel} f6 ttu`}>
+        {intl.formatMessage(messages.available)}
+      </span>
     </div>
   ) : (
     <div />

@@ -34,7 +34,7 @@
   "store/quickorder.available": "Available",
   "store/quickorder.unauthorized": "Not Available Online",
   "store/quickorder.unauthorized.catalog-eu": "Not Available in Your Region",
-  "store/quickorder.unauthorizedError": "Product Not Found",
+  "store/quickorder.unauthorizedError": "Not authorized to view this product",
   "store/quickorder.back": "Back",
   "store/quickorder.cannotBeDelivered": "Cannot be delivered",
   "store/quickorder.category.addButton": "Add items to Cart",
@@ -98,5 +98,7 @@
   "store/quickorder.invalidCustomerPart": "customer Part number is not exist",
   "store/quickorder.availability.error": "Error occurred during availability validation",
   "store/quickorder.metadata.update.error": "Error occurred while updating cart information",
-  "store/quickorder.download": "Download"
+  "store/quickorder.download": "Download",
+  "store/quickorder.invalidUnitMultiplier": "Invalid Unit multiplier",
+  "store/quickorder.invalidMoq": "Invalid MOQ"
 }

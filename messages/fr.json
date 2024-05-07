@@ -34,7 +34,7 @@
   "store/quickorder.available": "Disponible",
   "store/quickorder.unauthorized": "Non disponible en ligne",
   "store/quickorder.unauthorized.catalog-eu": "Non disponible dans votre région",
-  "store/quickorder.unauthorizedError": "Produit non trouvé",
+  "store/quickorder.unauthorizedError": "Non autorisé pour voir ce produit",
   "store/quickorder.back": "Dos",
   "store/quickorder.cannotBeDelivered": "Ne peut pas être livré",
   "store/quickorder.category.addButton": "Ajouter des articles au panier",
@@ -98,5 +98,7 @@
   "store/quickorder.invalidCustomerPart": "Le numéro de pièce du client n'existe pas",
   "store/quickorder.availability.error": "Une erreur s'est produite lors de la validation de la disponibilité",
   "store/quickorder.metadata.update.error": "Une erreur s'est produite lors de la mise à jour des informations du panier",
-  "store/quickorder.download": "Télécharger"
+  "store/quickorder.download": "Télécharger",
+  "store/quickorder.invalidUnitMultiplier": "Multiplicateur d'unité invalide",
+  "store/quickorder.invalidMoq": "MOQ invalide"
 }

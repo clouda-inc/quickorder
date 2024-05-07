@@ -186,6 +186,14 @@ const messages = defineMessages({
     id: 'store/quickorder.invalidRefId',
     defaultMessage: 'No Ref Id exists for given customerPart Number',
   },
+  invalidUnitMultiplier: {
+    id: 'store/quickorder.invalidUnitMultiplier',
+    defaultMessage: 'Invalid Unit multiplier',
+  },
+  invalidMoq: {
+    id: 'store/quickorder.invalidMoq',
+    defaultMessage: 'Invalid MOQ',
+  },
 })
 
 // let orderFormId = ''
@@ -312,6 +320,8 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     'store/quickorder.ORD031': messages.ORD031,
     'store/quickorder.invalidRefId': messages.noRefId,
     'store/quickorder.invalidCustomerPart': messages.noCustomerPart,
+    'store/quickorder.invalidUnitMultiplier': messages.invalidUnitMultiplier,
+    'store/quickorder.invalidMoq': messages.invalidMoq,
   }
 
   const isEURegion = () => {
@@ -334,12 +344,17 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
         (d: any) => i.sku === d.refid
       )?.moq
 
+      const productErr = refidData.getSkuAvailability?.dataErrors?.find(
+        (d: any) => i.sku === d.refid
+      )
+
       i.quantity = validateQuantity(minQty, unit, i.quantity)
 
       return {
         ...i,
         unit,
         minQty,
+        productErr,
       }
     })
 
@@ -406,6 +421,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
       }
 
       const errorMsg = (item: any) => {
+        const errorData = item?.productErr?.productError
         let ret: any = null
         const notfound = refIdNotFound.find((curr: any) => {
           return curr.refid === item.sku && curr.sku === null
@@ -415,10 +431,17 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
           return curr.refid === item.sku && curr.sku !== null
         })
 
+        const uomIssue = !Number.isInteger(item.unitMultiplier ?? 1)
+        // const uomIssue = !Number.isInteger(0.01 ?? 1)
+
         ret = notfound
           ? 'store/quickorder.skuNotFound'
           : found?.availability && found.availability === 'unauthorized'
           ? 'store/quickorder.unauthorizedError'
+          : uomIssue
+          ? 'store/quickorder.invalidUnitMultiplier'
+          : errorData?.[0]
+          ? errorData?.[0]
           : item.error
 
         return ret
@@ -451,7 +474,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
           unitMultiplier: itm?.unitMultiplier,
           moq: itm?.moq,
           refid: itm?.refid,
-          brand: itm?.brand
+          brand: itm?.brand,
         }
       })
 
@@ -781,6 +804,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                       itemIndex={rowData?.index}
                       itemNumber={rowData?.sku}
                       customerNumber={customerNumber}
+                      thruDate={rowData?.thruDate}
                     />
                   ) : (
                     <div />

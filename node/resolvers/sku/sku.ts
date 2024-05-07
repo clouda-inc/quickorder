@@ -1,4 +1,4 @@
-import { UserInputError } from '@vtex/api'
+import { UserInputError, NotFoundError } from '@vtex/api'
 
 export const queries = {
   getBrandInfoBySkyRefId: async (
@@ -29,6 +29,37 @@ export const queries = {
         ? args.brandNameToCompare.toUpperCase() ===
           skuContextResponse?.name?.toUpperCase()
         : undefined,
+    }
+  },
+
+  getProductSpecificationByName: async (
+    _: any,
+    args: { refId: string; skuSpecName: string },
+    ctx: Context
+  ): Promise<any> => {
+    const {
+      clients: { catalog },
+    } = ctx
+
+    if (!args.refId || !args.skuSpecName) {
+      throw new UserInputError('No refid/specification provided')
+    }
+
+    let productSpecResponse = null
+
+    try {
+      productSpecResponse = await catalog.getProductSpecificationByName(
+        args.refId,
+        args.skuSpecName
+      )
+    } catch (error) {
+      console.error(error)
+      throw new NotFoundError(error)
+    }
+
+    return {
+      spec: args.skuSpecName,
+      value: productSpecResponse ?? [],
     }
   },
 }

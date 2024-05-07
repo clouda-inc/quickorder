@@ -34,7 +34,7 @@
   "store/quickorder.available": "Disponibil",
   "store/quickorder.unauthorized": "Nu este disponibil online",
   "store/quickorder.unauthorized.catalog-eu": "Nu este disponibil în regiunea dvs",
-  "store/quickorder.unauthorizedError": "Produsul nu a fost găsit",
+  "store/quickorder.unauthorizedError": "Nu este autorizat să vizioneze acest produs",
   "store/quickorder.back": "Inapoi",
   "store/quickorder.cannotBeDelivered": "Nu poate fi livrat",
   "store/quickorder.category.addButton": "Adauga articole in carucior",
@@ -98,5 +98,7 @@
   "store/quickorder.invalidCustomerPart": "Numărul piesei clientului nu există",
   "store/quickorder.availability.error": "A apărut o eroare în timpul validării disponibilității",
   "store/quickorder.metadata.update.error": "A apărut o eroare la actualizarea informațiilor despre coș",
-  "store/quickorder.download": "Descărcare"
+  "store/quickorder.download": "Descărcare",
+  "store/quickorder.invalidUnitMultiplier": "Unitarul de multiplu nu este valabil",
+  "store/quickorder.invalidMoq": "MOQ nu este valabil"
 }
