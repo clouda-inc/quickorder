@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.81] - 2024-05-07
+
 ### Added
 
 - Added thruDate as [DATE_TODAY + DATEADD(JDE_LEAD_TIME_DAYS)] (mm/dd/yyyy)
