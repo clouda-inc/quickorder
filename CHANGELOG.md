@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Added thruDate as [DATE_TODAY + DATEADD(JDE_LEAD_TIME_DAYS)] (mm\dd\yyyy)
+- Added thruDate as [DATE_TODAY + DATEADD(JDE_LEAD_TIME_DAYS)] (mm/dd/yyyy)
 
 ## [0.1.80] - 2024-04-25
 
