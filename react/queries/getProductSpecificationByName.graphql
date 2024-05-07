@@ -1,8 +1,5 @@
-query GetProductSpecificationByName($skuRefId: String!, $skuSpecName: String!) {
-  getProductSpecificationByName(
-    skuRefId: $skuRefId
-    skuSpecName: $skuSpecName
-  ) {
+query GetProductSpecificationByName($refId: String!, $skuSpecName: String!) {
+  getProductSpecificationByName(refId: $refId, skuSpecName: $skuSpecName) {
     spec
     value
   }

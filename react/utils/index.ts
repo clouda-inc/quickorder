@@ -103,14 +103,14 @@ export const getBrandRestrictions = async (
 }
 
 export const getProductThruDate = async (
-  skuRefId: string,
+  refId: string,
   client: any,
   skuSpecName: string
 ) => {
   const query = {
     query: GET_PRODUCT_SPECIFICATION_BY_NAME,
     variables: {
-      skuRefId,
+      refId,
       skuSpecName,
     },
   }

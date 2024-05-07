@@ -38,7 +38,7 @@ type Query {
   ): SkuBrandInfo
 
   getProductSpecificationByName(
-    skuRefId: String!
+    refId: String!
     skuSpecName: String!
   ): ProductSpecification
 }

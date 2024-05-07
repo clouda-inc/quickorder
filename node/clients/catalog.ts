@@ -78,8 +78,8 @@ export class Catalog extends ExternalClient {
     return brandResponse
   }
 
-  public getSpecificationByName = async (
-    skuRefId: string,
+  public getProductSpecificationByName = async (
+    refId: string,
     skuSpecName: string
   ) => {
     this.context.logger.debug({
@@ -87,7 +87,7 @@ export class Catalog extends ExternalClient {
       url: this.context.host,
     })
 
-    const productResponse = await this.getProductByRefId(skuRefId)
+    const productResponse = await this.getProductByRefId(refId)
 
     if (!productResponse || !productResponse?.Id) {
       return null
