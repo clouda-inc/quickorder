@@ -48,6 +48,7 @@
   "store/quickorder.leadTime": "Std. Vorlaufzeit",
   "store/quickorder.moq": "MOQ",
   "store/quickorder.outOfStock": "Ausverkauft",
+  "store/quickorder.madeToOrder": "Auf Bestellung",
   "store/quickorder.quantityPerUnit": "Menge pro Einheit",
   "store/quickorder.review.label.content": "Inhalt",
   "store/quickorder.review.label.lineNumber": "#",

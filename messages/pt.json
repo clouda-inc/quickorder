@@ -48,6 +48,7 @@
   "store/quickorder.leadTime": "Std. Lead Time",
   "store/quickorder.moq": "MOQ",
   "store/quickorder.outOfStock": "Out of Stock",
+  "store/quickorder.madeToOrder": "Feito sob encomenda",
   "store/quickorder.quantityPerUnit": "Quantity Per Unit",
   "store/quickorder.review.label.content": "Conteúdo",
   "store/quickorder.review.label.lineNumber": "#",

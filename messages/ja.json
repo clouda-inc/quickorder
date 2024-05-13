@@ -48,6 +48,7 @@
   "store/quickorder.leadTime": "標準リードタイム",
   "store/quickorder.moq": "MOQ",
   "store/quickorder.outOfStock": "在庫切れ",
+  "store/quickorder.madeToOrder": "オーダーメイド",
   "store/quickorder.quantityPerUnit": "単位あたりの数量",
   "store/quickorder.review.label.content": "コンテンツ",
   "store/quickorder.review.label.lineNumber": "#",
