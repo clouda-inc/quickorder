@@ -20,6 +20,11 @@ type AvailableItem {
   price: Float
   unitMultiplier: Int
   brand: String
+  JDE_Weight_UOM: [String]
+  JDE_Weight_Per_UOM: [String]
+  JDE_Weight: [String]
+  JDE_Country_of_Origin: [String]
+  JDE_HTS_Code: [String]
 }
 
 type KeyValue {

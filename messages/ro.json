@@ -100,5 +100,8 @@
   "store/quickorder.metadata.update.error": "A apărut o eroare la actualizarea informațiilor despre coș",
   "store/quickorder.download": "Descărcare",
   "store/quickorder.invalidUnitMultiplier": "Unitarul de multiplu nu este valabil",
-  "store/quickorder.invalidMoq": "MOQ nu este valabil"
+  "store/quickorder.invalidMoq": "MOQ nu este valabil",
+  "store/quickorder.countryOfOrigin": "Țara de origine",
+  "store/quickorder.weight": "Greutate",
+  "store/quickorder.htsCode": "Cod tarifar vamal"
 }

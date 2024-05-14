@@ -194,6 +194,18 @@ const messages = defineMessages({
     id: 'store/quickorder.invalidMoq',
     defaultMessage: 'Invalid MOQ',
   },
+  countryOfOrigin: {
+    id: 'store/quickorder.countryOfOrigin',
+    defaultMessage: 'Country of Origin',
+  },
+  weight: {
+    id: 'store/quickorder.weight',
+    defaultMessage: 'Weight',
+  },
+  htsCode: {
+    id: 'store/quickorder.htsCode',
+    defaultMessage: 'Tariff Code',
+  },
 })
 
 // let orderFormId = ''
@@ -240,6 +252,9 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   onRefidLoading,
   intl,
 }: any) => {
+  console.log('props: onReviewItems', onReviewItems)
+  console.log('props: reviewedItems', reviewedItems)
+
   // const { data: orderFormData } = useQuery<{
   //   orderForm
   // }>(OrderFormQuery, {
@@ -271,8 +286,6 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   })
 
   const { reviewItems } = state
-
-  console.log('reviewItems', reviewItems);
 
   // if (orderFormData?.orderForm?.orderFormId) {
   //   orderFormId = orderFormData.orderForm.orderFormId
@@ -455,6 +468,8 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
         const sellers = item.sku ? mappedRefId[item.sku]?.sellers : '1'
         const itm = getItemFromQuery(item)
 
+        console.log('itm', itm)
+
         return {
           ...item,
           sellers: item.sku ? mappedRefId[item.sku]?.sellers : '1',
@@ -475,6 +490,11 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
           moq: itm?.moq,
           refid: itm?.refid,
           brand: itm?.brand,
+          JDE_Country_of_Origin: itm?.JDE_Country_of_Origin?.[0],
+          JDE_HTS_Code: itm?.JDE_HTS_Code?.[0],
+          JDE_Weight: itm?.JDE_Weight?.[0],
+          JDE_Weight_UOM: itm?.JDE_Weight_UOM?.[0],
+          JDE_Weight_Per_UOM: itm?.JDE_Weight_Per_UOM?.[0],
         }
       })
 
@@ -523,6 +543,8 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
       }
 
       const { data } = await client.query(query)
+
+      console.log('product data', data)
 
       // TODO: Remove this line
       // eslint-disable-next-line no-console
@@ -711,7 +733,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                     targetSystem === TARGET_SYSTEM.JDE ? 'w-60' : 'w-100'
                   }`}
                 >
-                  {rowData.uom && (
+                  {/* {rowData.uom && (
                     <div
                       className={`${styles.itemUom} flex flex-row justify-between`}
                     >
@@ -722,20 +744,24 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                         {rowData.uom}
                       </div>
                     </div>
-                  )}
+                  )} */}
                   {rowData.uomDescription && (
                     <div
                       className={`${styles.uomDescription} flex flex-row justify-between`}
                     >
-                      <div className={`${styles.KeyValueLabel}`}>
+                      <div
+                        className={`${styles.KeyValueLabel} ${styles.smallFont}`}
+                      >
                         {intl.formatMessage(messages.quantityPerUnit)}
                       </div>
-                      <div className={`${styles.KeyValueValue}`}>
+                      <div
+                        className={`${styles.KeyValueValue} ${styles.smallFont}`}
+                      >
                         {rowData.uomDescription}
                       </div>
                     </div>
                   )}
-                  {rowData.unitMultiplier && (
+                  {/* {rowData.unitMultiplier && (
                     <div
                       className={`${styles.uomDescription} flex flex-row justify-between`}
                     >
@@ -746,15 +772,19 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                         {rowData.unitMultiplier}
                       </div>
                     </div>
-                  )}
+                  )} */}
                   {rowData.moq && (
                     <div
                       className={`${styles.moq} flex flex-row justify-between`}
                     >
-                      <div className={`${styles.KeyValueLabel}`}>
+                      <div
+                        className={`${styles.KeyValueLabel} ${styles.smallFont}`}
+                      >
                         {intl.formatMessage(messages.moq)}
                       </div>
-                      <div className={`${styles.KeyValueValue}`}>
+                      <div
+                        className={`${styles.KeyValueValue} ${styles.smallFont}`}
+                      >
                         {rowData.moq}
                       </div>
                     </div>
@@ -764,11 +794,68 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                     <div
                       className={`${styles.leadTime} flex flex-row justify-between`}
                     >
-                      <div className={`${styles.KeyValueLabel}`}>
+                      <div
+                        className={`${styles.KeyValueLabel} ${styles.smallFont}`}
+                      >
                         {intl.formatMessage(messages.leadTime)}
                       </div>
-                      <div className={`${styles.KeyValueValue}`}>
+                      <div
+                        className={`${styles.KeyValueValue} ${styles.smallFont}`}
+                      >
                         {rowData.leadTime}
+                      </div>
+                    </div>
+                  )}
+
+                  {rowData?.JDE_Country_of_Origin && (
+                    <div
+                      className={`${styles.countryOfOrigin} flex flex-row justify-between`}
+                    >
+                      <div
+                        className={`${styles.KeyValueLabel} ${styles.smallFont}`}
+                      >
+                        {intl.formatMessage(messages.countryOfOrigin)}
+                      </div>
+                      <div
+                        className={`${styles.KeyValueValue} ${styles.smallFont}`}
+                      >
+                        {rowData.JDE_Country_of_Origin}
+                      </div>
+                    </div>
+                  )}
+
+                  {rowData?.JDE_Weight &&
+                    rowData?.JDE_Weight_UOM &&
+                    rowData?.JDE_Weight_Per_UOM && (
+                      <div
+                        className={`${styles.weight} flex flex-row justify-between`}
+                      >
+                        <div
+                          className={`${styles.KeyValueLabel} ${styles.smallFont}`}
+                        >
+                          {intl.formatMessage(messages.weight)}
+                        </div>
+                        <div
+                          className={`${styles.KeyValueValue} ${styles.smallFont}`}
+                        >
+                          {`${rowData.JDE_Weight} ${rowData.JDE_Weight_UOM}/${rowData.JDE_Weight_Per_UOM}`}
+                        </div>
+                      </div>
+                    )}
+
+                  {rowData.JDE_HTS_Code && (
+                    <div
+                      className={`${styles.htsCode} flex flex-row justify-between`}
+                    >
+                      <div
+                        className={`${styles.KeyValueLabel} ${styles.smallFont}`}
+                      >
+                        {intl.formatMessage(messages.htsCode)}
+                      </div>
+                      <div
+                        className={`${styles.KeyValueValue} ${styles.smallFont}`}
+                      >
+                        {rowData.JDE_HTS_Code}
                       </div>
                     </div>
                   )}

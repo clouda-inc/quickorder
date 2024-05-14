@@ -30,6 +30,11 @@ query getAvbProduct(
       price
       unitMultiplier
       brand
+      JDE_Weight_UOM
+      JDE_Weight_Per_UOM
+      JDE_Weight
+      JDE_Country_of_Origin
+      JDE_HTS_Code
     }
     performanceData {
       key

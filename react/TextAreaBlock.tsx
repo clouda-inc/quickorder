@@ -398,7 +398,10 @@ const TextAreaBlock: FunctionComponent<
       color: { argb: 'FFFFFF' },
     }
 
-    sheet.columns = system === TARGET_SYSTEM.JDE ? LEGACY_SYSTEM_TABLE_JDE : LEGACY_SYSTEM_TABLE_SAP
+    sheet.columns =
+      system === TARGET_SYSTEM.JDE
+        ? LEGACY_SYSTEM_TABLE_JDE
+        : LEGACY_SYSTEM_TABLE_SAP
 
     sheet.insertRow(1, {}, 'i')
 
@@ -416,35 +419,40 @@ const TextAreaBlock: FunctionComponent<
       })
     }
 
-    system === TARGET_SYSTEM.JDE ? sheet.mergeCells('A1:J1') : sheet.mergeCells('A1:H1')
+    system === TARGET_SYSTEM.JDE
+      ? sheet.mergeCells('A1:J1')
+      : sheet.mergeCells('A1:H1')
 
     const promise = Promise.all(
       data?.map(async (product) => {
         try {
           if (system === TARGET_SYSTEM.JDE) {
             sheet.addRow({
-                  skuName: product.skuName,
-                  productName: product.productName,
-                  leadTime: product.leadTime,
-                  uom: product.uom,
-                  uomDescription: product.uomDescription,
-                  moq: product.moq,
-                  quantity: product.quantity,
-                  price: product.price,
-                  priceUom: product.priceUom,
-                  stockAvailability: product.stockAvailability,
-                })
+              skuName: product.skuName,
+              productName: product.productName,
+              leadTime: product.leadTime,
+              uom: product.uom,
+              priceUom: product.priceUom,
+              uomDescription: product.uomDescription,
+              weight: `${product.JDE_Weight} ${product.JDE_Weight_UOM}/${product.JDE_Weight_Per_UOM}`,
+              tariffCode: product.JDE_HTS_Code,
+              origin: product.JDE_Country_of_Origin,
+              quantity: product.quantity,
+              price: product.price,
+
+              stockAvailability: product.stockAvailability,
+            })
           } else {
             sheet.addRow({
-                  skuName: product.skuName,
-                  productName: product.productName,
-                  leadTime: product.leadTime,
-                  uom: product.uom,
-                  uomDescription: product.uomDescription,
-                  moq: product.moq,
-                  quantity: product.quantity,
-                  price: product.price,
-                })
+              skuName: product.skuName,
+              productName: product.productName,
+              leadTime: product.leadTime,
+              uom: product.uom,
+              uomDescription: product.uomDescription,
+              moq: product.moq,
+              quantity: product.quantity,
+              price: product.price,
+            })
           }
         } catch (error) {
           console.error('Error adding rows: ', error)
@@ -488,7 +496,7 @@ const TextAreaBlock: FunctionComponent<
           // origin
           quantity: item.quantity,
           price: `$ ${item.price}`,
-          system: TARGET_SYSTEM.SAP
+          system: TARGET_SYSTEM.SAP,
         }
       }
       return item.priceList.map((priceItem: any) => {
@@ -499,14 +507,14 @@ const TextAreaBlock: FunctionComponent<
           uom: item.uom,
           uomDescription: item.uomDescription,
           moq: item.moq,
-          // weight
-          // tariffCode
-          // origin
+          weight: `${item.JDE_Weight} ${item.JDE_Weight_UOM}/${item.JDE_Weight_Per_UOM}`,
+          tariffCode: item.JDE_HTS_Code,
+          origin: item.JDE_Country_of_Origin,
           quantity: priceItem.quantity,
           price: `$ ${priceItem.price}`,
           priceUom: priceItem.uom,
           stockAvailability: `${item.stockAvailability} M`,
-          system: TARGET_SYSTEM.JDE
+          system: TARGET_SYSTEM.JDE,
         }
       })
     })

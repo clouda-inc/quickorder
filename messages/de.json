@@ -100,5 +100,8 @@
   "store/quickorder.metadata.update.error": "Se produjo un error al actualizar la información del carrito",
   "store/quickorder.download": "Herunterladen",
   "store/quickorder.invalidUnitMultiplier": "Ungültiger Einheitenmultiplikator",
-  "store/quickorder.invalidMoq": "Ungültiger MOQ"
+  "store/quickorder.invalidMoq": "Ungültiger MOQ",
+  "store/quickorder.countryOfOrigin": "Herkunftsland",
+  "store/quickorder.weight": "Gewicht",
+  "store/quickorder.htsCode": "Zolltarifnummer"
 }

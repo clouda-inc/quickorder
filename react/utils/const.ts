@@ -71,13 +71,28 @@ export const LEGACY_SYSTEM_TABLE_JDE = [
     width: 15,
   },
   {
+    header: 'PRICING UOM',
+    key: 'priceUom',
+    width: 15,
+  },
+  {
     header: 'QTY PER UNIT',
     key: 'uomDescription',
     width: 15,
   },
   {
-    header: 'MOQ',
-    key: 'moq',
+    header: 'Weight',
+    key: 'weight',
+    width: 15,
+  },
+  {
+    header: 'TARIFF CODE',
+    key: 'tariffCode',
+    width: 15,
+  },
+  {
+    header: 'ORIGIN',
+    key: 'origin',
     width: 15,
   },
   {
@@ -91,13 +106,8 @@ export const LEGACY_SYSTEM_TABLE_JDE = [
     width: 20,
   },
   {
-    header: 'PRICING UOM',
-    key: 'priceUom',
-    width: 15,
-  },
-  {
     header: 'Avaliability',
-    key:'stockAvailability',
+    key: 'stockAvailability',
     width: 15,
   },
 ]

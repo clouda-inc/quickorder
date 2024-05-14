@@ -49,3 +49,7 @@
   color: #027A48;
   font-size: 12px;
 }
+
+.smallFont {
+  font-size: 0.8em;
+}
