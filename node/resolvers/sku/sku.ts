@@ -34,14 +34,14 @@ export const queries = {
 
   getProductSpecificationByName: async (
     _: any,
-    args: { refId: string; skuSpecName: string },
+    args: { refId: string; productSpecName: string },
     ctx: Context
   ): Promise<any> => {
     const {
       clients: { catalog },
     } = ctx
 
-    if (!args.refId || !args.skuSpecName) {
+    if (!args.refId || !args.productSpecName) {
       throw new UserInputError('No refid/specification provided')
     }
 
@@ -50,7 +50,7 @@ export const queries = {
     try {
       productSpecResponse = await catalog.getProductSpecificationByName(
         args.refId,
-        args.skuSpecName
+        args.productSpecName
       )
     } catch (error) {
       console.error(error)
@@ -58,7 +58,7 @@ export const queries = {
     }
 
     return {
-      spec: args.skuSpecName,
+      spec: args.productSpecName,
       value: productSpecResponse ?? [],
     }
   },

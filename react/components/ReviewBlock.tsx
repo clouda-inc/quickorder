@@ -781,7 +781,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                 <div
                   className={`${styles.stockAvailabilityMessage} flex w-100`}
                 >
-                  {rowData?.mto ? (
+                  {targetSystem === TARGET_SYSTEM.JDE && rowData?.mto ? (
                     <span className={`${styles.madeToOrderMessage} b ttu`}>
                       {intl.formatMessage(messages.madeToOrder)}
                     </span>

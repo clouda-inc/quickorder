@@ -106,13 +106,13 @@ export const getBrandRestrictions = async (
 export const getProductThruDate = async (
   refId: string,
   client: any,
-  skuSpecName: string
+  productSpecName: string
 ) => {
   const query = {
     query: GET_PRODUCT_SPECIFICATION_BY_NAME,
     variables: {
       refId,
-      skuSpecName,
+      productSpecName,
     },
   }
 
@@ -142,7 +142,7 @@ export const getMadeToOrder = async (refId: string, client: any) => {
     query: GET_PRODUCT_SPECIFICATION_BY_NAME,
     variables: {
       refId,
-      skuSpecName: SPEC_MADE_TO_ORDER,
+      productSpecName: SPEC_MADE_TO_ORDER,
     },
   }
 
