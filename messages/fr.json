@@ -48,6 +48,7 @@
   "store/quickorder.leadTime": "Std. Délai de mise en œuvre",
   "store/quickorder.moq": "MOQ",
   "store/quickorder.outOfStock": "En rupture de stock",
+  "store/quickorder.madeToOrder": "Sur commande",
   "store/quickorder.quantityPerUnit": "Quantité par unité",
   "store/quickorder.review.label.content": "Contenu",
   "store/quickorder.review.label.lineNumber": "#",

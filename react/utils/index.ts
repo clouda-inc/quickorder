@@ -5,6 +5,7 @@ import { TARGET_SYSTEM } from './const'
 
 const RESTRICTED_BRAND_SPIRALOCK = 'SPIRALOCK'
 const SPEC_JDE_LEAD_TIME_DAYS = 'JDE_Lead_Time_Days'
+const SPEC_MADE_TO_ORDER = 'JDE_MTO'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const GetText = (items: any) => {
@@ -105,13 +106,13 @@ export const getBrandRestrictions = async (
 export const getProductThruDate = async (
   refId: string,
   client: any,
-  skuSpecName: string
+  productSpecName: string
 ) => {
   const query = {
     query: GET_PRODUCT_SPECIFICATION_BY_NAME,
     variables: {
       refId,
-      skuSpecName,
+      productSpecName,
     },
   }
 
@@ -134,6 +135,24 @@ export const getProductThruDate = async (
   }
 
   return getFormattedDate(today)
+}
+
+export const getMadeToOrder = async (refId: string, client: any) => {
+  const query = {
+    query: GET_PRODUCT_SPECIFICATION_BY_NAME,
+    variables: {
+      refId,
+      productSpecName: SPEC_MADE_TO_ORDER,
+    },
+  }
+
+  const { data } = await client.query(query)
+
+  return (
+    data?.getProductSpecificationByName?.value &&
+    data.getProductSpecificationByName.value?.length > 0 &&
+    data.getProductSpecificationByName.value[0].toUpperCase() === 'YES'
+  )
 }
 
 /**
@@ -187,6 +206,7 @@ export const ParseText = async (
               partNumber: '',
               branch: '',
               thruDate: '',
+              mto: false,
             }
           }
 
@@ -205,6 +225,8 @@ export const ParseText = async (
                 )
               : ''
 
+          const mto = await getMadeToOrder(skuRefId, client)
+
           return {
             index,
             line: index,
@@ -216,6 +238,7 @@ export const ParseText = async (
             partNumber: customerPartNumber,
             branch: isSpiraLockItem ? '6100' : '2100',
             thruDate,
+            mto,
           }
         }
       }
@@ -230,6 +253,7 @@ export const ParseText = async (
         partNumber: '',
         branch: '',
         thruDate: '',
+        mto: false,
       }
     })
 
