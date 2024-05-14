@@ -5,7 +5,7 @@ import { TARGET_SYSTEM } from './const'
 
 const RESTRICTED_BRAND_SPIRALOCK = 'SPIRALOCK'
 const SPEC_JDE_LEAD_TIME_DAYS = 'JDE_Lead_Time_Days'
-const SPEC_MADE_TO_ORDER = 'MTO'
+const SPEC_MADE_TO_ORDER = 'JDE_MTO'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const GetText = (items: any) => {
