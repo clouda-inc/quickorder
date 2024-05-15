@@ -111,3 +111,16 @@ export const LEGACY_SYSTEM_TABLE_JDE = [
     width: 15,
   },
 ]
+
+export const SAMPLE_TABLE = [
+  {
+    header: 'SKU',
+    key: 'SKU',
+    width: 15,
+  },
+  {
+    header: 'Quantity',
+    key: 'Quantity',
+    width: 15,
+  },
+]

@@ -12,13 +12,15 @@ import { useCssHandles } from 'vtex.css-handles'
 import { useMutation, useApolloClient } from 'react-apollo'
 import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
-import XLSX from 'xlsx'
+import * as ExcelJS from 'exceljs'
 
 import { ParseText, GetText } from './utils'
 import ReviewBlock from './components/ReviewBlock'
 import { addToCartGTMEventData } from './utils/GTMEventDataHandler'
 import ItemListContext from './ItemListContext'
 import { SpecialBrandHandleModal } from './components/modals/SpecialBrandHandle'
+import { SAMPLE_TABLE } from './utils/const'
+import { TableDataContext, TableData } from './utils/context'
 
 interface ItemType {
   id: string
@@ -67,6 +69,12 @@ const UploadBlock: FunctionComponent<
   const { reviewItems, reviewState } = state
   const apolloClient = useApolloClient()
 
+  const { tableData, handleExtractData } = useContext(
+    TableDataContext
+  ) as TableData
+
+  console.log('tableData: upload', tableData)
+
   const { useItemListState, useItemListDispatch } = ItemListContext
   const { isLoadingCustomerInfo, showAddToCart, customerNumber, targetSystem } =
     useItemListState()
@@ -107,8 +115,27 @@ const UploadBlock: FunctionComponent<
     showToast({ message })
   }
 
-  const download = () => {
-    const finalHeaders = ['SKU', 'Quantity']
+  // const download = () => {
+  //   const finalHeaders = ['SKU', 'Quantity']
+  //   const data = [
+  //     { SKU: 'AB120', Quantity: 2 },
+  //     { SKU: 'AB121', Quantity: 3 },
+  //     { SKU: 'AB122', Quantity: 5 },
+  //     { SKU: '[AB123]', Quantity: 10 },
+  //     { SKU: '[AB124]', Quantity: 1 },
+  //     { SKU: '[AB125]', Quantity: 20 },
+  //   ]
+
+  //   const ws = XLSX.utils.json_to_sheet(data, { header: finalHeaders })
+  //   const wb = XLSX.utils.book_new()
+
+  //   XLSX.utils.book_append_sheet(wb, ws, 'SheetJS')
+  //   const exportFileName = `model-quickorder.xls`
+
+  //   XLSX.writeFile(wb, exportFileName)
+  // }
+
+  const download = async () => {
     const data = [
       { SKU: 'AB120', Quantity: 2 },
       { SKU: 'AB121', Quantity: 3 },
@@ -118,13 +145,26 @@ const UploadBlock: FunctionComponent<
       { SKU: '[AB125]', Quantity: 20 },
     ]
 
-    const ws = XLSX.utils.json_to_sheet(data, { header: finalHeaders })
-    const wb = XLSX.utils.book_new()
+    const workbook = new ExcelJS.Workbook()
+    const sheet = workbook.addWorksheet('SheetJS')
 
-    XLSX.utils.book_append_sheet(wb, ws, 'SheetJS')
-    const exportFileName = `model-quickorder.xls`
+    sheet.columns = SAMPLE_TABLE
 
-    XLSX.writeFile(wb, exportFileName)
+    data.forEach((item) => sheet.addRow(item))
+
+    await workbook.xlsx.writeBuffer().then((sheetData) => {
+      const blob = new Blob([sheetData], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      })
+
+      const url = window.URL.createObjectURL(blob)
+      const anchor = document.createElement('a')
+
+      anchor.href = url
+      anchor.download = 'sample-data.xlsx'
+      anchor.click()
+      window.URL.revokeObjectURL(url)
+    })
   }
 
   const onRefidLoading = (data: boolean) => {
@@ -145,6 +185,9 @@ const UploadBlock: FunctionComponent<
         showAddToCart: show,
         textAreaValue: GetText(items),
       })
+
+      console.log('adding items to context: upload')
+      handleExtractData('-1', items, ' ')
 
       dispatch({
         type: 'UPDATE_ALL_STATUSES',
@@ -208,58 +251,132 @@ const UploadBlock: FunctionComponent<
     // onReviewItems(items)
   }
 
-  const processWb = (() => {
-    const toJson = function toJson(workbook: any) {
-      const result: any = {}
+  // const processWb = (() => {
+  //   const toJson = function toJson(workbook: any) {
+  //     const result: any = {}
 
-      workbook.SheetNames.forEach((sheetName: any) => {
-        const roa = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
-          header: 1,
+  //     workbook.SheetNames.forEach((sheetName: any) => {
+  //       const roa = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
+  //         header: 1,
+  //       })
+
+  //       if (roa.length) result[sheetName] = roa
+  //     })
+
+  //     return result
+  //   }
+
+  //   return (wb: any) => {
+  //     let output: any = null
+
+  //     output = toJson(wb)
+
+  //     return output
+  //   }
+  // })()
+
+  // const doFile = ([f]: any) => {
+  //   const reader: any = new FileReader()
+
+  //   reader.onload = (e: any) => {
+  //     let data = e.target.result
+
+  //     data = new Uint8Array(data)
+  //     const result = processWb(XLSX.read(data, { type: 'array' }))
+  //     const [sheetName] = Object.getOwnPropertyNames(result)
+
+  //     result[sheetName].splice(0, 1)
+  //     productsArray = result[sheetName]
+  //     productsArray = productsArray.filter((item: any) => item.length)
+  //     productsArray.forEach((p: any) => {
+  //       p[0] = (p[0] || '').toString().trim()
+  //       p[1] = (p[1] || '').toString().trim()
+  //     })
+  //   }
+
+  //   reader.onerror = () => {
+  //     // error
+  //   }
+
+  //   reader.readAsArrayBuffer(f)
+  // }
+
+  // const handleFile = (files: any) => {
+  //   doFile(files)
+  // }
+
+  const processWorkbook = async (file: File) => {
+    const reader = new FileReader()
+
+    const buffer = await new Promise<ArrayBuffer | string>(
+      (resolve, reject) => {
+        reader.onload = (e) => {
+          const data = e?.target?.result
+          if (data) {
+            if (file.name.endsWith('.csv')) {
+              resolve(data as string)
+            } else {
+              resolve(data as ArrayBuffer)
+            }
+          } else {
+            reject(new Error('Failed to read file'))
+          }
+        }
+        reader.onerror = (e) => reject(e)
+
+        if (file.name.endsWith('.csv')) {
+          reader.readAsText(file)
+        } else {
+          reader.readAsArrayBuffer(file)
+        }
+      }
+    )
+
+    let result: { [key: string]: any[][] } = {}
+
+    if (buffer instanceof ArrayBuffer) {
+      const workbook = new ExcelJS.Workbook()
+      await workbook.xlsx.load(buffer)
+
+      workbook.eachSheet((worksheet, _index) => {
+        const sheetData: any[][] = []
+        worksheet.eachRow((row, _rowIndex) => {
+          const rowData: any[] = []
+          row.eachCell((cell, _cellIndex) => {
+            rowData.push(cell.value)
+          })
+          sheetData.push(rowData)
         })
-
-        if (roa.length) result[sheetName] = roa
+        result[worksheet.name] = sheetData
       })
-
-      return result
+    } else {
+      const csvData = (buffer as string).split(/\r?\n|\r/)
+      result['SheetJS'] = csvData.map((row) =>
+        row.split(',').map((value) => value.trim())
+      )
     }
-
-    return (wb: any) => {
-      let output: any = null
-
-      output = toJson(wb)
-
-      return output
-    }
-  })()
-
-  const doFile = ([f]: any) => {
-    const reader: any = new FileReader()
-
-    reader.onload = (e: any) => {
-      let data = e.target.result
-
-      data = new Uint8Array(data)
-      const result = processWb(XLSX.read(data, { type: 'array' }))
-      const [sheetName] = Object.getOwnPropertyNames(result)
-
-      result[sheetName].splice(0, 1)
-      productsArray = result[sheetName]
-      productsArray = productsArray.filter((item: any) => item.length)
-      productsArray.forEach((p: any) => {
-        p[0] = (p[0] || '').toString().trim()
-        p[1] = (p[1] || '').toString().trim()
-      })
-    }
-
-    reader.onerror = () => {
-      // error
-    }
-
-    reader.readAsArrayBuffer(f)
+    return result
   }
 
-  const handleFile = (files: any) => {
-    doFile(files)
+  const handleFile = async (files: FileList) => {
+    if (files.length === 0) return
+    const workbookData = await processWorkbook(files[0])
+    console.log('workbookData:', workbookData)
+
+    for (const sheetName in workbookData) {
+      let sheetData = workbookData[sheetName]
+      sheetData = sheetData.filter((row) => row.length > 0)
+      sheetData.forEach((row) => {
+        row[0] = (row[0] || '').toString().trim()
+        row[1] = (row[1] || '').toString().trim()
+      })
+
+      console.log('sheetData:', sheetData)
+
+      productsArray = [...productsArray, ...sheetData.slice(1)]
+
+      console.log('productsArray:', productsArray)
+    }
   }
 
   const handleReset = () => {}
@@ -425,6 +542,9 @@ const UploadBlock: FunctionComponent<
     return <p>Loading sold to..</p>
   }
 
+  console.log('reviewItems: upload', reviewItems)
+  console.log('onReviewItems: upload', onReviewItems)
+
   return (
     <div className={`${handles.textContainerMain}`}>
       <SpecialBrandHandleModal
@@ -469,7 +589,7 @@ const UploadBlock: FunctionComponent<
                 onDropAccepted={handleFile}
                 onFileReset={handleReset}
                 onDropRejected={handleOnDropRejected}
-                accept=".xls,.xlsx,.csv"
+                accept=".xlsx,.csv"
               >
                 <div className="pt7">
                   <div>

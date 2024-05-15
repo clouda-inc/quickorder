@@ -749,14 +749,10 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                     <div
                       className={`${styles.uomDescription} flex flex-row justify-between`}
                     >
-                      <div
-                        className={`${styles.KeyValueLabel} ${styles.smallFont}`}
-                      >
+                      <div className={`${styles.KeyValueLabel}`}>
                         {intl.formatMessage(messages.quantityPerUnit)}
                       </div>
-                      <div
-                        className={`${styles.KeyValueValue} ${styles.smallFont}`}
-                      >
+                      <div className={`${styles.KeyValueValue}`}>
                         {rowData.uomDescription}
                       </div>
                     </div>
@@ -777,14 +773,10 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                     <div
                       className={`${styles.moq} flex flex-row justify-between`}
                     >
-                      <div
-                        className={`${styles.KeyValueLabel} ${styles.smallFont}`}
-                      >
+                      <div className={`${styles.KeyValueLabel}`}>
                         {intl.formatMessage(messages.moq)}
                       </div>
-                      <div
-                        className={`${styles.KeyValueValue} ${styles.smallFont}`}
-                      >
+                      <div className={`${styles.KeyValueValue}`}>
                         {rowData.moq}
                       </div>
                     </div>
@@ -794,14 +786,10 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                     <div
                       className={`${styles.leadTime} flex flex-row justify-between`}
                     >
-                      <div
-                        className={`${styles.KeyValueLabel} ${styles.smallFont}`}
-                      >
+                      <div className={`${styles.KeyValueLabel}`}>
                         {intl.formatMessage(messages.leadTime)}
                       </div>
-                      <div
-                        className={`${styles.KeyValueValue} ${styles.smallFont}`}
-                      >
+                      <div className={`${styles.KeyValueValue} `}>
                         {rowData.leadTime}
                       </div>
                     </div>
@@ -811,14 +799,10 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                     <div
                       className={`${styles.countryOfOrigin} flex flex-row justify-between`}
                     >
-                      <div
-                        className={`${styles.KeyValueLabel} ${styles.smallFont}`}
-                      >
+                      <div className={`${styles.KeyValueLabel}`}>
                         {intl.formatMessage(messages.countryOfOrigin)}
                       </div>
-                      <div
-                        className={`${styles.KeyValueValue} ${styles.smallFont}`}
-                      >
+                      <div className={`${styles.KeyValueValue}`}>
                         {rowData.JDE_Country_of_Origin}
                       </div>
                     </div>
@@ -830,14 +814,10 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                       <div
                         className={`${styles.weight} flex flex-row justify-between`}
                       >
-                        <div
-                          className={`${styles.KeyValueLabel} ${styles.smallFont}`}
-                        >
+                        <div className={`${styles.KeyValueLabel}`}>
                           {intl.formatMessage(messages.weight)}
                         </div>
-                        <div
-                          className={`${styles.KeyValueValue} ${styles.smallFont}`}
-                        >
+                        <div className={`${styles.KeyValueValue}`}>
                           {`${rowData.JDE_Weight} ${rowData.JDE_Weight_UOM}/${rowData.JDE_Weight_Per_UOM}`}
                         </div>
                       </div>
@@ -847,14 +827,10 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                     <div
                       className={`${styles.htsCode} flex flex-row justify-between`}
                     >
-                      <div
-                        className={`${styles.KeyValueLabel} ${styles.smallFont}`}
-                      >
+                      <div className={`${styles.KeyValueLabel}`}>
                         {intl.formatMessage(messages.htsCode)}
                       </div>
-                      <div
-                        className={`${styles.KeyValueValue} ${styles.smallFont}`}
-                      >
+                      <div className={`${styles.KeyValueValue}`}>
                         {rowData.JDE_HTS_Code}
                       </div>
                     </div>

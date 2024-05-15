@@ -62,7 +62,7 @@
   "store/quickorder.unitMultiplier": "Unit Multiplier",
   "store/quickorder.unitOfMeasure": "Unit of Measure",
   "store/quickorder.upload.choose": "choose a file",
-  "store/quickorder.upload.drop": "Drop here your XLS, CSV or",
+  "store/quickorder.upload.drop": "Drop here your XLSX, CSV or",
   "store/quickorder.valid": "Valid",
   "store/quickorder.validate": "Validate",
   "store/quickorder.withoutPriceFulfillment": "Product without price",

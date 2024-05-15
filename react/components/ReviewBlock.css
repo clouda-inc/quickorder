@@ -1,5 +1,5 @@
 .tableCol2Col2 {
-  min-height: 110px;
+  min-height: 130px;
 }
 
 .productName {
@@ -42,6 +42,10 @@
 
 .quickOrderTableRowWithIssues {
   background-color: #ffd6d6;
+  height: 150px;
+  /* font-size: 0.9rem; */
+  /* padding-top: 1rem;
+  padding-bottom: 1rem; */
 }
 
 .customerPartValue,
@@ -50,6 +54,7 @@
   font-size: 12px;
 }
 
-.smallFont {
-  font-size: 0.8em;
-}
+/* .reviewBlock :global(.ReactVirtualized__Grid__innerScrollContaine){
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+} */

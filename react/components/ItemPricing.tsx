@@ -56,6 +56,9 @@ const ItemPricing = ({ itemNumber, customerNumber, branch }: Props) => {
   const intl = useIntl()
   const { handleExtractData } = useContext(TableDataContext) as TableData
 
+  const tableDataContext = useContext(TableDataContext)
+  console.log(tableDataContext)
+
   const { data: itemPricingInfo, loading } = useQuery(GET_ITEM_PRICING, {
     skip: !itemNumber || itemNumber === '',
     variables: {

@@ -526,7 +526,7 @@ const TextAreaBlock: FunctionComponent<
   }
 
   return (
-    <div className={`${handles.textContainerMain} flex flex-column`}>
+    <div className={`${handles.textContainerMain} flex flex-column h-auto`}>
       <SpecialBrandHandleModal
         isModalOpen={isModalOpen}
         setIsModelOpen={setIsModelOpen}
@@ -582,11 +582,13 @@ const TextAreaBlock: FunctionComponent<
 
         {reviewState && (
           <div className={`w-100 ph4 ${handles.reviewBlock}`}>
-            <ReviewBlock
-              reviewedItems={reviewItems}
-              onReviewItems={onReviewItems}
-              onRefidLoading={onRefidLoading}
-            />
+            <div className={`h-10`}>
+              <ReviewBlock
+                reviewedItems={reviewItems}
+                onReviewItems={onReviewItems}
+                onRefidLoading={onRefidLoading}
+              />
+            </div>
             <div
               className={`mb4 mt4 flex justify-between ${
                 handles.buttonsBlock
