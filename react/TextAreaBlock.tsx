@@ -72,6 +72,8 @@ const TextAreaBlock: FunctionComponent<
     TableDataContext
   ) as TableData
 
+  console.log('tableData: context', tableData)
+
   const { textAreaValue, reviewItems, reviewState } = state
   const apolloClient = useApolloClient()
 
@@ -434,12 +436,11 @@ const TextAreaBlock: FunctionComponent<
               uom: product.uom,
               priceUom: product.priceUom,
               uomDescription: product.uomDescription,
-              weight: `${product.JDE_Weight} ${product.JDE_Weight_UOM}/${product.JDE_Weight_Per_UOM}`,
-              tariffCode: product.JDE_HTS_Code,
-              origin: product.JDE_Country_of_Origin,
+              weight: product.weight,
+              tariffCode: product.tariffCode,
+              origin: product.origin,
               quantity: product.quantity,
               price: product.price,
-
               stockAvailability: product.stockAvailability,
             })
           } else {
@@ -499,6 +500,28 @@ const TextAreaBlock: FunctionComponent<
           system: TARGET_SYSTEM.SAP,
         }
       }
+      if (item.priceList.length === 0) {
+        return {
+          skuName: item.skuName,
+          productName: item.productName,
+          leadTime: item.leadTime,
+          uom: item.uom,
+          uomDescription: item.uomDescription,
+          moq: item.moq,
+          weight: item?.JDE_Weight
+            ? `${item.JDE_Weight} ${item.JDE_Weight_UOM}/${item.JDE_Weight_Per_UOM}`
+            : ' ',
+          tariffCode: item.JDE_HTS_Code,
+          origin: item.JDE_Country_of_Origin,
+          quantity: item.quantity,
+          price: `$ ${item.price}`,
+          priceUom: ' ',
+          stockAvailability: item?.stockAvailability
+            ? `${item.stockAvailability} M`
+            : 'Out of Stock',
+          system: TARGET_SYSTEM.JDE,
+        }
+      }
       return item.priceList.map((priceItem: any) => {
         return {
           skuName: item.skuName,
@@ -507,13 +530,17 @@ const TextAreaBlock: FunctionComponent<
           uom: item.uom,
           uomDescription: item.uomDescription,
           moq: item.moq,
-          weight: `${item.JDE_Weight} ${item.JDE_Weight_UOM}/${item.JDE_Weight_Per_UOM}`,
+          weight: item?.JDE_Weight
+            ? `${item.JDE_Weight} ${item.JDE_Weight_UOM}/${item.JDE_Weight_Per_UOM}`
+            : ' ',
           tariffCode: item.JDE_HTS_Code,
           origin: item.JDE_Country_of_Origin,
           quantity: priceItem.quantity,
           price: `$ ${priceItem.price}`,
           priceUom: priceItem.uom,
-          stockAvailability: `${item.stockAvailability} M`,
+          stockAvailability: item?.stockAvailability
+            ? `${item.stockAvailability} M`
+            : 'Out of Stock',
           system: TARGET_SYSTEM.JDE,
         }
       })

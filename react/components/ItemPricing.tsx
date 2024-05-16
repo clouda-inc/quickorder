@@ -7,7 +7,8 @@ import { useIntl, defineMessages } from 'react-intl'
 
 import GET_ITEM_PRICING from '../queries/getItemPricing.gql'
 import { getFormattedDate } from '../utils'
-import { TableDataContext, TableData } from '../utils/context'
+import { TableDataContext } from '../utils/context'
+import type { TableData } from '../utils/context'
 
 import './ItemPricing.css'
 
@@ -56,10 +57,11 @@ const ItemPricing = ({ itemNumber, customerNumber, branch }: Props) => {
   const intl = useIntl()
   const { handleExtractData } = useContext(TableDataContext) as TableData
 
-  const tableDataContext = useContext(TableDataContext)
-  console.log(tableDataContext)
-
-  const { data: itemPricingInfo, loading } = useQuery(GET_ITEM_PRICING, {
+  const {
+    data: itemPricingInfo,
+    loading,
+    refetch,
+  } = useQuery(GET_ITEM_PRICING, {
     skip: !itemNumber || itemNumber === '',
     variables: {
       itemNumber,
@@ -80,13 +82,20 @@ const ItemPricing = ({ itemNumber, customerNumber, branch }: Props) => {
     setIsOpen(true)
   }
 
+  const refetchPriceListAndUpdateContext = async () => {
+    const { data } = await refetch()
+    const priceList = data?.getItemPricing?.itemPrices ?? []
+
+    handleExtractData(itemNumber, priceList, 'priceList')
+  }
+
   useEffect(() => {
     if (!loading) {
-      console.log('adding price list to context');
+      console.log('adding price list to context')
       handleExtractData(itemNumber, priceList, 'priceList')
     }
-  }, [priceList]);
-
+    refetchPriceListAndUpdateContext()
+  }, [priceList])
 
   return loading ? (
     <div className={`${styles.priceTable}`}>

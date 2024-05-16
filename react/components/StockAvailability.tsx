@@ -5,7 +5,8 @@ import { useIntl, defineMessages } from 'react-intl'
 
 import GET_STOCK_AVAILABILITY from '../queries/getStockAvailability.gql'
 import ItemListContext from '../ItemListContext'
-import { TableDataContext, TableData } from '../utils/context'
+import { TableDataContext } from '../utils/context'
+import type { TableData } from '../utils/context'
 
 import './ItemPricing.css'
 
