@@ -18,7 +18,7 @@
     "react-dom": "^16.9.2",
     "react-intl": "3.9.1",
     "sheetjs-style": "^0.15.8",
-    "xlsx": "^0.18.5"
+    "xlsx": "0.15.6"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.7",

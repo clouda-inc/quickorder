@@ -62,7 +62,7 @@
   "store/quickorder.unitMultiplier": "単位乗数",
   "store/quickorder.unitOfMeasure": "測定単位",
   "store/quickorder.upload.choose": "ファイルを選択してください",
-  "store/quickorder.upload.drop": "ここにXLSX, CSV、または",
+  "store/quickorder.upload.drop": "ここにXLS, CSV、または",
   "store/quickorder.valid": "有効",
   "store/quickorder.validate": "検証",
   "store/quickorder.withoutPriceFulfillment": "価格のない商品",
