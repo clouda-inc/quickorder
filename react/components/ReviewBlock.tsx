@@ -795,20 +795,22 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                     </div>
                   )}
 
-                  {rowData?.JDE_Country_of_Origin && (
-                    <div
-                      className={`${styles.countryOfOrigin} flex flex-row justify-between`}
-                    >
-                      <div className={`${styles.KeyValueLabel}`}>
-                        {intl.formatMessage(messages.countryOfOrigin)}
+                  {targetSystem === TARGET_SYSTEM.JDE &&
+                    rowData?.JDE_Country_of_Origin && (
+                      <div
+                        className={`${styles.countryOfOrigin} flex flex-row justify-between`}
+                      >
+                        <div className={`${styles.KeyValueLabel}`}>
+                          {intl.formatMessage(messages.countryOfOrigin)}
+                        </div>
+                        <div className={`${styles.KeyValueValue}`}>
+                          {rowData.JDE_Country_of_Origin}
+                        </div>
                       </div>
-                      <div className={`${styles.KeyValueValue}`}>
-                        {rowData.JDE_Country_of_Origin}
-                      </div>
-                    </div>
-                  )}
+                    )}
 
-                  {rowData?.JDE_Weight &&
+                  {targetSystem === TARGET_SYSTEM.JDE &&
+                    rowData?.JDE_Weight &&
                     rowData?.JDE_Weight_UOM &&
                     rowData?.JDE_Weight_Per_UOM && (
                       <div
@@ -823,7 +825,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                       </div>
                     )}
 
-                  {rowData.JDE_HTS_Code && (
+                  {targetSystem === TARGET_SYSTEM.JDE && rowData.JDE_HTS_Code && (
                     <div
                       className={`${styles.htsCode} flex flex-row justify-between`}
                     >
