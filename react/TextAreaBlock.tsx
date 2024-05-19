@@ -22,6 +22,7 @@ import ItemListContext from './ItemListContext'
 import type { TableData } from './utils/context'
 import { TableDataContext } from './utils/context'
 import { EMAIL_TEMPLATE_LOGO, LEGACY_SYSTEM_TABLE_SAP, LEGACY_SYSTEM_TABLE_JDE, TARGET_SYSTEM } from './utils/const'
+import { useRuntime } from 'vtex.render-runtime'
 
 const messages = defineMessages({
   success: {
@@ -89,10 +90,17 @@ const TextAreaBlock: FunctionComponent<
   const { showToast } = useContext(ToastContext)
 
   const { useItemListState, useItemListDispatch } = ItemListContext
-  const { isLoadingCustomerInfo, showAddToCart, customerNumber, targetSystem } =
-    useItemListState()
+  const {
+    isLoadingCustomerInfo,
+    showAddToCart,
+    customerNumber,
+    targetSystem,
+    itemStatuses,
+  } = useItemListState()
 
   const dispatch = useItemListDispatch()
+
+  const { binding } = useRuntime()
 
   const translateMessage = (message: MessageDescriptor) => {
     return intl.formatMessage(message)
@@ -374,6 +382,20 @@ const TextAreaBlock: FunctionComponent<
     return <p>{intl.formatMessage(messages.loadingSoldTo)}</p>
   }
 
+  const getLineItemStatus = (lineItem: any) => {
+    const item = itemStatuses.find((itm: any) => itm.index === lineItem.index)
+
+    return item?.availability
+  }
+
+  const isEURegion = () => {
+    const url = binding?.canonicalBaseAddress ?? undefined
+
+    return url
+      ? !!url.split(`/`).find((element) => element === `catalog-eu`)
+      : false
+  }
+
   const handleExcelFileCreation = async (data) => {
     if (!data) {
       return
@@ -448,11 +470,12 @@ const TextAreaBlock: FunctionComponent<
               skuName: product.skuName,
               productName: product.productName,
               leadTime: product.leadTime,
-              uom: product.uom,
+              // uom: product.uom,
               uomDescription: product.uomDescription,
               moq: product.moq,
               quantity: product.quantity,
-              price: product.price,
+              // price: product.price,
+              availability: product.availability,
             })
           }
         } catch (error) {
@@ -492,11 +515,16 @@ const TextAreaBlock: FunctionComponent<
           uom: item.uom,
           uomDescription: item.uomDescription,
           moq: item.moq,
-          // weight
-          // tariffCode
-          // origin
           quantity: item.quantity,
-          price: `$ ${item.price}`,
+          // price: `$ ${item.price}`,
+          availability:
+            getLineItemStatus(item) === 'available'
+              ? 'In Stock'
+              : getLineItemStatus(item) === 'unavailable'
+              ? 'Out of Stock'
+              : getLineItemStatus(item) === 'unauthorized' && !isEURegion()
+              ? 'Not Available Online'
+              : 'Not Available in Your Region',
           system: TARGET_SYSTEM.SAP,
         }
       }
