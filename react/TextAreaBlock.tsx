@@ -677,7 +677,11 @@ const TextAreaBlock: FunctionComponent<
                     size="small"
                     onClick={downloadExcelFile}
                     isLoading={exceldownloading}
-                    disabled={!showDownloadButton}
+                    disabled={
+                      targetSystem === TARGET_SYSTEM.JDE
+                        ? !showDownloadButton
+                        : !showAddToCart
+                    }
                   >
                     <FormattedMessage id="store/quickorder.download" />
                   </Button>

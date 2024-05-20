@@ -95,7 +95,7 @@ const ItemPricing = ({ itemNumber, customerNumber, branch }: Props) => {
       handleExtractData(itemNumber, priceList, 'priceList')
     }
     refetchPriceListAndUpdateContext()
-  }, [priceList])
+  }, [])
 
   return loading ? (
     <div className={`${styles.priceTable}`}>
