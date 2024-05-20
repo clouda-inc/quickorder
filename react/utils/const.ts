@@ -30,7 +30,7 @@ export const LEGACY_SYSTEM_TABLE_SAP = [
   {
     header: 'LEAD TIME',
     key: 'leadTime',
-    width: 20,
+    width: 15,
   },
   // {
   //   header: 'STOCKING UOM',
@@ -40,7 +40,7 @@ export const LEGACY_SYSTEM_TABLE_SAP = [
   {
     header: 'Qty',
     key: 'quantity',
-    width: 10,
+    width: 15,
   },
   // {
   //   header: 'Price',
@@ -68,7 +68,7 @@ export const LEGACY_SYSTEM_TABLE_JDE = [
   {
     header: 'LEAD TIME',
     key: 'leadTime',
-    width: 20,
+    width: 15,
   },
   {
     header: 'STOCKING UOM',
@@ -103,12 +103,12 @@ export const LEGACY_SYSTEM_TABLE_JDE = [
   {
     header: 'Qty',
     key: 'quantity',
-    width: 10,
+    width: 15,
   },
   {
     header: 'Price',
     key: 'price',
-    width: 20,
+    width: 25,
   },
   {
     header: 'Avaliability',

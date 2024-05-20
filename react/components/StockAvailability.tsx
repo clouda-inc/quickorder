@@ -48,17 +48,18 @@ const StockAvailability = ({
 
   const dispatch = useItemListDispatch()
 
-  const { data: stockAvailabilityInfo, loading } = useQuery(
-    GET_STOCK_AVAILABILITY,
-    {
-      skip: !itemNumber || itemNumber === '' || customerNumber === '',
-      variables: {
-        itemNumber,
-        customer: customerNumber,
-        thruDate,
-      },
-    }
-  )
+  const {
+    data: stockAvailabilityInfo,
+    loading,
+    refetch,
+  } = useQuery(GET_STOCK_AVAILABILITY, {
+    skip: !itemNumber || itemNumber === '' || customerNumber === '',
+    variables: {
+      itemNumber,
+      customer: customerNumber,
+      thruDate,
+    },
+  })
 
   const stockAvailability = parseInt(
     stockAvailabilityInfo?.getStockAvailability?.qtyAvailable ?? '0',
@@ -79,18 +80,28 @@ const StockAvailability = ({
         },
       },
     })
-
   }, [stockAvailability, itemIndex, itemNumber, loading, dispatch])
 
   const primaryUoM =
     stockAvailabilityInfo?.getStockAvailability?.primaryUoM ?? ''
 
+  const refetchStockAvailabilityAndUpdateContext = async () => {
+    const { data } = await refetch()
+    const stockAvailability = parseInt(
+      data?.getStockAvailability?.qtyAvailable ?? '0',
+      10
+    )
+
+    handleExtractData(itemNumber, stockAvailability, 'stockAvailability')
+  }
+
   useEffect(() => {
     if (!loading) {
-      console.log('add stock availability to context');
-      handleExtractData(itemNumber, stockAvailability, 'stockAvailability');
+      console.log('add stock availability to context')
+      handleExtractData(itemNumber, stockAvailability, 'stockAvailability')
     }
-  }, [stockAvailability]);
+    refetchStockAvailabilityAndUpdateContext()
+  }, [stockAvailability])
 
   return loading ? (
     <div className={`${styles.itemAvailability}`}>

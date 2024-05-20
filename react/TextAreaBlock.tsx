@@ -96,6 +96,7 @@ const TextAreaBlock: FunctionComponent<
     customerNumber,
     targetSystem,
     itemStatuses,
+    showDownloadButton,
   } = useItemListState()
 
   const dispatch = useItemListDispatch()
@@ -450,8 +451,9 @@ const TextAreaBlock: FunctionComponent<
     const promise = Promise.all(
       data?.map(async (product) => {
         try {
+          let row
           if (system === TARGET_SYSTEM.JDE) {
-            sheet.addRow({
+            row = sheet.addRow({
               skuName: product.skuName,
               productName: product.productName,
               leadTime: product.leadTime,
@@ -466,7 +468,7 @@ const TextAreaBlock: FunctionComponent<
               stockAvailability: product.stockAvailability,
             })
           } else {
-            sheet.addRow({
+            row = sheet.addRow({
               skuName: product.skuName,
               productName: product.productName,
               leadTime: product.leadTime,
@@ -478,6 +480,9 @@ const TextAreaBlock: FunctionComponent<
               availability: product.availability,
             })
           }
+          row.eachCell((cell) => {
+            cell.alignment = { horizontal: 'left' }
+          })
         } catch (error) {
           console.error('Error adding rows: ', error)
 
@@ -544,9 +549,10 @@ const TextAreaBlock: FunctionComponent<
           quantity: item.quantity,
           price: `$ ${item.price}`,
           priceUom: ' ',
-          stockAvailability: item?.stockAvailability
-            ? `${item.stockAvailability} M`
-            : 'Out of Stock',
+          stockAvailability:
+            item?.stockAvailability > 0
+              ? `${item.stockAvailability} M`
+              : 'Out of Stock',
           system: TARGET_SYSTEM.JDE,
         }
       }
@@ -566,9 +572,10 @@ const TextAreaBlock: FunctionComponent<
           quantity: priceItem.quantity,
           price: `$ ${priceItem.price}`,
           priceUom: priceItem.uom,
-          stockAvailability: item?.stockAvailability
-            ? `${item.stockAvailability} M`
-            : 'Out of Stock',
+          stockAvailability:
+            item?.stockAvailability > 0
+              ? `${item.stockAvailability} M`
+              : 'Out of Stock',
           system: TARGET_SYSTEM.JDE,
         }
       })
@@ -670,7 +677,7 @@ const TextAreaBlock: FunctionComponent<
                     size="small"
                     onClick={downloadExcelFile}
                     isLoading={exceldownloading}
-                    disabled={!showAddToCart}
+                    disabled={!showDownloadButton}
                   >
                     <FormattedMessage id="store/quickorder.download" />
                   </Button>
