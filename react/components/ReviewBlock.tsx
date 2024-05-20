@@ -256,9 +256,6 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   onRefidLoading,
   intl,
 }: any) => {
-  console.log('props: onReviewItems', onReviewItems)
-  console.log('props: reviewedItems', reviewedItems)
-
   // const { data: orderFormData } = useQuery<{
   //   orderForm
   // }>(OrderFormQuery, {
@@ -473,8 +470,6 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
         const sellers = item.sku ? mappedRefId[item.sku]?.sellers : '1'
         const itm = getItemFromQuery(item)
 
-        console.log('itm', itm)
-
         return {
           ...item,
           sellers: item.sku ? mappedRefId[item.sku]?.sellers : '1',
@@ -548,8 +543,6 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
       }
 
       const { data } = await client.query(query)
-
-      console.log('product data', data)
 
       // TODO: Remove this line
       // eslint-disable-next-line no-console

@@ -97,7 +97,6 @@ const StockAvailability = ({
 
   useEffect(() => {
     if (!loading) {
-      console.log('add stock availability to context')
       handleExtractData(itemNumber, stockAvailability, 'stockAvailability')
     }
     refetchStockAvailabilityAndUpdateContext()

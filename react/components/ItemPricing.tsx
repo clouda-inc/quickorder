@@ -91,7 +91,6 @@ const ItemPricing = ({ itemNumber, customerNumber, branch }: Props) => {
 
   useEffect(() => {
     if (!loading) {
-      console.log('adding price list to context')
       handleExtractData(itemNumber, priceList, 'priceList')
     }
     refetchPriceListAndUpdateContext()

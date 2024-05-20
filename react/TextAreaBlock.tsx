@@ -67,14 +67,12 @@ const TextAreaBlock: FunctionComponent<
   const [loading, setLoading] = useState<boolean>(false)
   const [isModalOpen, setIsModelOpen] = useState<boolean>(false)
   const [base64Image, setBase64Image] = useState('')
-  const [exceldownloading, setExcelDownloading] = useState<boolean>(false)
-  const [isMTO, setIsMTO] = useState<boolean>(false)
+  const [excelDownloading, setExcelDownloading] = useState<boolean>(false)
+  const [isMto, setIsMto] = useState<boolean>(false)
 
   const { tableData, handleExtractData } = useContext(
     TableDataContext
   ) as TableData
-
-  console.log('tableData: context', tableData)
 
   const { textAreaValue, reviewItems, reviewState } = state
   const apolloClient = useApolloClient()
@@ -591,7 +589,7 @@ const TextAreaBlock: FunctionComponent<
 
   useEffect(() => {
     if (tableData) {
-      setIsMTO(tableData?.some((item) => !!item.mto))
+      setIsMto(tableData?.some((item) => !!item.mto))
     }
   }, [tableData])
 
@@ -684,9 +682,9 @@ const TextAreaBlock: FunctionComponent<
                     variation="primary"
                     size="small"
                     onClick={downloadExcelFile}
-                    isLoading={exceldownloading}
+                    isLoading={excelDownloading}
                     disabled={
-                      targetSystem === TARGET_SYSTEM.SAP || isMTO
+                      targetSystem === TARGET_SYSTEM.SAP || isMto
                         ? !showAddToCart
                         : !showDownloadButton
                     }
@@ -703,7 +701,6 @@ const TextAreaBlock: FunctionComponent<
                       addToCartCopyNPaste()
                     }}
                     disabled={!showAddToCart}
-                    style={{ marginLeft: '12px' }}
                   >
                     <FormattedMessage id="store/quickorder.addToCart" />
                   </Button>
