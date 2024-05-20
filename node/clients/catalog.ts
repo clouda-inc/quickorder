@@ -80,7 +80,7 @@ export class Catalog extends ExternalClient {
 
   public getProductSpecificationByName = async (
     refId: string,
-    skuSpecName: string
+    productSpecName: string
   ) => {
     this.context.logger.debug({
       auth: this.context.authToken,
@@ -119,7 +119,7 @@ export class Catalog extends ExternalClient {
 
     const specValue = productSpecificationsResponse.find(
       (el: { Name: string }) =>
-        el?.Name?.toUpperCase().trim() === skuSpecName?.toUpperCase().trim()
+        el?.Name?.toUpperCase().trim() === productSpecName?.toUpperCase().trim()
     )?.Value
 
     return specValue

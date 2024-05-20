@@ -168,6 +168,9 @@ const messages = defineMessages({
   outOfStock: {
     id: 'store/quickorder.outOfStock',
   },
+  madeToOrder: {
+    id: 'store/quickorder.madeToOrder',
+  },
   moq: {
     id: 'store/quickorder.moq',
   },
@@ -236,6 +239,7 @@ const CSS_HANDLES = [
   'outOfStockMessage',
   'stockAvailabilityMessage',
   'stockAvailabilityValue',
+  'madeToOrderMessage',
   'productPageLink',
   'orderedQuantity',
   'orderedQuantityLabel',
@@ -264,6 +268,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   const client = useApolloClient()
   const styles = useCssHandles(CSS_HANDLES)
   const { binding } = useRuntime()
+
   // const customerNumber =
   //   soldToAccount?.getOrderSoldToAccount?.customerNumber ?? ''
 
@@ -843,7 +848,11 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                 <div
                   className={`${styles.stockAvailabilityMessage} flex w-100`}
                 >
-                  {itemAvailability === 'available' ? (
+                  {targetSystem === TARGET_SYSTEM.JDE && rowData?.mto ? (
+                    <span className={`${styles.madeToOrderMessage} b ttu`}>
+                      {intl.formatMessage(messages.madeToOrder)}
+                    </span>
+                  ) : itemAvailability === 'available' ? (
                     <span className={`${styles.inStockMessage} b ttu`}>
                       {intl.formatMessage(messages.inStock)}
                     </span>
@@ -864,7 +873,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                   )}
                 </div>
                 <div className={`${styles.stockAvailabilityValue} w-40`}>
-                  {targetSystem === TARGET_SYSTEM.JDE ? (
+                  {targetSystem === TARGET_SYSTEM.JDE && !rowData?.mto ? (
                     <StockAvailability
                       itemIndex={rowData?.index}
                       itemNumber={rowData?.sku}

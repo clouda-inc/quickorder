@@ -48,6 +48,7 @@
   "store/quickorder.leadTime": "store/quickorder.leadTime",
   "store/quickorder.moq": "store/quickorder.moq",
   "store/quickorder.outOfStock": "store/quickorder.outOfStock",
+  "store/quickorder.madeToOrder": "store/quickorder.madeToOrder",
   "store/quickorder.quantityPerUnit": "store/quickorder.quantityPerUnit",
   "store/quickorder.review.label.content": "store/quickorder.review.label.content",
   "store/quickorder.review.label.lineNumber": "store/quickorder.review.label.lineNumber",
