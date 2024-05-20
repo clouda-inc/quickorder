@@ -23,6 +23,7 @@ export interface State {
   isLoadingCustomerInfo: boolean
   itemStatuses: ItemStatus[]
   showAddToCart: boolean
+  showDownloadButton: boolean
 }
 
 interface SetCustomerInfo {
@@ -99,6 +100,7 @@ const categoryReducer = (state: State, action: ReducerActions): State => {
         ...state,
         itemStatuses,
         showAddToCart: false,
+        showDownloadButton: false,
       }
     }
 
@@ -194,9 +196,14 @@ const categoryReducer = (state: State, action: ReducerActions): State => {
         return item
       })
 
+      const showDownloadButton = items.some(
+        (item: ItemStatus) => !!item.availability
+      )
+
       return {
         ...state,
         itemStatuses: items,
+        showDownloadButton,
       }
     }
 
@@ -213,6 +220,7 @@ const DEFAULT_STATE: State = {
   salesOrganizationCode: '',
   isLoadingCustomerInfo: false,
   showAddToCart: false,
+  showDownloadButton: false,
 }
 
 const ItemListContext = createContext<State>(DEFAULT_STATE)
@@ -227,6 +235,7 @@ const initialState: State = {
   salesOrganizationCode: '',
   isLoadingCustomerInfo: false,
   showAddToCart: false,
+  showDownloadButton: false,
 }
 
 interface Props {

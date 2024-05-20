@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
 import type { FunctionComponent } from 'react'
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import type { WrappedComponentProps } from 'react-intl'
 import { FormattedMessage, defineMessages, injectIntl } from 'react-intl'
 import { Button, Textarea, ToastContext, Spinner } from 'vtex.styleguide'
@@ -12,12 +12,17 @@ import { useCssHandles } from 'vtex.css-handles'
 import { useMutation, useApolloClient } from 'react-apollo'
 import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
+import ExcelJS from 'exceljs'
 
 import ReviewBlock from './components/ReviewBlock'
 import { SpecialBrandHandleModal } from './components/modals/SpecialBrandHandle'
 import { ParseText, GetText } from './utils'
 import { addToCartGTMEventData } from './utils/GTMEventDataHandler'
 import ItemListContext from './ItemListContext'
+import type { TableData } from './utils/context'
+import { TableDataContext } from './utils/context'
+import { EMAIL_TEMPLATE_LOGO, LEGACY_SYSTEM_TABLE_SAP, LEGACY_SYSTEM_TABLE_JDE, TARGET_SYSTEM } from './utils/const'
+import { useRuntime } from 'vtex.render-runtime'
 
 const messages = defineMessages({
   success: {
@@ -61,6 +66,13 @@ const TextAreaBlock: FunctionComponent<
   const [refidLoading, setRefIdLoading] = useState<any>()
   const [loading, setLoading] = useState<boolean>(false)
   const [isModalOpen, setIsModelOpen] = useState<boolean>(false)
+  const [base64Image, setBase64Image] = useState('')
+  const [excelDownloading, setExcelDownloading] = useState<boolean>(false)
+  const [isMto, setIsMto] = useState<boolean>(false)
+
+  const { tableData, handleExtractData } = useContext(
+    TableDataContext
+  ) as TableData
 
   const { textAreaValue, reviewItems, reviewState } = state
   const apolloClient = useApolloClient()
@@ -77,10 +89,18 @@ const TextAreaBlock: FunctionComponent<
   const { showToast } = useContext(ToastContext)
 
   const { useItemListState, useItemListDispatch } = ItemListContext
-  const { isLoadingCustomerInfo, showAddToCart, customerNumber, targetSystem } =
-    useItemListState()
+  const {
+    isLoadingCustomerInfo,
+    showAddToCart,
+    customerNumber,
+    targetSystem,
+    itemStatuses,
+    showDownloadButton,
+  } = useItemListState()
 
   const dispatch = useItemListDispatch()
+
+  const { binding } = useRuntime()
 
   const translateMessage = (message: MessageDescriptor) => {
     return intl.formatMessage(message)
@@ -104,6 +124,26 @@ const TextAreaBlock: FunctionComponent<
 
     showToast({ message })
   }
+
+  useEffect(() => {
+    const getImageAsBase64UE = async () => {
+      try {
+        const response = await fetch(EMAIL_TEMPLATE_LOGO)
+
+        const blob = await response.blob()
+        const reader = new FileReader()
+
+        reader.readAsDataURL(blob)
+        reader.onloadend = () => {
+          setBase64Image(reader.result as string)
+        }
+      } catch (error) {
+        console.error('Error fetching or converting image: ', error)
+      }
+    }
+
+    getImageAsBase64UE()
+  }, [])
 
   const callAddToCart = async (items: any) => {
     const currentItemsInCart = orderForm.orderForm.items
@@ -180,6 +220,8 @@ const TextAreaBlock: FunctionComponent<
         showAddToCart: show,
         textAreaValue: GetText(items),
       })
+
+      handleExtractData('-1', items, ' ')
 
       dispatch({
         type: 'UPDATE_ALL_STATUSES',
@@ -340,8 +382,219 @@ const TextAreaBlock: FunctionComponent<
     return <p>{intl.formatMessage(messages.loadingSoldTo)}</p>
   }
 
+  const getLineItemStatus = (lineItem: any) => {
+    const item = itemStatuses.find((itm: any) => itm.index === lineItem.index)
+
+    return item?.availability
+  }
+
+  const isEURegion = () => {
+    const url = binding?.canonicalBaseAddress ?? undefined
+
+    return url
+      ? !!url.split(`/`).find((element) => element === `catalog-eu`)
+      : false
+  }
+
+  const handleExcelFileCreation = async (data) => {
+    if (!data) {
+      return
+    }
+
+    const system = data[0]?.system
+
+    const workbook = new ExcelJS.Workbook()
+    const sheet = workbook.addWorksheet('Items')
+
+    sheet.properties.defaultRowHeight = 20
+
+    sheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '14BFCC' },
+    }
+
+    sheet.getRow(1).font = {
+      name: 'Calibri',
+      family: 4,
+      size: 11,
+      bold: true,
+      color: { argb: 'FFFFFF' },
+    }
+
+    sheet.columns =
+      system === TARGET_SYSTEM.JDE
+        ? LEGACY_SYSTEM_TABLE_JDE
+        : LEGACY_SYSTEM_TABLE_SAP
+
+    sheet.insertRow(1, {}, 'i')
+
+    if (base64Image) {
+      sheet.getRow(1).height = 200
+
+      const imageId2 = workbook.addImage({
+        base64: base64Image,
+        extension: 'png',
+      })
+
+      sheet.addImage(imageId2, {
+        ext: { width: 400, height: 200 },
+        tl: { col: 0, row: 0 },
+      })
+    }
+
+    system === TARGET_SYSTEM.JDE
+      ? sheet.mergeCells('A1:J1')
+      : sheet.mergeCells('A1:H1')
+
+    const promise = Promise.all(
+      data?.map(async (product) => {
+        try {
+          let row
+          if (system === TARGET_SYSTEM.JDE) {
+            row = sheet.addRow({
+              skuName: product.skuName,
+              productName: product.productName,
+              leadTime: product.leadTime,
+              uom: product.uom,
+              priceUom: product.priceUom,
+              uomDescription: product.uomDescription,
+              weight: product.weight,
+              tariffCode: product.tariffCode,
+              origin: product.origin,
+              quantity: product.quantity,
+              price: product.price,
+              stockAvailability: product.stockAvailability,
+            })
+          } else {
+            row = sheet.addRow({
+              skuName: product.skuName,
+              productName: product.productName,
+              leadTime: product.leadTime,
+              // uom: product.uom,
+              uomDescription: product.uomDescription,
+              moq: product.moq,
+              quantity: product.quantity,
+              // price: product.price,
+              availability: product.availability,
+            })
+          }
+          row.eachCell((cell) => {
+            cell.alignment = { horizontal: 'left' }
+          })
+        } catch (error) {
+          console.error('Error adding rows: ', error)
+
+          return error
+        }
+      })
+    )
+
+    promise.then(() => {
+      workbook.xlsx.writeBuffer().then(function (sheetData) {
+        const blob = new Blob([sheetData], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        })
+
+        const url = window.URL.createObjectURL(blob)
+        const anchor = document.createElement('a')
+
+        anchor.href = url
+        anchor.download =
+          'Legacy System - Tiered Pricing and Availability Export.xlsx'
+        anchor.click()
+        window.URL.revokeObjectURL(url)
+      })
+    })
+  }
+
+  const downloadExcelFile = async () => {
+    setExcelDownloading(true)
+    const data = tableData.flatMap((item: any) => {
+      if (!item?.priceList) {
+        return {
+          skuName: item.skuName,
+          productName: item.productName,
+          leadTime: item.leadTime,
+          uom: item.uom,
+          uomDescription: item.uomDescription,
+          moq: item.moq,
+          quantity: item.quantity,
+          // price: `$ ${item.price}`,
+          availability:
+            getLineItemStatus(item) === 'available'
+              ? 'In Stock'
+              : getLineItemStatus(item) === 'unavailable'
+              ? 'Out of Stock'
+              : getLineItemStatus(item) === 'unauthorized' && !isEURegion()
+              ? 'Not Available Online'
+              : 'Not Available in Your Region',
+          system: TARGET_SYSTEM.SAP,
+        }
+      }
+      if (item.priceList.length === 0) {
+        return {
+          skuName: item.skuName,
+          productName: item.productName,
+          leadTime: item.leadTime,
+          uom: item.uom,
+          uomDescription: item.uomDescription,
+          moq: item.moq,
+          weight: item?.JDE_Weight
+            ? `${item.JDE_Weight} ${item.JDE_Weight_UOM}/${item.JDE_Weight_Per_UOM}`
+            : ' ',
+          tariffCode: item.JDE_HTS_Code,
+          origin: item.JDE_Country_of_Origin,
+          quantity: item.quantity,
+          price: `$ ${item.price}`,
+          priceUom: ' ',
+          stockAvailability:
+            item?.stockAvailability > 0
+              ? `${item.stockAvailability} M`
+              : 'Out of Stock',
+          system: TARGET_SYSTEM.JDE,
+        }
+      }
+      return item.priceList.map((priceItem: any) => {
+        return {
+          skuName: item.skuName,
+          productName: item.productName,
+          leadTime: item.leadTime,
+          uom: item.uom,
+          uomDescription: item.uomDescription,
+          moq: item.moq,
+          weight: item?.JDE_Weight
+            ? `${item.JDE_Weight} ${item.JDE_Weight_UOM}/${item.JDE_Weight_Per_UOM}`
+            : ' ',
+          tariffCode: item.JDE_HTS_Code,
+          origin: item.JDE_Country_of_Origin,
+          quantity: priceItem.quantity,
+          price: `$ ${priceItem.price}`,
+          priceUom: priceItem.uom,
+          stockAvailability: item?.mto
+            ? 'Made to Order'
+            : item?.stockAvailability > 0
+            ? `${item.stockAvailability} M`
+            : 'Out of Stock',
+          system: TARGET_SYSTEM.JDE,
+        }
+      })
+    })
+
+    handleExcelFileCreation(data)
+    setTimeout(() => {
+      setExcelDownloading(false)
+    }, 1000)
+  }
+
+  useEffect(() => {
+    if (tableData) {
+      setIsMto(tableData?.some((item) => !!item.mto))
+    }
+  }, [tableData])
+
   return (
-    <div className={`${handles.textContainerMain} flex flex-column`}>
+    <div className={`${handles.textContainerMain} flex flex-column h-auto`}>
       <SpecialBrandHandleModal
         isModalOpen={isModalOpen}
         setIsModelOpen={setIsModelOpen}
@@ -397,11 +650,13 @@ const TextAreaBlock: FunctionComponent<
 
         {reviewState && (
           <div className={`w-100 ph4 ${handles.reviewBlock}`}>
-            <ReviewBlock
-              reviewedItems={reviewItems}
-              onReviewItems={onReviewItems}
-              onRefidLoading={onRefidLoading}
-            />
+            <div className={`h-10`}>
+              <ReviewBlock
+                reviewedItems={reviewItems}
+                onReviewItems={onReviewItems}
+                onRefidLoading={onRefidLoading}
+              />
+            </div>
             <div
               className={`mb4 mt4 flex justify-between ${
                 handles.buttonsBlock
@@ -421,17 +676,36 @@ const TextAreaBlock: FunctionComponent<
                 <FormattedMessage id="store/quickorder.back" />
               </Button>
               {refidLoading && <Spinner />}
-              <Button
-                variation="primary"
-                size="small"
-                isLoading={mutationLoading}
-                onClick={() => {
-                  addToCartCopyNPaste()
-                }}
-                disabled={!showAddToCart}
-              >
-                <FormattedMessage id="store/quickorder.addToCart" />
-              </Button>
+              <div className="flex justify-between">
+                <div style={{ marginRight: '12px' }}>
+                  <Button
+                    variation="primary"
+                    size="small"
+                    onClick={downloadExcelFile}
+                    isLoading={excelDownloading}
+                    disabled={
+                      targetSystem === TARGET_SYSTEM.SAP || isMto
+                        ? !showAddToCart
+                        : !showDownloadButton
+                    }
+                  >
+                    <FormattedMessage id="store/quickorder.download" />
+                  </Button>
+                </div>
+                <div>
+                  <Button
+                    variation="primary"
+                    size="small"
+                    isLoading={mutationLoading}
+                    onClick={() => {
+                      addToCartCopyNPaste()
+                    }}
+                    disabled={!showAddToCart}
+                  >
+                    <FormattedMessage id="store/quickorder.addToCart" />
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         )}

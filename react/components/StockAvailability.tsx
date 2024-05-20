@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useQuery } from 'react-apollo'
 import { useCssHandles } from 'vtex.css-handles'
 import { useIntl, defineMessages } from 'react-intl'
 
 import GET_STOCK_AVAILABILITY from '../queries/getStockAvailability.gql'
 import ItemListContext from '../ItemListContext'
+import { TableDataContext } from '../utils/context'
+import type { TableData } from '../utils/context'
 
 import './ItemPricing.css'
 
@@ -42,20 +44,22 @@ const StockAvailability = ({
   const styles = useCssHandles(CSS_HANDLES)
   const intl = useIntl()
   const { useItemListDispatch } = ItemListContext
+  const { handleExtractData } = useContext(TableDataContext) as TableData
 
   const dispatch = useItemListDispatch()
 
-  const { data: stockAvailabilityInfo, loading } = useQuery(
-    GET_STOCK_AVAILABILITY,
-    {
-      skip: !itemNumber || itemNumber === '' || customerNumber === '',
-      variables: {
-        itemNumber,
-        customer: customerNumber,
-        thruDate,
-      },
-    }
-  )
+  const {
+    data: stockAvailabilityInfo,
+    loading,
+    refetch,
+  } = useQuery(GET_STOCK_AVAILABILITY, {
+    skip: !itemNumber || itemNumber === '' || customerNumber === '',
+    variables: {
+      itemNumber,
+      customer: customerNumber,
+      thruDate,
+    },
+  })
 
   const stockAvailability = parseInt(
     stockAvailabilityInfo?.getStockAvailability?.qtyAvailable ?? '0',
@@ -80,6 +84,23 @@ const StockAvailability = ({
 
   const primaryUoM =
     stockAvailabilityInfo?.getStockAvailability?.primaryUoM ?? ''
+
+  const refetchStockAvailabilityAndUpdateContext = async () => {
+    const { data } = await refetch()
+    const stockAvailability = parseInt(
+      data?.getStockAvailability?.qtyAvailable ?? '0',
+      10
+    )
+
+    handleExtractData(itemNumber, stockAvailability, 'stockAvailability')
+  }
+
+  useEffect(() => {
+    if (!loading) {
+      handleExtractData(itemNumber, stockAvailability, 'stockAvailability')
+    }
+    refetchStockAvailabilityAndUpdateContext()
+  }, [])
 
   return loading ? (
     <div className={`${styles.itemAvailability}`}>

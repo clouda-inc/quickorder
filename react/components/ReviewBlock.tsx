@@ -197,6 +197,18 @@ const messages = defineMessages({
     id: 'store/quickorder.invalidMoq',
     defaultMessage: 'Invalid MOQ',
   },
+  countryOfOrigin: {
+    id: 'store/quickorder.countryOfOrigin',
+    defaultMessage: 'Country of Origin',
+  },
+  weight: {
+    id: 'store/quickorder.weight',
+    defaultMessage: 'Weight',
+  },
+  htsCode: {
+    id: 'store/quickorder.htsCode',
+    defaultMessage: 'Tariff Code',
+  },
 })
 
 // let orderFormId = ''
@@ -478,6 +490,11 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
           moq: itm?.moq,
           refid: itm?.refid,
           brand: itm?.brand,
+          JDE_Country_of_Origin: itm?.JDE_Country_of_Origin?.[0],
+          JDE_HTS_Code: itm?.JDE_HTS_Code?.[0],
+          JDE_Weight: itm?.JDE_Weight?.[0],
+          JDE_Weight_UOM: itm?.JDE_Weight_UOM?.[0],
+          JDE_Weight_Per_UOM: itm?.JDE_Weight_Per_UOM?.[0],
         }
       })
 
@@ -714,7 +731,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                     targetSystem === TARGET_SYSTEM.JDE ? 'w-60' : 'w-100'
                   }`}
                 >
-                  {rowData.uom && (
+                  {/* {rowData.uom && (
                     <div
                       className={`${styles.itemUom} flex flex-row justify-between`}
                     >
@@ -725,7 +742,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                         {rowData.uom}
                       </div>
                     </div>
-                  )}
+                  )} */}
                   {rowData.uomDescription && (
                     <div
                       className={`${styles.uomDescription} flex flex-row justify-between`}
@@ -738,7 +755,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                       </div>
                     </div>
                   )}
-                  {rowData.unitMultiplier && (
+                  {/* {rowData.unitMultiplier && (
                     <div
                       className={`${styles.uomDescription} flex flex-row justify-between`}
                     >
@@ -749,7 +766,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                         {rowData.unitMultiplier}
                       </div>
                     </div>
-                  )}
+                  )} */}
                   {rowData.moq && (
                     <div
                       className={`${styles.moq} flex flex-row justify-between`}
@@ -770,8 +787,51 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                       <div className={`${styles.KeyValueLabel}`}>
                         {intl.formatMessage(messages.leadTime)}
                       </div>
-                      <div className={`${styles.KeyValueValue}`}>
+                      <div className={`${styles.KeyValueValue} `}>
                         {rowData.leadTime}
+                      </div>
+                    </div>
+                  )}
+
+                  {targetSystem === TARGET_SYSTEM.JDE &&
+                    rowData?.JDE_Country_of_Origin && (
+                      <div
+                        className={`${styles.countryOfOrigin} flex flex-row justify-between`}
+                      >
+                        <div className={`${styles.KeyValueLabel}`}>
+                          {intl.formatMessage(messages.countryOfOrigin)}
+                        </div>
+                        <div className={`${styles.KeyValueValue}`}>
+                          {rowData.JDE_Country_of_Origin}
+                        </div>
+                      </div>
+                    )}
+
+                  {targetSystem === TARGET_SYSTEM.JDE &&
+                    rowData?.JDE_Weight &&
+                    rowData?.JDE_Weight_UOM &&
+                    rowData?.JDE_Weight_Per_UOM && (
+                      <div
+                        className={`${styles.weight} flex flex-row justify-between`}
+                      >
+                        <div className={`${styles.KeyValueLabel}`}>
+                          {intl.formatMessage(messages.weight)}
+                        </div>
+                        <div className={`${styles.KeyValueValue}`}>
+                          {`${rowData.JDE_Weight} ${rowData.JDE_Weight_UOM}/${rowData.JDE_Weight_Per_UOM}`}
+                        </div>
+                      </div>
+                    )}
+
+                  {targetSystem === TARGET_SYSTEM.JDE && rowData.JDE_HTS_Code && (
+                    <div
+                      className={`${styles.htsCode} flex flex-row justify-between`}
+                    >
+                      <div className={`${styles.KeyValueLabel}`}>
+                        {intl.formatMessage(messages.htsCode)}
+                      </div>
+                      <div className={`${styles.KeyValueValue}`}>
+                        {rowData.JDE_HTS_Code}
                       </div>
                     </div>
                   )}

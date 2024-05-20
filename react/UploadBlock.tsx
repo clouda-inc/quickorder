@@ -19,6 +19,8 @@ import ReviewBlock from './components/ReviewBlock'
 import { addToCartGTMEventData } from './utils/GTMEventDataHandler'
 import ItemListContext from './ItemListContext'
 import { SpecialBrandHandleModal } from './components/modals/SpecialBrandHandle'
+// import { SAMPLE_TABLE } from './utils/const'
+import { TableDataContext, TableData } from './utils/context'
 
 interface ItemType {
   id: string
@@ -66,6 +68,12 @@ const UploadBlock: FunctionComponent<
   const [isModalOpen, setIsModelOpen] = useState<boolean>(false)
   const { reviewItems, reviewState } = state
   const apolloClient = useApolloClient()
+
+  const { tableData, handleExtractData } = useContext(
+    TableDataContext
+  ) as TableData
+
+  console.log('tableData: upload', tableData)
 
   const { useItemListState, useItemListDispatch } = ItemListContext
   const { isLoadingCustomerInfo, showAddToCart, customerNumber, targetSystem } =
@@ -145,6 +153,8 @@ const UploadBlock: FunctionComponent<
         showAddToCart: show,
         textAreaValue: GetText(items),
       })
+
+      handleExtractData('-1', items, ' ')
 
       dispatch({
         type: 'UPDATE_ALL_STATUSES',
@@ -469,7 +479,7 @@ const UploadBlock: FunctionComponent<
                 onDropAccepted={handleFile}
                 onFileReset={handleReset}
                 onDropRejected={handleOnDropRejected}
-                accept=".xls,.xlsx,.csv"
+                accept=".xlsx,.xls,.csv"
               >
                 <div className="pt7">
                   <div>

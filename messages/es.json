@@ -99,6 +99,10 @@
   "store/quickorder.invalidCustomerPart": "El número de pieza del cliente no existe.",
   "store/quickorder.availability.error": "Se produjo un error durante la validación de disponibilidad.",
   "store/quickorder.metadata.update.error": "Se produjo un error al actualizar la información del carrito",
+  "store/quickorder.download": "Descargar",
   "store/quickorder.invalidUnitMultiplier": "Multiplicador de unidades no válido",
-  "store/quickorder.invalidMoq": "MOQ no válido"
+  "store/quickorder.invalidMoq": "MOQ no válido",
+  "store/quickorder.countryOfOrigin": " País de origen",
+  "store/quickorder.weight": "Peso",
+  "store/quickorder.htsCode": "Código arancelario"
 }

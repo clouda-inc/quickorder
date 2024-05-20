@@ -99,6 +99,10 @@
   "store/quickorder.invalidCustomerPart": "Il codice prodotto del cliente non esiste",
   "store/quickorder.availability.error": "Si è verificato un errore durante la convalida della disponibilità",
   "store/quickorder.metadata.update.error": "Si è verificato un errore durante l'aggiornamento delle informazioni del carrello",
+  "store/quickorder.download": "Scaricare",
   "store/quickorder.invalidUnitMultiplier": "Moltiplicatore unitario non valido",
-  "store/quickorder.invalidMoq": "M.O.Q. non valido"
+  "store/quickorder.invalidMoq": "M.O.Q. non valido",
+  "store/quickorder.countryOfOrigin": " Paese di origine",
+  "store/quickorder.weight": "Peso",
+  "store/quickorder.htsCode": "Codice tariffario"
 }

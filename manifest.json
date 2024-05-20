@@ -104,6 +104,13 @@
     {
       "name": "outbound-access",
       "attrs": {
+        "host": "cdn.dummyjson.com",
+        "path": "/*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
         "host": "{{account}}.vtexcommercestable.com.br",
         "path": "/api/logistics/pvt/inventory/skus/*"
       }
@@ -152,7 +159,9 @@
     },
     "free": true,
     "type": "free",
-    "availableCountries": ["*"]
+    "availableCountries": [
+      "*"
+    ]
   },
   "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"
 }

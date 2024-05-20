@@ -197,6 +197,8 @@ export const queries = {
         )
       )
 
+      console.log('products', products)
+
       // TODO: Remove this line
       performanceArray.push({
         key: 'START Get All plants for sales organizations',
@@ -238,16 +240,16 @@ export const queries = {
         key: 'START Get Brand Info',
         value: Date.now().toString(),
       })
-      const brands =
-        await masterdata.searchDocumentsWithPaginationInfo<BrandForClients>({
-          dataEntity: BRAND_CLIENT_ACRONYM,
-          schema: BRAND_CLIENT_SCHEMA,
-          fields: BRNAD_CLIENT_FIELDS,
-          where: `(user=${customerNumber ?? ''} AND targetSystem=${
-            targetSystem ?? ''
-          })`,
-          pagination: { pageSize: 100, page: 1 },
-        })
+      const brands = await masterdata.searchDocumentsWithPaginationInfo<
+        BrandForClients
+      >({
+        dataEntity: BRAND_CLIENT_ACRONYM,
+        schema: BRAND_CLIENT_SCHEMA,
+        fields: BRNAD_CLIENT_FIELDS,
+        where: `(user=${customerNumber ?? ''} AND targetSystem=${targetSystem ??
+          ''})`,
+        pagination: { pageSize: 100, page: 1 },
+      })
 
       const brandsList = brands?.data ?? []
 
@@ -283,14 +285,22 @@ export const queries = {
             return {}
           }
 
-          const { items, productId, productName } = product
+          const {
+            items,
+            productId,
+            productName,
+            JDE_Weight_UOM,
+            JDE_Weight_Per_UOM,
+            JDE_Weight,
+            JDE_Country_of_Origin,
+            JDE_HTS_Code,
+          } = product
 
           // One item has one sku
           const skuItem = items[0]
           const itemId = skuItem?.itemId
-          const skuRefId = (skus ?? []).find(
-            (sku: any) => sku.skuId === itemId
-          )?.refId
+          const skuRefId = (skus ?? []).find((sku: any) => sku.skuId === itemId)
+            ?.refId
 
           // const refId = (items[0]?.referenceId ?? []).find((ref: any) => ref.Key === 'RefId')?.Value ?? ''
           const { commertialOffer, sellerId, sellerName } = items[0].sellers[0]
@@ -414,6 +424,11 @@ export const queries = {
             availability: isAuthorized ? 'authorized' : 'unauthorized',
             unitMultiplier,
             brand: product.brand,
+            JDE_Weight_UOM,
+            JDE_Weight_Per_UOM,
+            JDE_Weight,
+            JDE_Country_of_Origin,
+            JDE_HTS_Code,
           }
         })
 
