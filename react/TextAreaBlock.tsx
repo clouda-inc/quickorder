@@ -68,6 +68,7 @@ const TextAreaBlock: FunctionComponent<
   const [isModalOpen, setIsModelOpen] = useState<boolean>(false)
   const [base64Image, setBase64Image] = useState('')
   const [exceldownloading, setExcelDownloading] = useState<boolean>(false)
+  const [isMTO, setIsMTO] = useState<boolean>(false)
 
   const { tableData, handleExtractData } = useContext(
     TableDataContext
@@ -572,10 +573,11 @@ const TextAreaBlock: FunctionComponent<
           quantity: priceItem.quantity,
           price: `$ ${priceItem.price}`,
           priceUom: priceItem.uom,
-          stockAvailability:
-            item?.stockAvailability > 0
-              ? `${item.stockAvailability} M`
-              : 'Out of Stock',
+          stockAvailability: item?.mto
+            ? 'Made to Order'
+            : item?.stockAvailability > 0
+            ? `${item.stockAvailability} M`
+            : 'Out of Stock',
           system: TARGET_SYSTEM.JDE,
         }
       })
@@ -586,6 +588,12 @@ const TextAreaBlock: FunctionComponent<
       setExcelDownloading(false)
     }, 1000)
   }
+
+  useEffect(() => {
+    if (tableData) {
+      setIsMTO(tableData?.some((item) => !!item.mto))
+    }
+  }, [tableData])
 
   return (
     <div className={`${handles.textContainerMain} flex flex-column h-auto`}>
@@ -678,9 +686,9 @@ const TextAreaBlock: FunctionComponent<
                     onClick={downloadExcelFile}
                     isLoading={exceldownloading}
                     disabled={
-                      targetSystem === TARGET_SYSTEM.JDE
-                        ? !showDownloadButton
-                        : !showAddToCart
+                      targetSystem === TARGET_SYSTEM.SAP || isMTO
+                        ? !showAddToCart
+                        : !showDownloadButton
                     }
                   >
                     <FormattedMessage id="store/quickorder.download" />
