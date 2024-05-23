@@ -101,5 +101,8 @@
   "store/quickorder.metadata.update.error": "store/quickorder.metadata.update.error",
   "store/quickorder.download": "store/quickorder.download",
   "store/quickorder.invalidUnitMultiplier": "store/quickorder.invalidUnitMultiplier",
-  "store/quickorder.invalidMoq": "store/quickorder.invalidMoq"
+  "store/quickorder.invalidMoq": "store/quickorder.invalidMoq",
+  "store/quickorder.countryOfOrigin": "store/quickorder.countryOfOrigin",
+  "store/quickorder.weight": "store/quickorder.weight",
+  "store/quickorder.htsCode": "store/quickorder.htsCode"
 }
