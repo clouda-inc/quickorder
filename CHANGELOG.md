@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed the invalid sku handle issue in upload & order block
+- 
 ## [0.1.84] - 2024-05-20
 
 ## [0.1.83] - 2024-05-20
