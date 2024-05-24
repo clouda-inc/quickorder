@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- Added enable/disable feature to download price list excel from CMS
+
 ## [0.1.85] - 2024-05-23
 
 ### Fixed
