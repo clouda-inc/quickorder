@@ -21,7 +21,12 @@ import { addToCartGTMEventData } from './utils/GTMEventDataHandler'
 import ItemListContext from './ItemListContext'
 import type { TableData } from './utils/context'
 import { TableDataContext } from './utils/context'
-import { EMAIL_TEMPLATE_LOGO, LEGACY_SYSTEM_TABLE_SAP, LEGACY_SYSTEM_TABLE_JDE, TARGET_SYSTEM } from './utils/const'
+import {
+  EMAIL_TEMPLATE_LOGO,
+  LEGACY_SYSTEM_TABLE_SAP,
+  LEGACY_SYSTEM_TABLE_JDE,
+  TARGET_SYSTEM,
+} from './utils/const'
 import { useRuntime } from 'vtex.render-runtime'
 
 const messages = defineMessages({
@@ -56,7 +61,14 @@ const SPECAIL_BRAND_NAME = 'SPIRALOCK'
 
 const TextAreaBlock: FunctionComponent<
   TextAreaBlockInterface & WrappedComponentProps
-> = ({ intl, value, text, description, componentOnly }: any) => {
+> = ({
+  intl,
+  value,
+  text,
+  descriptionTextArea,
+  componentOnly,
+  enableDownload = true,
+}: any) => {
   const [state, setState] = useState<any>({
     reviewState: false,
     textAreaValue: value || '',
@@ -611,7 +623,7 @@ const TextAreaBlock: FunctionComponent<
           >
             <div
               dangerouslySetInnerHTML={{
-                __html: `<div> ${description} </div>`,
+                __html: `<div> ${descriptionTextArea} </div>`,
               }}
             />
           </div>
@@ -677,21 +689,25 @@ const TextAreaBlock: FunctionComponent<
               </Button>
               {refidLoading && <Spinner />}
               <div className="flex justify-between">
-                <div style={{ marginRight: '12px' }}>
-                  <Button
-                    variation="primary"
-                    size="small"
-                    onClick={downloadExcelFile}
-                    isLoading={excelDownloading}
-                    disabled={
-                      targetSystem === TARGET_SYSTEM.SAP || isMto
-                        ? !showAddToCart
-                        : !showDownloadButton
-                    }
-                  >
-                    <FormattedMessage id="store/quickorder.download" />
-                  </Button>
-                </div>
+                {enableDownload ? (
+                  <div style={{ marginRight: '12px' }}>
+                    <Button
+                      variation="primary"
+                      size="small"
+                      onClick={downloadExcelFile}
+                      isLoading={excelDownloading}
+                      disabled={
+                        targetSystem === TARGET_SYSTEM.SAP || isMto
+                          ? !showAddToCart
+                          : !showDownloadButton
+                      }
+                    >
+                      <FormattedMessage id="store/quickorder.download" />
+                    </Button>
+                  </div>
+                ) : (
+                  <></>
+                )}
                 <div>
                   <Button
                     variation="primary"
@@ -730,8 +746,9 @@ interface TextAreaBlockInterface {
   value: string
   onRefidLoading: any
   text?: string
-  description?: string
+  descriptionTextArea?: string
   componentOnly?: boolean
+  enableDownload?: boolean
 }
 
 export default injectIntl(TextAreaBlock)
