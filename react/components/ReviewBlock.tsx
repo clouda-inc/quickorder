@@ -743,7 +743,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                       </div>
                     </div>
                   )} */}
-                  {rowData.uomDescription && (
+                  {rowData?.uomDescription && (
                     <div
                       className={`${styles.uomDescription} flex flex-row justify-between`}
                     >
@@ -767,7 +767,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                       </div>
                     </div>
                   )} */}
-                  {rowData.moq && (
+                  {rowData?.moq >= 0 && (
                     <div
                       className={`${styles.moq} flex flex-row justify-between`}
                     >
@@ -780,7 +780,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                     </div>
                   )}
 
-                  {rowData.leadTime && (
+                  {rowData?.leadTime && (
                     <div
                       className={`${styles.leadTime} flex flex-row justify-between`}
                     >
