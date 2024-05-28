@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.86] - 2024-05-24
+
+### Added
+
+- Added enable/disable feature to download price list excel from CMS
+
+## [0.1.85] - 2024-05-23
+
+### Fixed
+
+- Fixed the invalid sku handle issue in upload & order block
+- 
 ## [0.1.84] - 2024-05-20
 
 ## [0.1.83] - 2024-05-20

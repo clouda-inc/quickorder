@@ -37,19 +37,24 @@ export class Catalog extends ExternalClient {
     })
 
     const productEndpoint = `${this.options?.baseURL}/api/catalog_system/pvt/products/productgetbyrefid/${refId}`
-    const productResponse = await this.http.get(productEndpoint, {
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        VtexIdclientAutCookie: `${this.context.authToken}`,
-        'Proxy-Authorization': this.context.authToken,
-        'X-Vtex-Proxy-To': productEndpoint,
-        'X-Vtex-Use-Https': true,
-        'Cache-Control': 'no-cache',
-      },
-    })
 
-    return productResponse
+    try {
+      const productResponse = await this.http.get(productEndpoint, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          VtexIdclientAutCookie: `${this.context.authToken}`,
+          'Proxy-Authorization': this.context.authToken,
+          'X-Vtex-Proxy-To': productEndpoint,
+          'X-Vtex-Use-Https': true,
+          'Cache-Control': 'no-cache',
+        },
+      })
+
+      return productResponse
+    } catch (error) {
+      return null
+    }
   }
 
   public getSkuContextByRefId = async (refId: string) => {
