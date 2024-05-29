@@ -86,6 +86,8 @@ const TextAreaBlock: FunctionComponent<
     TableDataContext
   ) as TableData
 
+  console.log('tableData', tableData)
+
   const { textAreaValue, reviewItems, reviewState } = state
   const apolloClient = useApolloClient()
 
@@ -560,10 +562,11 @@ const TextAreaBlock: FunctionComponent<
           quantity: item.quantity,
           price: `$ ${item.price}`,
           priceUom: ' ',
-          stockAvailability:
-            item?.stockAvailability > 0
-              ? `${item.stockAvailability} M`
-              : 'Out of Stock',
+          stockAvailability: item?.mto
+            ? 'Made to Order'
+            : item?.stockAvailability > 0
+            ? `${item.stockAvailability} M`
+            : 'Out of Stock',
           system: TARGET_SYSTEM.JDE,
         }
       }

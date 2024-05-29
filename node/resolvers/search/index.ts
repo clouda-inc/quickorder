@@ -151,8 +151,12 @@ export const queries = {
         value: Date.now().toString(),
       })
 
-      const { refIds, customerNumber, targetSystem, salesOrganizationCode } =
-        args
+      const {
+        refIds,
+        customerNumber,
+        targetSystem,
+        salesOrganizationCode,
+      } = args
 
       const {
         clients: { search, catalog },
@@ -196,8 +200,6 @@ export const queries = {
           search.searchProductBySkuId(sku.skuId, salesChannel)
         )
       )
-
-      console.log('products', products)
 
       // TODO: Remove this line
       performanceArray.push({

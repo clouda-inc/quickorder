@@ -90,11 +90,13 @@ const ItemPricing = ({ itemNumber, customerNumber, branch }: Props) => {
   }
 
   useEffect(() => {
-    if (!loading) {
-      handleExtractData(itemNumber, priceList, 'priceList')
+    if (itemNumber && itemNumber !== '') {
+      if (!loading) {
+        handleExtractData(itemNumber, priceList, 'priceList')
+      }
+      refetchPriceListAndUpdateContext()
     }
-    refetchPriceListAndUpdateContext()
-  }, [])
+  }, [itemNumber, refetch, loading, priceList])
 
   return loading ? (
     <div className={`${styles.priceTable}`}>
