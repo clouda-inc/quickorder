@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.88] - 2024-05-30
+
 ### Fixed
 
 - Removed Std lead time from EUR region
