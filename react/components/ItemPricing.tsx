@@ -9,6 +9,7 @@ import GET_ITEM_PRICING from '../queries/getItemPricing.gql'
 import { getFormattedDate } from '../utils'
 import { TableDataContext } from '../utils/context'
 import type { TableData } from '../utils/context'
+import ItemListContext from '../ItemListContext'
 
 import './ItemPricing.css'
 
@@ -46,16 +47,25 @@ const messages = defineMessages({
 })
 
 interface Props {
+  itemIndex: number
   itemNumber: string
   customerNumber: string
   branch: string
 }
 
-const ItemPricing = ({ itemNumber, customerNumber, branch }: Props) => {
+const ItemPricing = ({
+  itemIndex,
+  itemNumber,
+  customerNumber,
+  branch,
+}: Props) => {
   const styles = useCssHandles(CSS_HANDLES)
   const [isOpen, setIsOpen] = useState(false)
   const intl = useIntl()
   const { handleExtractData } = useContext(TableDataContext) as TableData
+  const { useItemListDispatch } = ItemListContext
+
+  const dispatch = useItemListDispatch()
 
   const {
     data: itemPricingInfo,
@@ -97,6 +107,23 @@ const ItemPricing = ({ itemNumber, customerNumber, branch }: Props) => {
       refetchPriceListAndUpdateContext()
     }
   }, [itemNumber, refetch, loading, priceList])
+
+  useEffect(() => {
+    dispatch({
+      type: 'SET_ITEM_PRICE',
+      args: {
+        itemStatus: {
+          index: itemIndex,
+          sku: itemNumber,
+          error: '',
+          price: priceList,
+          availability: '',
+          availableQuantity: 0,
+          isQuantityLoading: false,
+        },
+      },
+    })
+  }, [priceList, itemIndex, itemNumber, loading, dispatch])
 
   return loading ? (
     <div className={`${styles.priceTable}`}>

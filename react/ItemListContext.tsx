@@ -14,6 +14,7 @@ interface ItemStatus {
   availability: string
   availableQuantity: number
   isQuantityLoading: boolean
+  price: number
 }
 
 export interface State {
@@ -60,6 +61,11 @@ interface SetItemAvailability {
   args: { itemStatus: ItemStatus }
 }
 
+interface SetItemPrice {
+  type: 'SET_ITEM_PRICE'
+  args: { itemStatus: ItemStatus }
+}
+
 type ReducerActions =
   | SetItemStatuses
   | UpdateAllStatuses
@@ -67,6 +73,7 @@ type ReducerActions =
   | SetCustomerInfo
   | SetInitialLoading
   | SetItemAvailability
+  | SetItemPrice
 
 export type Dispatch = (action: ReducerActions) => void
 
@@ -196,8 +203,31 @@ const categoryReducer = (state: State, action: ReducerActions): State => {
         return item
       })
 
-      const showDownloadButton = items.some(
-        (item: ItemStatus) => !!item.availability
+      const showDownloadButton = items.every(
+        (item: ItemStatus) => !!item.availability && item.price !== undefined
+      )
+
+      return {
+        ...state,
+        itemStatuses: items,
+        showDownloadButton,
+      }
+    }
+
+    case 'SET_ITEM_PRICE': {
+      const items = state.itemStatuses.map((item: ItemStatus) => {
+        if (item.index === action.args.itemStatus.index) {
+          return {
+            ...item,
+            price: action.args.itemStatus.price,
+          }
+        }
+
+        return item
+      })
+
+      const showDownloadButton = items.every(
+        (item: ItemStatus) => !!item.availability && item.price !== undefined
       )
 
       return {

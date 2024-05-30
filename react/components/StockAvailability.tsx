@@ -77,6 +77,7 @@ const StockAvailability = ({
           availability: '',
           availableQuantity: stockAvailability,
           isQuantityLoading: loading,
+          price: 0,
         },
       },
     })
@@ -96,11 +97,13 @@ const StockAvailability = ({
   }
 
   useEffect(() => {
-    if (!loading) {
-      handleExtractData(itemNumber, stockAvailability, 'stockAvailability')
+    if (itemNumber && itemNumber !== '') {
+      if (!loading) {
+        handleExtractData(itemNumber, stockAvailability, 'stockAvailability')
+      }
+      refetchStockAvailabilityAndUpdateContext()
     }
-    refetchStockAvailabilityAndUpdateContext()
-  }, [])
+  }, [itemNumber, refetch, loading, stockAvailability])
 
   return loading ? (
     <div className={`${styles.itemAvailability}`}>
