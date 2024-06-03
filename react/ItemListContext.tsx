@@ -7,16 +7,6 @@ import React, {
   useEffect,
 } from 'react'
 
-interface ItemStatus {
-  index: number
-  sku: string
-  error: string
-  availability: string
-  availableQuantity: number
-  isQuantityLoading: boolean
-  price: number
-}
-
 export interface State {
   customerNumber: string
   targetSystem: string
@@ -101,7 +91,13 @@ const categoryReducer = (state: State, action: ReducerActions): State => {
 
   switch (action.type) {
     case 'ADD_STATUSES': {
-      const itemStatuses = action?.args?.itemStatuses ?? []
+      const itemStatuses = (action?.args?.itemStatuses ?? []).map(
+        (item: ItemStatus) => ({
+          ...item,
+          isPriceLoading: true,
+          isQuantityLoading: true,
+        })
+      )
 
       return {
         ...state,
@@ -119,7 +115,7 @@ const categoryReducer = (state: State, action: ReducerActions): State => {
 
         // if JDE available quantity comes from external api
         const availableQuantity = getAvailableQuantity(
-          item.availableQuantity,
+          item.availableQuantity ?? 0,
           selected?.availableQuantity ?? 0
         )
 
@@ -220,6 +216,7 @@ const categoryReducer = (state: State, action: ReducerActions): State => {
           return {
             ...item,
             price: action.args.itemStatus.price,
+            isPriceLoading: action.args.itemStatus.isPriceLoading,
           }
         }
 

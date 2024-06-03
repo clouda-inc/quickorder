@@ -13,6 +13,7 @@ import { useMutation, useApolloClient } from 'react-apollo'
 import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
 import ExcelJS from 'exceljs'
+import { useRuntime } from 'vtex.render-runtime'
 
 import ReviewBlock from './components/ReviewBlock'
 import { SpecialBrandHandleModal } from './components/modals/SpecialBrandHandle'
@@ -27,7 +28,7 @@ import {
   LEGACY_SYSTEM_TABLE_JDE,
   TARGET_SYSTEM,
 } from './utils/const'
-import { useRuntime } from 'vtex.render-runtime'
+import useDownloadButtonStatus from './components/hooks/useDownloadButtonStatus'
 
 const messages = defineMessages({
   success: {
@@ -86,8 +87,6 @@ const TextAreaBlock: FunctionComponent<
     TableDataContext
   ) as TableData
 
-  console.log('tableData', tableData)
-
   const { textAreaValue, reviewItems, reviewState } = state
   const apolloClient = useApolloClient()
 
@@ -109,12 +108,13 @@ const TextAreaBlock: FunctionComponent<
     customerNumber,
     targetSystem,
     itemStatuses,
-    showDownloadButton,
   } = useItemListState()
 
   const dispatch = useItemListDispatch()
 
   const { binding } = useRuntime()
+
+  const { disabled: isDownloadDisabled } = useDownloadButtonStatus(reviewItems)
 
   const translateMessage = (message: MessageDescriptor) => {
     return intl.formatMessage(message)
@@ -465,6 +465,7 @@ const TextAreaBlock: FunctionComponent<
       data?.map(async (product) => {
         try {
           let row
+
           if (system === TARGET_SYSTEM.JDE) {
             row = sheet.addRow({
               skuName: product.skuName,
@@ -493,6 +494,7 @@ const TextAreaBlock: FunctionComponent<
               availability: product.availability,
             })
           }
+
           row.eachCell((cell) => {
             cell.alignment = { horizontal: 'left' }
           })
@@ -546,6 +548,7 @@ const TextAreaBlock: FunctionComponent<
           system: TARGET_SYSTEM.SAP,
         }
       }
+
       if (item.priceList.length === 0) {
         return {
           skuName: item.skuName,
@@ -570,6 +573,7 @@ const TextAreaBlock: FunctionComponent<
           system: TARGET_SYSTEM.JDE,
         }
       }
+
       return item.priceList.map((priceItem: any) => {
         return {
           skuName: item.skuName,
@@ -665,7 +669,7 @@ const TextAreaBlock: FunctionComponent<
 
         {reviewState && (
           <div className={`w-100 ph4 ${handles.reviewBlock}`}>
-            <div className={`h-10`}>
+            <div className="h-10">
               <ReviewBlock
                 reviewedItems={reviewItems}
                 onReviewItems={onReviewItems}
@@ -702,7 +706,7 @@ const TextAreaBlock: FunctionComponent<
                       disabled={
                         targetSystem === TARGET_SYSTEM.SAP
                           ? !showAddToCart
-                          : !showDownloadButton
+                          : isDownloadDisabled
                       }
                     >
                       <FormattedMessage id="store/quickorder.download" />

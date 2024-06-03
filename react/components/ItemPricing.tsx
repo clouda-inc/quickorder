@@ -92,21 +92,22 @@ const ItemPricing = ({
     setIsOpen(true)
   }
 
-  const refetchPriceListAndUpdateContext = async () => {
-    const { data } = await refetch()
-    const priceList = data?.getItemPricing?.itemPrices ?? []
-
-    handleExtractData(itemNumber, priceList, 'priceList')
-  }
-
   useEffect(() => {
+    const refetchPriceListAndUpdateContext = async () => {
+      const { data } = await refetch()
+      const prices = data?.getItemPricing?.itemPrices ?? []
+
+      handleExtractData(itemNumber, prices, 'priceList')
+    }
+
     if (itemNumber && itemNumber !== '') {
       if (!loading) {
         handleExtractData(itemNumber, priceList, 'priceList')
       }
+
       refetchPriceListAndUpdateContext()
     }
-  }, [itemNumber, refetch, loading, priceList])
+  }, [itemNumber, refetch, loading, priceList, handleExtractData])
 
   useEffect(() => {
     dispatch({
@@ -115,11 +116,8 @@ const ItemPricing = ({
         itemStatus: {
           index: itemIndex,
           sku: itemNumber,
-          error: '',
           price: priceList,
-          availability: '',
-          availableQuantity: 0,
-          isQuantityLoading: false,
+          isPriceLoading: loading,
         },
       },
     })
