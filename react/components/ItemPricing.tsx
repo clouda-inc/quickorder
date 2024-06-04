@@ -107,7 +107,7 @@ const ItemPricing = ({
 
       refetchPriceListAndUpdateContext()
     }
-  }, [itemNumber, refetch, loading, priceList, handleExtractData])
+  }, [itemNumber, refetch, loading, priceList])
 
   useEffect(() => {
     dispatch({

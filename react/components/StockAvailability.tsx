@@ -103,7 +103,7 @@ const StockAvailability = ({
 
       refetchStockAvailabilityAndUpdateContext()
     }
-  }, [itemNumber, refetch, loading, stockAvailability, handleExtractData])
+  }, [itemNumber, refetch, loading, stockAvailability])
 
   return loading ? (
     <div className={`${styles.itemAvailability}`}>
