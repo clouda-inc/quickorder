@@ -81,7 +81,6 @@ const TextAreaBlock: FunctionComponent<
   const [isModalOpen, setIsModelOpen] = useState<boolean>(false)
   const [base64Image, setBase64Image] = useState('')
   const [excelDownloading, setExcelDownloading] = useState<boolean>(false)
-  // const [isMto, setIsMto] = useState<boolean>(false)
 
   const { tableData, handleExtractData } = useContext(
     TableDataContext
@@ -605,12 +604,6 @@ const TextAreaBlock: FunctionComponent<
       setExcelDownloading(false)
     }, 1000)
   }
-
-  // useEffect(() => {
-  //   if (tableData) {
-  //     setIsMto(tableData?.some((item) => !!item.mto))
-  //   }
-  // }, [tableData])
 
   return (
     <div className={`${handles.textContainerMain} flex flex-column h-auto`}>
