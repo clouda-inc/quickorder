@@ -781,7 +781,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                     </div>
                   )}
 
-                  {rowData?.leadTime && (
+                  {!isEURegion() && rowData?.leadTime && (
                     <div
                       className={`${styles.leadTime} flex flex-row justify-between`}
                     >

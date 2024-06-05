@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Handled error: price list response comes as 404
 - Disabled download button until price data and availability data are loaded
 
+## [0.1.88] - 2024-05-30
+
+### Fixed
+
+- Removed Std lead time from EUR region
+
 ## [0.1.87] - 2024-05-28
 
 ## [0.1.86] - 2024-05-24
