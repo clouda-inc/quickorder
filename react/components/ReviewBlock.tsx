@@ -718,6 +718,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                 {targetSystem === TARGET_SYSTEM.JDE ? (
                   <div className={`${styles.tableCol2Col1} w-40`}>
                     <ItemPricing
+                      itemIndex={rowData?.index}
                       itemNumber={rowData?.sku}
                       customerNumber={customerNumber}
                       branch={rowData?.branch}

@@ -85,22 +85,25 @@ const StockAvailability = ({
   const primaryUoM =
     stockAvailabilityInfo?.getStockAvailability?.primaryUoM ?? ''
 
-  const refetchStockAvailabilityAndUpdateContext = async () => {
-    const { data } = await refetch()
-    const stockAvailability = parseInt(
-      data?.getStockAvailability?.qtyAvailable ?? '0',
-      10
-    )
-
-    handleExtractData(itemNumber, stockAvailability, 'stockAvailability')
-  }
-
   useEffect(() => {
-    if (!loading) {
-      handleExtractData(itemNumber, stockAvailability, 'stockAvailability')
+    const refetchStockAvailabilityAndUpdateContext = async () => {
+      const { data } = await refetch()
+      const availability = parseInt(
+        data?.getStockAvailability?.qtyAvailable ?? '0',
+        10
+      )
+
+      handleExtractData(itemNumber, availability, 'stockAvailability')
     }
-    refetchStockAvailabilityAndUpdateContext()
-  }, [])
+
+    if (itemNumber && itemNumber !== '') {
+      if (!loading) {
+        handleExtractData(itemNumber, stockAvailability, 'stockAvailability')
+      }
+
+      refetchStockAvailabilityAndUpdateContext()
+    }
+  }, [itemNumber, refetch, loading, stockAvailability])
 
   return loading ? (
     <div className={`${styles.itemAvailability}`}>

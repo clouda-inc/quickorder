@@ -7,15 +7,6 @@ import React, {
   useEffect,
 } from 'react'
 
-interface ItemStatus {
-  index: number
-  sku: string
-  error: string
-  availability: string
-  availableQuantity: number
-  isQuantityLoading: boolean
-}
-
 export interface State {
   customerNumber: string
   targetSystem: string
@@ -60,6 +51,11 @@ interface SetItemAvailability {
   args: { itemStatus: ItemStatus }
 }
 
+interface SetItemPrice {
+  type: 'SET_ITEM_PRICE'
+  args: { itemStatus: ItemStatus }
+}
+
 type ReducerActions =
   | SetItemStatuses
   | UpdateAllStatuses
@@ -67,6 +63,7 @@ type ReducerActions =
   | SetCustomerInfo
   | SetInitialLoading
   | SetItemAvailability
+  | SetItemPrice
 
 export type Dispatch = (action: ReducerActions) => void
 
@@ -94,7 +91,13 @@ const categoryReducer = (state: State, action: ReducerActions): State => {
 
   switch (action.type) {
     case 'ADD_STATUSES': {
-      const itemStatuses = action?.args?.itemStatuses ?? []
+      const itemStatuses = (action?.args?.itemStatuses ?? []).map(
+        (item: ItemStatus) => ({
+          ...item,
+          isPriceLoading: true,
+          isQuantityLoading: true,
+        })
+      )
 
       return {
         ...state,
@@ -112,7 +115,7 @@ const categoryReducer = (state: State, action: ReducerActions): State => {
 
         // if JDE available quantity comes from external api
         const availableQuantity = getAvailableQuantity(
-          item.availableQuantity,
+          item.availableQuantity ?? 0,
           selected?.availableQuantity ?? 0
         )
 
@@ -196,8 +199,32 @@ const categoryReducer = (state: State, action: ReducerActions): State => {
         return item
       })
 
-      const showDownloadButton = items.some(
-        (item: ItemStatus) => !!item.availability
+      const showDownloadButton = items.every(
+        (item: ItemStatus) => !!item.availability && item.price !== undefined
+      )
+
+      return {
+        ...state,
+        itemStatuses: items,
+        showDownloadButton,
+      }
+    }
+
+    case 'SET_ITEM_PRICE': {
+      const items = state.itemStatuses.map((item: ItemStatus) => {
+        if (item.index === action.args.itemStatus.index) {
+          return {
+            ...item,
+            price: action.args.itemStatus.price,
+            isPriceLoading: action.args.itemStatus.isPriceLoading,
+          }
+        }
+
+        return item
+      })
+
+      const showDownloadButton = items.every(
+        (item: ItemStatus) => !!item.availability && item.price !== undefined
       )
 
       return {

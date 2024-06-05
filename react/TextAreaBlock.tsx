@@ -13,6 +13,7 @@ import { useMutation, useApolloClient } from 'react-apollo'
 import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
 import ExcelJS from 'exceljs'
+import { useRuntime } from 'vtex.render-runtime'
 
 import ReviewBlock from './components/ReviewBlock'
 import { SpecialBrandHandleModal } from './components/modals/SpecialBrandHandle'
@@ -27,7 +28,7 @@ import {
   LEGACY_SYSTEM_TABLE_JDE,
   TARGET_SYSTEM,
 } from './utils/const'
-import { useRuntime } from 'vtex.render-runtime'
+import useDownloadButtonStatus from './components/hooks/useDownloadButtonStatus'
 
 const messages = defineMessages({
   success: {
@@ -80,7 +81,6 @@ const TextAreaBlock: FunctionComponent<
   const [isModalOpen, setIsModelOpen] = useState<boolean>(false)
   const [base64Image, setBase64Image] = useState('')
   const [excelDownloading, setExcelDownloading] = useState<boolean>(false)
-  const [isMto, setIsMto] = useState<boolean>(false)
 
   const { tableData, handleExtractData } = useContext(
     TableDataContext
@@ -107,12 +107,13 @@ const TextAreaBlock: FunctionComponent<
     customerNumber,
     targetSystem,
     itemStatuses,
-    showDownloadButton,
   } = useItemListState()
 
   const dispatch = useItemListDispatch()
 
   const { binding } = useRuntime()
+
+  const { disabled: isDownloadDisabled } = useDownloadButtonStatus(reviewItems)
 
   const translateMessage = (message: MessageDescriptor) => {
     return intl.formatMessage(message)
@@ -463,6 +464,7 @@ const TextAreaBlock: FunctionComponent<
       data?.map(async (product) => {
         try {
           let row
+
           if (system === TARGET_SYSTEM.JDE) {
             row = sheet.addRow({
               skuName: product.skuName,
@@ -491,6 +493,7 @@ const TextAreaBlock: FunctionComponent<
               availability: product.availability,
             })
           }
+
           row.eachCell((cell) => {
             cell.alignment = { horizontal: 'left' }
           })
@@ -544,6 +547,7 @@ const TextAreaBlock: FunctionComponent<
           system: TARGET_SYSTEM.SAP,
         }
       }
+
       if (item.priceList.length === 0) {
         return {
           skuName: item.skuName,
@@ -560,13 +564,15 @@ const TextAreaBlock: FunctionComponent<
           quantity: item.quantity,
           price: `$ ${item.price}`,
           priceUom: ' ',
-          stockAvailability:
-            item?.stockAvailability > 0
-              ? `${item.stockAvailability} M`
-              : 'Out of Stock',
+          stockAvailability: item?.mto
+            ? 'Made to Order'
+            : item?.stockAvailability > 0
+            ? `${item.stockAvailability} M`
+            : 'Out of Stock',
           system: TARGET_SYSTEM.JDE,
         }
       }
+
       return item.priceList.map((priceItem: any) => {
         return {
           skuName: item.skuName,
@@ -598,12 +604,6 @@ const TextAreaBlock: FunctionComponent<
       setExcelDownloading(false)
     }, 1000)
   }
-
-  useEffect(() => {
-    if (tableData) {
-      setIsMto(tableData?.some((item) => !!item.mto))
-    }
-  }, [tableData])
 
   return (
     <div className={`${handles.textContainerMain} flex flex-column h-auto`}>
@@ -662,7 +662,7 @@ const TextAreaBlock: FunctionComponent<
 
         {reviewState && (
           <div className={`w-100 ph4 ${handles.reviewBlock}`}>
-            <div className={`h-10`}>
+            <div className="h-10">
               <ReviewBlock
                 reviewedItems={reviewItems}
                 onReviewItems={onReviewItems}
@@ -697,9 +697,9 @@ const TextAreaBlock: FunctionComponent<
                       onClick={downloadExcelFile}
                       isLoading={excelDownloading}
                       disabled={
-                        targetSystem === TARGET_SYSTEM.SAP || isMto
+                        targetSystem === TARGET_SYSTEM.SAP
                           ? !showAddToCart
-                          : !showDownloadButton
+                          : isDownloadDisabled
                       }
                     >
                       <FormattedMessage id="store/quickorder.download" />

@@ -9,6 +9,7 @@ import GET_ITEM_PRICING from '../queries/getItemPricing.gql'
 import { getFormattedDate } from '../utils'
 import { TableDataContext } from '../utils/context'
 import type { TableData } from '../utils/context'
+import ItemListContext from '../ItemListContext'
 
 import './ItemPricing.css'
 
@@ -46,16 +47,25 @@ const messages = defineMessages({
 })
 
 interface Props {
+  itemIndex: number
   itemNumber: string
   customerNumber: string
   branch: string
 }
 
-const ItemPricing = ({ itemNumber, customerNumber, branch }: Props) => {
+const ItemPricing = ({
+  itemIndex,
+  itemNumber,
+  customerNumber,
+  branch,
+}: Props) => {
   const styles = useCssHandles(CSS_HANDLES)
   const [isOpen, setIsOpen] = useState(false)
   const intl = useIntl()
   const { handleExtractData } = useContext(TableDataContext) as TableData
+  const { useItemListDispatch } = ItemListContext
+
+  const dispatch = useItemListDispatch()
 
   const {
     data: itemPricingInfo,
@@ -82,19 +92,36 @@ const ItemPricing = ({ itemNumber, customerNumber, branch }: Props) => {
     setIsOpen(true)
   }
 
-  const refetchPriceListAndUpdateContext = async () => {
-    const { data } = await refetch()
-    const priceList = data?.getItemPricing?.itemPrices ?? []
+  useEffect(() => {
+    const refetchPriceListAndUpdateContext = async () => {
+      const { data } = await refetch()
+      const prices = data?.getItemPricing?.itemPrices ?? []
 
-    handleExtractData(itemNumber, priceList, 'priceList')
-  }
+      handleExtractData(itemNumber, prices, 'priceList')
+    }
+
+    if (itemNumber && itemNumber !== '') {
+      if (!loading) {
+        handleExtractData(itemNumber, priceList, 'priceList')
+      }
+
+      refetchPriceListAndUpdateContext()
+    }
+  }, [itemNumber, refetch, loading, priceList])
 
   useEffect(() => {
-    if (!loading) {
-      handleExtractData(itemNumber, priceList, 'priceList')
-    }
-    refetchPriceListAndUpdateContext()
-  }, [])
+    dispatch({
+      type: 'SET_ITEM_PRICE',
+      args: {
+        itemStatus: {
+          index: itemIndex,
+          sku: itemNumber,
+          price: priceList,
+          isPriceLoading: loading,
+        },
+      },
+    })
+  }, [priceList, itemIndex, itemNumber, loading, dispatch])
 
   return loading ? (
     <div className={`${styles.priceTable}`}>

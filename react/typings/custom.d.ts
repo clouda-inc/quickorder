@@ -25,3 +25,14 @@ type GtmProductDetail = {
 type Category = {
   name: string
 }
+
+interface ItemStatus {
+  index: number
+  sku?: string
+  error?: string
+  availability?: string
+  availableQuantity?: number
+  isQuantityLoading?: boolean
+  isPriceLoading?: boolean
+  price?: number
+}
