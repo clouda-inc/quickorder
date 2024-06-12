@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Handled error: price list response comes as 404
 - Disabled download button until price data and availability data are loaded
+- Added Unit of Measure to EU region
 
 ## [0.1.88] - 2024-05-30
 

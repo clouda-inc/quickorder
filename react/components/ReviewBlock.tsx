@@ -347,6 +347,8 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
       : false
   }
 
+  console.log('isEURegion', isEURegion)
+
   const validateRefids = (refidData: any, reviewed: any) => {
     let error = false
 
@@ -732,18 +734,20 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                     targetSystem === TARGET_SYSTEM.JDE ? 'w-60' : 'w-100'
                   }`}
                 >
-                  {/* {rowData.uom && (
-                    <div
-                      className={`${styles.itemUom} flex flex-row justify-between`}
-                    >
-                      <div className={`${styles.KeyValueLabel}`}>
-                        {intl.formatMessage(messages.unitOfMeasure)}
+                  {isEURegion() &&
+                    targetSystem === TARGET_SYSTEM.SAP &&
+                    rowData.uom && (
+                      <div
+                        className={`${styles.itemUom} flex flex-row justify-between`}
+                      >
+                        <div className={`${styles.KeyValueLabel}`}>
+                          {intl.formatMessage(messages.unitOfMeasure)}
+                        </div>
+                        <div className={`${styles.KeyValueValue}`}>
+                          {rowData.uom}
+                        </div>
                       </div>
-                      <div className={`${styles.KeyValueValue}`}>
-                        {rowData.uom}
-                      </div>
-                    </div>
-                  )} */}
+                    )}
                   {rowData?.uomDescription && (
                     <div
                       className={`${styles.uomDescription} flex flex-row justify-between`}
