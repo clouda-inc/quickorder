@@ -732,7 +732,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                     targetSystem === TARGET_SYSTEM.JDE ? 'w-60' : 'w-100'
                   }`}
                 >
-                  {/* {rowData.uom && (
+                  {rowData.uom && (
                     <div
                       className={`${styles.itemUom} flex flex-row justify-between`}
                     >
@@ -743,7 +743,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                         {rowData.uom}
                       </div>
                     </div>
-                  )} */}
+                  )}
                   {rowData?.uomDescription && (
                     <div
                       className={`${styles.uomDescription} flex flex-row justify-between`}
