@@ -6,7 +6,7 @@ import React, { useState, useCallback, useEffect } from 'react'
 import {
   ButtonWithIcon,
   IconDelete,
-  // IconInfo,
+  IconInfo,
   // Input,
   Table,
   Tooltip,
@@ -26,6 +26,7 @@ import StockAvailability from './StockAvailability'
 import ItemListContext from '../ItemListContext'
 import GET_PRODUCT_DATA from '../queries/getPrductAvailability.graphql'
 import './ReviewBlock.css'
+import { COO_DATA } from '../utils/const'
 
 const remove = <IconDelete />
 
@@ -643,6 +644,12 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
         cellRenderer: ({ rowData }: any) => {
           const itemError = getLineError(rowData)
           const itemAvailability = getLineItemStatus(rowData)
+          const tooltipTitle =
+            COO_DATA.find((item) => item.UDC === rowData.JDE_Country_of_Origin)
+              ?.text || rowData.JDE_Country_of_Origin
+          const coo =
+            COO_DATA.find((item) => item.UDC === rowData.JDE_Country_of_Origin)
+              ?.description || rowData.JDE_Country_of_Origin
 
           return (
             <div
@@ -806,9 +813,13 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                         <div className={`${styles.KeyValueLabel}`}>
                           {intl.formatMessage(messages.countryOfOrigin)}
                         </div>
-                        <div className={`${styles.KeyValueValue}`}>
-                          {rowData.JDE_Country_of_Origin}
-                        </div>
+
+                        <Tooltip label={tooltipTitle} position="bottom">
+                          <div className={`${styles.KeyValueValue}`}>
+                            <span>{coo}</span> {'    '}
+                            <IconInfo size={16} />
+                          </div>
+                        </Tooltip>
                       </div>
                     )}
 

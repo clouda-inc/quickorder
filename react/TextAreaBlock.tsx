@@ -29,6 +29,7 @@ import {
   TARGET_SYSTEM,
 } from './utils/const'
 import useDownloadButtonStatus from './components/hooks/useDownloadButtonStatus'
+import { COO_DATA } from './utils/const'
 
 const messages = defineMessages({
   success: {
@@ -560,7 +561,9 @@ const TextAreaBlock: FunctionComponent<
             ? `${item.JDE_Weight} ${item.JDE_Weight_UOM}/${item.JDE_Weight_Per_UOM}`
             : ' ',
           tariffCode: item.JDE_HTS_Code,
-          origin: item.JDE_Country_of_Origin,
+          origin:
+            COO_DATA.find((coo) => coo.UDC === item.JDE_Country_of_Origin)
+              ?.text || item.JDE_Country_of_Origin,
           quantity: item.quantity,
           price: `$ ${item.price}`,
           priceUom: ' ',
@@ -585,7 +588,9 @@ const TextAreaBlock: FunctionComponent<
             ? `${item.JDE_Weight} ${item.JDE_Weight_UOM}/${item.JDE_Weight_Per_UOM}`
             : ' ',
           tariffCode: item.JDE_HTS_Code,
-          origin: item.JDE_Country_of_Origin,
+          origin:
+            COO_DATA.find((coo) => coo.UDC === item.JDE_Country_of_Origin)
+              ?.text || item.JDE_Country_of_Origin,
           quantity: priceItem.quantity,
           price: `$ ${priceItem.price}`,
           priceUom: priceItem.uom,
