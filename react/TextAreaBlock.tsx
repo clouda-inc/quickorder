@@ -9,7 +9,7 @@ import { OrderForm } from 'vtex.order-manager'
 import type { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
 import { useCssHandles } from 'vtex.css-handles'
-import { useMutation, useApolloClient } from 'react-apollo'
+import { useMutation, useApolloClient, useQuery } from 'react-apollo'
 import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
 import ExcelJS from 'exceljs'
@@ -29,7 +29,7 @@ import {
   TARGET_SYSTEM,
 } from './utils/const'
 import useDownloadButtonStatus from './components/hooks/useDownloadButtonStatus'
-import { COO_DATA } from './utils/const'
+import GET_COUNTRY_OF_ORIGIN from './queries/getCountryOfOrigin.gql'
 
 const messages = defineMessages({
   success: {
@@ -82,6 +82,7 @@ const TextAreaBlock: FunctionComponent<
   const [isModalOpen, setIsModelOpen] = useState<boolean>(false)
   const [base64Image, setBase64Image] = useState('')
   const [excelDownloading, setExcelDownloading] = useState<boolean>(false)
+  // const [countryOfOriginList, setCountryOfOriginList] = useState<any>([])
 
   const { tableData, handleExtractData } = useContext(
     TableDataContext
@@ -524,6 +525,23 @@ const TextAreaBlock: FunctionComponent<
     })
   }
 
+  const { data: countryOfOriginData } = useQuery(GET_COUNTRY_OF_ORIGIN, {
+    ssr: false,
+  })
+  const countryOfOriginList = countryOfOriginData?.getCountryOfOrigin ?? []
+
+  // useEffect(() => {
+  //   const refetchCountryOfOrigin = async () => {
+  //     const { data } = await refetch()
+  //     const countryOfOrigin = data?.getCountryOfOrigin ?? []
+  //     setCountryOfOriginList(countryOfOrigin)
+  //   }
+
+  //   if (countryOfOriginList.length === 0) {
+  //     refetchCountryOfOrigin
+  //   }
+  // }, [])
+
   const downloadExcelFile = async () => {
     setExcelDownloading(true)
     const data = tableData.flatMap((item: any) => {
@@ -562,8 +580,9 @@ const TextAreaBlock: FunctionComponent<
             : ' ',
           tariffCode: item.JDE_HTS_Code,
           origin:
-            COO_DATA.find((coo) => coo.UDC === item.JDE_Country_of_Origin)
-              ?.text || item.JDE_Country_of_Origin,
+            countryOfOriginList.find(
+              (coo) => coo.udc === item.JDE_Country_of_Origin
+            )?.text ?? item.JDE_Country_of_Origin,
           quantity: item.quantity,
           price: `$ ${item.price}`,
           priceUom: ' ',
@@ -589,8 +608,9 @@ const TextAreaBlock: FunctionComponent<
             : ' ',
           tariffCode: item.JDE_HTS_Code,
           origin:
-            COO_DATA.find((coo) => coo.UDC === item.JDE_Country_of_Origin)
-              ?.text || item.JDE_Country_of_Origin,
+            countryOfOriginList.find(
+              (coo) => coo.udc === item.JDE_Country_of_Origin
+            )?.text ?? item.JDE_Country_of_Origin,
           quantity: priceItem.quantity,
           price: `$ ${priceItem.price}`,
           priceUom: priceItem.uom,
@@ -672,6 +692,7 @@ const TextAreaBlock: FunctionComponent<
                 reviewedItems={reviewItems}
                 onReviewItems={onReviewItems}
                 onRefidLoading={onRefidLoading}
+                countryOfOriginList={countryOfOriginList}
               />
             </div>
             <div

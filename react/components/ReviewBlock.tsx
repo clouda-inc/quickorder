@@ -26,7 +26,6 @@ import StockAvailability from './StockAvailability'
 import ItemListContext from '../ItemListContext'
 import GET_PRODUCT_DATA from '../queries/getPrductAvailability.graphql'
 import './ReviewBlock.css'
-import { COO_DATA } from '../utils/const'
 
 const remove = <IconDelete />
 
@@ -256,6 +255,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   reviewedItems,
   onRefidLoading,
   intl,
+  countryOfOriginList,
 }: any) => {
   // const { data: orderFormData } = useQuery<{
   //   orderForm
@@ -347,8 +347,6 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
       ? !!url.split(`/`).find((element) => element === `catalog-eu`)
       : false
   }
-
-  console.log('isEURegion', isEURegion)
 
   const validateRefids = (refidData: any, reviewed: any) => {
     let error = false
@@ -645,11 +643,13 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
           const itemError = getLineError(rowData)
           const itemAvailability = getLineItemStatus(rowData)
           const tooltipTitle =
-            COO_DATA.find((item) => item.UDC === rowData.JDE_Country_of_Origin)
-              ?.text || rowData.JDE_Country_of_Origin
+            countryOfOriginList.find(
+              (coo) => coo.udc === rowData.JDE_Country_of_Origin
+            )?.text ?? rowData.JDE_Country_of_Origin
           const coo =
-            COO_DATA.find((item) => item.UDC === rowData.JDE_Country_of_Origin)
-              ?.description || rowData.JDE_Country_of_Origin
+            countryOfOriginList.find(
+              (coo) => coo.udc === rowData.JDE_Country_of_Origin
+            )?.description ?? rowData.JDE_Country_of_Origin
 
           return (
             <div

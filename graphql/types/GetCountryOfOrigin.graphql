@@ -1,0 +1,5 @@
+type CountryOfOrigin {
+  udc: String
+  description: String
+  text: String
+}

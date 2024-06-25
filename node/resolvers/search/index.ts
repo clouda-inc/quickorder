@@ -17,6 +17,9 @@ import {
   // UMMOQ_CLIENT_ACRONYM,
   // UMMOQ_CLIENT_FIELDS,
   // UMMOQ_CLIENT_SCHEMA,
+  COUNTRY_OF_ORIGIN_ACRONYM,
+  COUNTRY_OF_ORIGIN_SCHEMA,
+  COUNTRY_OF_ORIGIN_FIELDS,
 } from '../../utils/consts'
 import { formatUOMDescription } from '../../utils/searchFieldExtension'
 import { getCustomerPartNumbers } from '../../middlewares/getCustomerPartNumbers'
@@ -82,14 +85,15 @@ export const queries = {
     }
 
     const callMasterdataClient = async (where: string) => {
-      const res =
-        await masterdata.searchDocumentsWithPaginationInfo<SearchResponse>({
-          dataEntity: CUSTOMER_SKU_ACRONYM,
-          schema: CUSTOMER_SKU_SCHEMA,
-          fields: CUSTOMER_SKU_FIELDS,
-          pagination: { pageSize: 100, page: 1 },
-          where,
-        })
+      const res = await masterdata.searchDocumentsWithPaginationInfo<
+        SearchResponse
+      >({
+        dataEntity: CUSTOMER_SKU_ACRONYM,
+        schema: CUSTOMER_SKU_SCHEMA,
+        fields: CUSTOMER_SKU_FIELDS,
+        pagination: { pageSize: 100, page: 1 },
+        where,
+      })
 
       return res.data
     }
@@ -497,5 +501,19 @@ export const queries = {
         performanceData: [],
       }
     }
+  },
+
+  getCountryOfOrigin: async (_: any, __: any, ctx: any) => {
+    const {
+      clients: { masterdata },
+    } = ctx
+
+    const res = await masterdata.searchDocumentsWithPaginationInfo({
+      dataEntity: COUNTRY_OF_ORIGIN_ACRONYM,
+      schema: COUNTRY_OF_ORIGIN_SCHEMA,
+      fields: COUNTRY_OF_ORIGIN_FIELDS,
+      pagination: { pageSize: 1000, page: 1 },
+    })
+    return res.data
   },
 }

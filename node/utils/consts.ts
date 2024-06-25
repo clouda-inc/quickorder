@@ -19,3 +19,6 @@ export const CUSTOMER_SKU_FIELDS = ['skuRefId', 'customerSku', 'customerNumber']
 export const CUSTOMER_SKU_SCHEMA = 'mdv1'
 export const CUSTOMER_SKU_ACRONYM = 'KU'
 
+export const COUNTRY_OF_ORIGIN_ACRONYM = 'DC'
+export const COUNTRY_OF_ORIGIN_SCHEMA = 'mdv1'
+export const COUNTRY_OF_ORIGIN_FIELDS = ['id', 'udc', 'description', 'text']
