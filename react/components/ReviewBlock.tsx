@@ -6,7 +6,7 @@ import React, { useState, useCallback, useEffect } from 'react'
 import {
   ButtonWithIcon,
   IconDelete,
-  IconInfo,
+  // IconInfo,
   // Input,
   Table,
   Tooltip,
@@ -471,6 +471,8 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
         const sellers = item.sku ? mappedRefId[item.sku]?.sellers : '1'
         const itm = getItemFromQuery(item)
 
+        console.log('itm', itm)
+
         return {
           ...item,
           sellers: item.sku ? mappedRefId[item.sku]?.sellers : '1',
@@ -629,6 +631,15 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     return item?.availability
   }
 
+  const truncateText = (text: string, maxLength: number) => {
+    if (text?.length > maxLength) {
+      return text.substring(0, maxLength - 3) + '...'
+    }
+    return text
+  }
+
+  const MAX_CHARACTERS = 16 // Maximum number of characters to display
+
   const tableStyles = `.ReactVirtualized__Grid__innerScrollContainer>div {padding: 0;}`
 
   const tableSchema = {
@@ -642,14 +653,18 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
         cellRenderer: ({ rowData }: any) => {
           const itemError = getLineError(rowData)
           const itemAvailability = getLineItemStatus(rowData)
+
           const tooltipTitle =
             countryOfOriginList.find(
               (coo) => coo.udc === rowData.JDE_Country_of_Origin
             )?.text ?? rowData.JDE_Country_of_Origin
-          const coo =
+
+          const coo = truncateText(
             countryOfOriginList.find(
               (coo) => coo.udc === rowData.JDE_Country_of_Origin
-            )?.description ?? rowData.JDE_Country_of_Origin
+            )?.description ?? rowData.JDE_Country_of_Origin,
+            MAX_CHARACTERS
+          )
 
           return (
             <div
@@ -817,7 +832,17 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                         <Tooltip label={tooltipTitle} position="bottom">
                           <div className={`${styles.KeyValueValue}`}>
                             <span>{coo}</span> {'    '}
-                            <IconInfo size={16} />
+                            {/* <IconInfo size={16} /> */}
+                            <img
+                              src="https://sbdsefuat.vteximg.com.br/arquivos/info-icon-checkout-cart-page.png"
+                              alt=""
+                              style={{
+                                width: '16px',
+                                height: '16px',
+                                marginBottom: '4px',
+                                marginRight: '5px',
+                              }}
+                            />
                           </div>
                         </Tooltip>
                       </div>
