@@ -82,7 +82,6 @@ const TextAreaBlock: FunctionComponent<
   const [isModalOpen, setIsModelOpen] = useState<boolean>(false)
   const [base64Image, setBase64Image] = useState('')
   const [excelDownloading, setExcelDownloading] = useState<boolean>(false)
-  // const [countryOfOriginList, setCountryOfOriginList] = useState<any>([])
 
   const { tableData, handleExtractData } = useContext(
     TableDataContext
@@ -529,18 +528,6 @@ const TextAreaBlock: FunctionComponent<
     ssr: false,
   })
   const countryOfOriginList = countryOfOriginData?.getCountryOfOrigin ?? []
-
-  // useEffect(() => {
-  //   const refetchCountryOfOrigin = async () => {
-  //     const { data } = await refetch()
-  //     const countryOfOrigin = data?.getCountryOfOrigin ?? []
-  //     setCountryOfOriginList(countryOfOrigin)
-  //   }
-
-  //   if (countryOfOriginList.length === 0) {
-  //     refetchCountryOfOrigin
-  //   }
-  // }, [])
 
   const downloadExcelFile = async () => {
     setExcelDownloading(true)

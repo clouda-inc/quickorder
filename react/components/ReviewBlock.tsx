@@ -471,8 +471,6 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
         const sellers = item.sku ? mappedRefId[item.sku]?.sellers : '1'
         const itm = getItemFromQuery(item)
 
-        console.log('itm', itm)
-
         return {
           ...item,
           sellers: item.sku ? mappedRefId[item.sku]?.sellers : '1',
@@ -832,7 +830,6 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                         <Tooltip label={tooltipTitle} position="bottom">
                           <div className={`${styles.KeyValueValue}`}>
                             <span>{coo}</span> {'    '}
-                            {/* <IconInfo size={16} /> */}
                             <img
                               src="https://sbdsefuat.vteximg.com.br/arquivos/info-icon-checkout-cart-page.png"
                               alt=""
