@@ -3,3 +3,21 @@ type CountryOfOrigin {
   description: String
   text: String
 }
+
+type PerformanceData {
+  key: String
+  value: String
+}
+
+type Error {
+  message: String
+  code: String
+  details: String
+  timestamp: String
+}
+
+type CountryOfOriginResponse {
+  data: [CountryOfOrigin]
+  errors: [Error]
+  performanceData: [PerformanceData]
+}

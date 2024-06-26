@@ -1,7 +1,17 @@
-query getCountryOfOrigin {
-  getCountryOfOrigin {
-    udc
-    description
-    text
+query GetCountryOfOrigin($udcs: [String]!) {
+  getCountryOfOrigin(udcs: $udcs) {
+    data {
+      udc
+      description
+      text
+    }
+    errors {
+      message
+      code
+    }
+    performanceData {
+      key
+      value
+    }
   }
 }

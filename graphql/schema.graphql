@@ -42,5 +42,5 @@ type Query {
     productSpecName: String!
   ): ProductSpecification
 
-  getCountryOfOrigin: [CountryOfOrigin]
+  getCountryOfOrigin(udcs: [String]!): CountryOfOriginResponse
 }

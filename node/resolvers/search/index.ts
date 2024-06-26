@@ -503,17 +503,80 @@ export const queries = {
     }
   },
 
-  getCountryOfOrigin: async (_: any, __: any, ctx: any) => {
+  getCountryOfOrigin: async (
+    _: any,
+    args: {
+      udcs: string[]
+    },
+    ctx: any
+  ) => {
     const {
       clients: { masterdata },
     } = ctx
 
-    const res = await masterdata.searchDocumentsWithPaginationInfo({
-      dataEntity: COUNTRY_OF_ORIGIN_ACRONYM,
-      schema: COUNTRY_OF_ORIGIN_SCHEMA,
-      fields: COUNTRY_OF_ORIGIN_FIELDS,
-      pagination: { pageSize: 1000, page: 1 },
+    const performanceArray = [] as KeyValue[]
+    performanceArray.push({
+      key: 'REQUEST_START',
+      value: Date.now().toString(),
     })
-    return res.data
+
+    const { udcs } = args
+
+    try {
+      const whereClause = udcs
+        .map((udc) => `udc=${encodeURIComponent(udc)}`)
+        .join(' OR ')
+      const res = await masterdata.searchDocumentsWithPaginationInfo({
+        dataEntity: COUNTRY_OF_ORIGIN_ACRONYM,
+        schema: COUNTRY_OF_ORIGIN_SCHEMA,
+        fields: COUNTRY_OF_ORIGIN_FIELDS,
+        where: whereClause,
+        pagination: {
+          page: 1,
+          pageSize: udcs.length,
+        },
+      })
+
+      performanceArray.push({
+        key: 'REQUEST_END',
+        value: Date.now().toString(),
+      })
+
+      return {
+        performanceData: performanceArray,
+        data: res.data,
+      }
+    } catch (err) {
+      console.error(
+        `Error fetching country of origin for UDCs: ${udcs.join(', ')}: ${
+          err.message
+        }`,
+        {
+          timestamp: new Date().toISOString(),
+          udcs,
+          error: err,
+        }
+      )
+
+      if (err.response) {
+        console.error('Response data:>>>', err.response.data)
+        console.error('Response status:>>>', err.response.status)
+        console.error('Response headers:>>>', err.response.headers)
+      }
+
+      return {
+        performanceData: [],
+        data: [],
+        errors: [
+          {
+            message:
+              'Failed to fetch country of origin data for multiple UDCs.',
+            code: 'FETCH_ERROR',
+            details: `UDCs: ${udcs.join(', ')}`,
+            timestamp: Date.now().toString(),
+          },
+        ],
+      }
+    }
   },
 }
