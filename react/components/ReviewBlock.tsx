@@ -653,14 +653,14 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
           const itemAvailability = getLineItemStatus(rowData)
 
           const tooltipTitle =
-            countryOfOriginList.find(
-              (coo) => coo.udc === rowData.JDE_Country_of_Origin
-            )?.text ?? rowData.JDE_Country_of_Origin
+            countryOfOriginList?.find(
+              (coo) => coo.udc === rowData?.JDE_Country_of_Origin
+            )?.text ?? rowData?.JDE_Country_of_Origin
 
           const coo = truncateText(
-            countryOfOriginList.find(
-              (coo) => coo.udc === rowData.JDE_Country_of_Origin
-            )?.description ?? rowData.JDE_Country_of_Origin,
+            countryOfOriginList?.find(
+              (coo) => coo.udc === rowData?.JDE_Country_of_Origin
+            )?.description ?? rowData?.JDE_Country_of_Origin,
             MAX_CHARACTERS
           )
 

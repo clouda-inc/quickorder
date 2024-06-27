@@ -569,7 +569,7 @@ const TextAreaBlock: FunctionComponent<
         }
       }
 
-      if (item?.priceList.length === 0) {
+      if (item?.priceList?.length === 0) {
         return {
           skuName: item?.skuName,
           productName: item?.productName,
@@ -597,7 +597,7 @@ const TextAreaBlock: FunctionComponent<
         }
       }
 
-      return item.priceList.map((priceItem: any) => {
+      return item?.priceList?.map((priceItem: any) => {
         return {
           skuName: item?.skuName,
           productName: item?.productName,
