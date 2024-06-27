@@ -546,7 +546,7 @@ const TextAreaBlock: FunctionComponent<
 
   const downloadExcelFile = async () => {
     setExcelDownloading(true)
-    const data = tableData.flatMap((item: any) => {
+    const data = tableData?.flatMap((item: any) => {
       if (!item?.priceList) {
         return {
           skuName: item?.skuName,
