@@ -520,10 +520,11 @@ export const queries = {
       value: Date.now().toString(),
     })
 
-    const { udcs } = args
+    // Remove duplicates from udcs
+    const uniqueUdcs = Array.from(new Set(args.udcs))
 
     try {
-      const whereClause = udcs
+      const whereClause = uniqueUdcs
         .map((udc) => `udc=${encodeURIComponent(udc)}`)
         .join(' OR ')
       const res = await masterdata.searchDocumentsWithPaginationInfo({
@@ -533,7 +534,7 @@ export const queries = {
         where: whereClause,
         pagination: {
           page: 1,
-          pageSize: udcs.length,
+          pageSize: uniqueUdcs.length,
         },
       })
 
@@ -548,12 +549,12 @@ export const queries = {
       }
     } catch (err) {
       console.error(
-        `Error fetching country of origin for UDCs: ${udcs.join(', ')}: ${
+        `Error fetching country of origin for UDCs: ${uniqueUdcs.join(', ')}: ${
           err.message
         }`,
         {
           timestamp: new Date().toISOString(),
-          udcs,
+          uniqueUdcs,
           error: err,
         }
       )
@@ -572,7 +573,7 @@ export const queries = {
             message:
               'Failed to fetch country of origin data for multiple UDCs.',
             code: 'FETCH_ERROR',
-            details: `UDCs: ${udcs.join(', ')}`,
+            details: `UDCs: ${uniqueUdcs.join(', ')}`,
             timestamp: Date.now().toString(),
           },
         ],

@@ -526,7 +526,7 @@ const TextAreaBlock: FunctionComponent<
   }
 
   const { data: countryOfOriginData } = useQuery(GET_COUNTRY_OF_ORIGIN, {
-    skip: !countryOfOriginCodes.length,
+    skip: !countryOfOriginCodes?.length,
     variables: {
       udcs: countryOfOriginCodes,
     },
@@ -536,11 +536,11 @@ const TextAreaBlock: FunctionComponent<
 
   useEffect(() => {
     if (tableData?.length > 0) {
-      const countryOfOriginCodes = tableData
-        .filter((item: any) => item?.JDE_Country_of_Origin)
-        .map((item: any) => item.JDE_Country_of_Origin)
-
-      setCountryOfOriginCodes(countryOfOriginCodes)
+      setCountryOfOriginCodes(
+        tableData
+          .filter((item: any) => item?.JDE_Country_of_Origin)
+          .map((item: any) => item.JDE_Country_of_Origin)
+      )
     }
   }, [tableData])
 
