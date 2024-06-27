@@ -538,8 +538,8 @@ const TextAreaBlock: FunctionComponent<
     if (tableData?.length > 0) {
       setCountryOfOriginCodes(
         tableData
-          .filter((item: any) => item?.JDE_Country_of_Origin)
-          .map((item: any) => item.JDE_Country_of_Origin)
+          ?.filter((item: any) => item?.JDE_Country_of_Origin)
+          ?.map((item: any) => item?.JDE_Country_of_Origin)
       )
     }
   }, [tableData])
