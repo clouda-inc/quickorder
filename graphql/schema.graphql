@@ -41,4 +41,6 @@ type Query {
     refId: String!
     productSpecName: String!
   ): ProductSpecification
+
+  getCountryOfOrigin(udcs: [String]!): CountryOfOriginResponse
 }

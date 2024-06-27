@@ -9,7 +9,7 @@ import { OrderForm } from 'vtex.order-manager'
 import type { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
 import { useCssHandles } from 'vtex.css-handles'
-import { useMutation, useApolloClient } from 'react-apollo'
+import { useMutation, useApolloClient, useQuery } from 'react-apollo'
 import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
 import ExcelJS from 'exceljs'
@@ -29,6 +29,7 @@ import {
   TARGET_SYSTEM,
 } from './utils/const'
 import useDownloadButtonStatus from './components/hooks/useDownloadButtonStatus'
+import GET_COUNTRY_OF_ORIGIN from './queries/getCountryOfOrigin.gql'
 
 const messages = defineMessages({
   success: {
@@ -81,6 +82,7 @@ const TextAreaBlock: FunctionComponent<
   const [isModalOpen, setIsModelOpen] = useState<boolean>(false)
   const [base64Image, setBase64Image] = useState('')
   const [excelDownloading, setExcelDownloading] = useState<boolean>(false)
+  const [countryOfOriginCodes, setCountryOfOriginCodes] = useState<any>([])
 
   const { tableData, handleExtractData } = useContext(
     TableDataContext
@@ -523,18 +525,37 @@ const TextAreaBlock: FunctionComponent<
     })
   }
 
+  const { data: countryOfOriginData } = useQuery(GET_COUNTRY_OF_ORIGIN, {
+    skip: !countryOfOriginCodes?.length,
+    variables: {
+      udcs: countryOfOriginCodes,
+    },
+  })
+  const countryOfOriginList =
+    countryOfOriginData?.getCountryOfOrigin?.data ?? []
+
+  useEffect(() => {
+    if (tableData?.length > 0) {
+      setCountryOfOriginCodes(
+        tableData
+          ?.filter((item: any) => item?.JDE_Country_of_Origin)
+          ?.map((item: any) => item?.JDE_Country_of_Origin)
+      )
+    }
+  }, [tableData])
+
   const downloadExcelFile = async () => {
     setExcelDownloading(true)
-    const data = tableData.flatMap((item: any) => {
+    const data = tableData?.flatMap((item: any) => {
       if (!item?.priceList) {
         return {
-          skuName: item.skuName,
-          productName: item.productName,
-          leadTime: item.leadTime,
-          uom: item.uom,
-          uomDescription: item.uomDescription,
-          moq: item.moq,
-          quantity: item.quantity,
+          skuName: item?.skuName,
+          productName: item?.productName,
+          leadTime: item?.leadTime,
+          uom: item?.uom,
+          uomDescription: item?.uomDescription,
+          moq: item?.moq,
+          quantity: item?.quantity,
           // price: `$ ${item.price}`,
           availability:
             getLineItemStatus(item) === 'available'
@@ -548,21 +569,24 @@ const TextAreaBlock: FunctionComponent<
         }
       }
 
-      if (item.priceList.length === 0) {
+      if (item?.priceList?.length === 0) {
         return {
-          skuName: item.skuName,
-          productName: item.productName,
-          leadTime: item.leadTime,
-          uom: item.uom,
-          uomDescription: item.uomDescription,
-          moq: item.moq,
+          skuName: item?.skuName,
+          productName: item?.productName,
+          leadTime: item?.leadTime,
+          uom: item?.uom,
+          uomDescription: item?.uomDescription,
+          moq: item?.moq,
           weight: item?.JDE_Weight
             ? `${item.JDE_Weight} ${item.JDE_Weight_UOM}/${item.JDE_Weight_Per_UOM}`
             : ' ',
-          tariffCode: item.JDE_HTS_Code,
-          origin: item.JDE_Country_of_Origin,
-          quantity: item.quantity,
-          price: `$ ${item.price}`,
+          tariffCode: item?.JDE_HTS_Code,
+          origin:
+            countryOfOriginList?.find(
+              (coo) => coo.udc === item?.JDE_Country_of_Origin
+            )?.text ?? item?.JDE_Country_of_Origin,
+          quantity: item?.quantity,
+          price: `$ ${item?.price}`,
           priceUom: ' ',
           stockAvailability: item?.mto
             ? 'Made to Order'
@@ -573,22 +597,25 @@ const TextAreaBlock: FunctionComponent<
         }
       }
 
-      return item.priceList.map((priceItem: any) => {
+      return item?.priceList?.map((priceItem: any) => {
         return {
-          skuName: item.skuName,
-          productName: item.productName,
-          leadTime: item.leadTime,
-          uom: item.uom,
-          uomDescription: item.uomDescription,
-          moq: item.moq,
+          skuName: item?.skuName,
+          productName: item?.productName,
+          leadTime: item?.leadTime,
+          uom: item?.uom,
+          uomDescription: item?.uomDescription,
+          moq: item?.moq,
           weight: item?.JDE_Weight
             ? `${item.JDE_Weight} ${item.JDE_Weight_UOM}/${item.JDE_Weight_Per_UOM}`
             : ' ',
-          tariffCode: item.JDE_HTS_Code,
-          origin: item.JDE_Country_of_Origin,
-          quantity: priceItem.quantity,
-          price: `$ ${priceItem.price}`,
-          priceUom: priceItem.uom,
+          tariffCode: item?.JDE_HTS_Code,
+          origin:
+            countryOfOriginList?.find(
+              (coo) => coo.udc === item?.JDE_Country_of_Origin
+            )?.text ?? item?.JDE_Country_of_Origin,
+          quantity: priceItem?.quantity,
+          price: `$ ${priceItem?.price}`,
+          priceUom: priceItem?.uom,
           stockAvailability: item?.mto
             ? 'Made to Order'
             : item?.stockAvailability > 0
@@ -667,6 +694,7 @@ const TextAreaBlock: FunctionComponent<
                 reviewedItems={reviewItems}
                 onReviewItems={onReviewItems}
                 onRefidLoading={onRefidLoading}
+                countryOfOriginList={countryOfOriginList}
               />
             </div>
             <div

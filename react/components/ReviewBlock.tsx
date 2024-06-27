@@ -255,6 +255,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   reviewedItems,
   onRefidLoading,
   intl,
+  countryOfOriginList,
 }: any) => {
   // const { data: orderFormData } = useQuery<{
   //   orderForm
@@ -346,8 +347,6 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
       ? !!url.split(`/`).find((element) => element === `catalog-eu`)
       : false
   }
-
-  console.log('isEURegion', isEURegion)
 
   const validateRefids = (refidData: any, reviewed: any) => {
     let error = false
@@ -630,6 +629,15 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     return item?.availability
   }
 
+  const truncateText = (text: string, maxLength: number) => {
+    if (text?.length > maxLength) {
+      return text.substring(0, maxLength - 3) + '...'
+    }
+    return text
+  }
+
+  const MAX_CHARACTERS = 16 // Maximum number of characters to display
+
   const tableStyles = `.ReactVirtualized__Grid__innerScrollContainer>div {padding: 0;}`
 
   const tableSchema = {
@@ -643,6 +651,18 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
         cellRenderer: ({ rowData }: any) => {
           const itemError = getLineError(rowData)
           const itemAvailability = getLineItemStatus(rowData)
+
+          const tooltipTitle =
+            countryOfOriginList?.find(
+              (coo) => coo.udc === rowData?.JDE_Country_of_Origin
+            )?.text ?? rowData?.JDE_Country_of_Origin
+
+          const coo = truncateText(
+            countryOfOriginList?.find(
+              (coo) => coo.udc === rowData?.JDE_Country_of_Origin
+            )?.description ?? rowData?.JDE_Country_of_Origin,
+            MAX_CHARACTERS
+          )
 
           return (
             <div
@@ -806,9 +826,22 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                         <div className={`${styles.KeyValueLabel}`}>
                           {intl.formatMessage(messages.countryOfOrigin)}
                         </div>
-                        <div className={`${styles.KeyValueValue}`}>
-                          {rowData.JDE_Country_of_Origin}
-                        </div>
+
+                        <Tooltip label={tooltipTitle} position="bottom">
+                          <div className={`${styles.KeyValueValue}`}>
+                            <span>{coo}</span> {'    '}
+                            <img
+                              src="https://sbdsefuat.vteximg.com.br/arquivos/info-icon-checkout-cart-page.png"
+                              alt=""
+                              style={{
+                                width: '16px',
+                                height: '16px',
+                                marginBottom: '4px',
+                                marginRight: '5px',
+                              }}
+                            />
+                          </div>
+                        </Tooltip>
                       </div>
                     )}
 

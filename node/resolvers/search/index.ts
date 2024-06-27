@@ -17,6 +17,9 @@ import {
   // UMMOQ_CLIENT_ACRONYM,
   // UMMOQ_CLIENT_FIELDS,
   // UMMOQ_CLIENT_SCHEMA,
+  COUNTRY_OF_ORIGIN_ACRONYM,
+  COUNTRY_OF_ORIGIN_SCHEMA,
+  COUNTRY_OF_ORIGIN_FIELDS,
 } from '../../utils/consts'
 import { formatUOMDescription } from '../../utils/searchFieldExtension'
 import { getCustomerPartNumbers } from '../../middlewares/getCustomerPartNumbers'
@@ -82,14 +85,15 @@ export const queries = {
     }
 
     const callMasterdataClient = async (where: string) => {
-      const res =
-        await masterdata.searchDocumentsWithPaginationInfo<SearchResponse>({
-          dataEntity: CUSTOMER_SKU_ACRONYM,
-          schema: CUSTOMER_SKU_SCHEMA,
-          fields: CUSTOMER_SKU_FIELDS,
-          pagination: { pageSize: 100, page: 1 },
-          where,
-        })
+      const res = await masterdata.searchDocumentsWithPaginationInfo<
+        SearchResponse
+      >({
+        dataEntity: CUSTOMER_SKU_ACRONYM,
+        schema: CUSTOMER_SKU_SCHEMA,
+        fields: CUSTOMER_SKU_FIELDS,
+        pagination: { pageSize: 100, page: 1 },
+        where,
+      })
 
       return res.data
     }
@@ -495,6 +499,84 @@ export const queries = {
       return {
         items: [],
         performanceData: [],
+      }
+    }
+  },
+
+  getCountryOfOrigin: async (
+    _: any,
+    args: {
+      udcs: string[]
+    },
+    ctx: any
+  ) => {
+    const {
+      clients: { masterdata },
+    } = ctx
+
+    const performanceArray = [] as KeyValue[]
+    performanceArray.push({
+      key: 'REQUEST_START',
+      value: Date.now().toString(),
+    })
+
+    // Remove duplicates from udcs
+    const uniqueUdcs = Array.from(new Set(args.udcs))
+
+    try {
+      const whereClause = uniqueUdcs
+        .map((udc) => `udc=${encodeURIComponent(udc)}`)
+        .join(' OR ')
+      const res = await masterdata.searchDocumentsWithPaginationInfo({
+        dataEntity: COUNTRY_OF_ORIGIN_ACRONYM,
+        schema: COUNTRY_OF_ORIGIN_SCHEMA,
+        fields: COUNTRY_OF_ORIGIN_FIELDS,
+        where: whereClause,
+        pagination: {
+          page: 1,
+          pageSize: uniqueUdcs.length,
+        },
+      })
+
+      performanceArray.push({
+        key: 'REQUEST_END',
+        value: Date.now().toString(),
+      })
+
+      return {
+        performanceData: performanceArray,
+        data: res.data,
+      }
+    } catch (err) {
+      console.error(
+        `Error fetching country of origin for UDCs: ${uniqueUdcs.join(', ')}: ${
+          err.message
+        }`,
+        {
+          timestamp: new Date().toISOString(),
+          uniqueUdcs,
+          error: err,
+        }
+      )
+
+      if (err.response) {
+        console.error('Response data:>>>', err.response.data)
+        console.error('Response status:>>>', err.response.status)
+        console.error('Response headers:>>>', err.response.headers)
+      }
+
+      return {
+        performanceData: [],
+        data: [],
+        errors: [
+          {
+            message:
+              'Failed to fetch country of origin data for multiple UDCs.',
+            code: 'FETCH_ERROR',
+            details: `UDCs: ${uniqueUdcs.join(', ')}`,
+            timestamp: Date.now().toString(),
+          },
+        ],
       }
     }
   },
