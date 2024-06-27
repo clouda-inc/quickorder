@@ -549,13 +549,13 @@ const TextAreaBlock: FunctionComponent<
     const data = tableData.flatMap((item: any) => {
       if (!item?.priceList) {
         return {
-          skuName: item.skuName,
-          productName: item.productName,
-          leadTime: item.leadTime,
-          uom: item.uom,
-          uomDescription: item.uomDescription,
-          moq: item.moq,
-          quantity: item.quantity,
+          skuName: item?.skuName,
+          productName: item?.productName,
+          leadTime: item?.leadTime,
+          uom: item?.uom,
+          uomDescription: item?.uomDescription,
+          moq: item?.moq,
+          quantity: item?.quantity,
           // price: `$ ${item.price}`,
           availability:
             getLineItemStatus(item) === 'available'
@@ -569,24 +569,24 @@ const TextAreaBlock: FunctionComponent<
         }
       }
 
-      if (item.priceList.length === 0) {
+      if (item?.priceList.length === 0) {
         return {
-          skuName: item.skuName,
-          productName: item.productName,
-          leadTime: item.leadTime,
-          uom: item.uom,
-          uomDescription: item.uomDescription,
-          moq: item.moq,
+          skuName: item?.skuName,
+          productName: item?.productName,
+          leadTime: item?.leadTime,
+          uom: item?.uom,
+          uomDescription: item?.uomDescription,
+          moq: item?.moq,
           weight: item?.JDE_Weight
             ? `${item.JDE_Weight} ${item.JDE_Weight_UOM}/${item.JDE_Weight_Per_UOM}`
             : ' ',
-          tariffCode: item.JDE_HTS_Code,
+          tariffCode: item?.JDE_HTS_Code,
           origin:
-            countryOfOriginList.find(
-              (coo) => coo.udc === item.JDE_Country_of_Origin
-            )?.text ?? item.JDE_Country_of_Origin,
-          quantity: item.quantity,
-          price: `$ ${item.price}`,
+            countryOfOriginList?.find(
+              (coo) => coo.udc === item?.JDE_Country_of_Origin
+            )?.text ?? item?.JDE_Country_of_Origin,
+          quantity: item?.quantity,
+          price: `$ ${item?.price}`,
           priceUom: ' ',
           stockAvailability: item?.mto
             ? 'Made to Order'
@@ -599,23 +599,23 @@ const TextAreaBlock: FunctionComponent<
 
       return item.priceList.map((priceItem: any) => {
         return {
-          skuName: item.skuName,
-          productName: item.productName,
-          leadTime: item.leadTime,
-          uom: item.uom,
-          uomDescription: item.uomDescription,
-          moq: item.moq,
+          skuName: item?.skuName,
+          productName: item?.productName,
+          leadTime: item?.leadTime,
+          uom: item?.uom,
+          uomDescription: item?.uomDescription,
+          moq: item?.moq,
           weight: item?.JDE_Weight
             ? `${item.JDE_Weight} ${item.JDE_Weight_UOM}/${item.JDE_Weight_Per_UOM}`
             : ' ',
-          tariffCode: item.JDE_HTS_Code,
+          tariffCode: item?.JDE_HTS_Code,
           origin:
-            countryOfOriginList.find(
-              (coo) => coo.udc === item.JDE_Country_of_Origin
-            )?.text ?? item.JDE_Country_of_Origin,
-          quantity: priceItem.quantity,
-          price: `$ ${priceItem.price}`,
-          priceUom: priceItem.uom,
+            countryOfOriginList?.find(
+              (coo) => coo.udc === item?.JDE_Country_of_Origin
+            )?.text ?? item?.JDE_Country_of_Origin,
+          quantity: priceItem?.quantity,
+          price: `$ ${priceItem?.price}`,
+          priceUom: priceItem?.uom,
           stockAvailability: item?.mto
             ? 'Made to Order'
             : item?.stockAvailability > 0
