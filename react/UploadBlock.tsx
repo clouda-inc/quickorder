@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
 import type { FunctionComponent } from 'react'
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import type { WrappedComponentProps } from 'react-intl'
 import { FormattedMessage, injectIntl, defineMessages } from 'react-intl'
 import { Button, Dropzone, ToastContext, Spinner } from 'vtex.styleguide'
@@ -9,9 +9,10 @@ import { OrderForm } from 'vtex.order-manager'
 import type { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
 import { useCssHandles } from 'vtex.css-handles'
-import { useMutation, useApolloClient } from 'react-apollo'
+import { useMutation, useApolloClient, useQuery } from 'react-apollo'
 import { usePWA } from 'vtex.store-resources/PWAContext'
 import { usePixel } from 'vtex.pixel-manager/PixelContext'
+import { useRuntime } from 'vtex.render-runtime'
 import XLSX from 'xlsx'
 
 import { ParseText, GetText } from './utils'
@@ -19,8 +20,16 @@ import ReviewBlock from './components/ReviewBlock'
 import { addToCartGTMEventData } from './utils/GTMEventDataHandler'
 import ItemListContext from './ItemListContext'
 import { SpecialBrandHandleModal } from './components/modals/SpecialBrandHandle'
-// import { SAMPLE_TABLE } from './utils/const'
-import { TableDataContext, TableData } from './utils/context'
+import type { TableData } from './utils/context'
+import { TableDataContext } from './utils/context'
+import { TARGET_SYSTEM } from './utils/const'
+import useDownloadButtonStatus from './components/hooks/useDownloadButtonStatus'
+import GET_COUNTRY_OF_ORIGIN from './queries/getCountryOfOrigin.gql'
+import {
+  createExcelFile,
+  fetchEmailTemplateLogo,
+  bindTableData,
+} from './utils/excelUtils'
 
 interface ItemType {
   id: string
@@ -55,7 +64,14 @@ const SPECAIL_BRAND_NAME = 'SPIRALOCK'
 
 const UploadBlock: FunctionComponent<
   UploadBlockInterface & WrappedComponentProps
-> = ({ text, description, downloadText, componentOnly, intl }: any) => {
+> = ({
+  text,
+  description,
+  downloadText,
+  componentOnly,
+  intl,
+  enableDownload = true,
+}: any) => {
   let productsArray: any = []
   const [state, setState] = useState<any>({
     reviewItems: [],
@@ -66,6 +82,10 @@ const UploadBlock: FunctionComponent<
   const [refidLoading, setRefIdLoading] = useState<any>()
   const [loading, setLoading] = useState<boolean>(false)
   const [isModalOpen, setIsModelOpen] = useState<boolean>(false)
+  const [base64Image, setBase64Image] = useState('')
+  const [excelDownloading, setExcelDownloading] = useState<boolean>(false)
+  const [countryOfOriginCodes, setCountryOfOriginCodes] = useState<any>([])
+
   const { reviewItems, reviewState } = state
   const apolloClient = useApolloClient()
 
@@ -73,13 +93,20 @@ const UploadBlock: FunctionComponent<
     TableDataContext
   ) as TableData
 
-  console.log('tableData: upload', tableData)
-
   const { useItemListState, useItemListDispatch } = ItemListContext
-  const { isLoadingCustomerInfo, showAddToCart, customerNumber, targetSystem } =
-    useItemListState()
+  const {
+    isLoadingCustomerInfo,
+    showAddToCart,
+    customerNumber,
+    targetSystem,
+    itemStatuses,
+  } = useItemListState()
 
   const dispatch = useItemListDispatch()
+
+  const { binding } = useRuntime()
+
+  const { disabled: isDownloadDisabled } = useDownloadButtonStatus(reviewItems)
 
   const [addToCart, { error: mutationError, loading: mutationLoading }] =
     useMutation<{ addToCart: OrderFormType }, { items: [] }>(ADD_TO_CART)
@@ -114,6 +141,15 @@ const UploadBlock: FunctionComponent<
 
     showToast({ message })
   }
+
+  useEffect(() => {
+    const getEmailTemplateLogo = async () => {
+      const logo = await fetchEmailTemplateLogo()
+      setBase64Image(logo)
+    }
+
+    getEmailTemplateLogo()
+  }, [])
 
   const download = () => {
     const finalHeaders = ['SKU', 'Quantity']
@@ -435,6 +471,55 @@ const UploadBlock: FunctionComponent<
     return <p>Loading sold to..</p>
   }
 
+  const getLineItemStatus = (lineItem: any) => {
+    const item = itemStatuses.find((itm: any) => itm.index === lineItem.index)
+
+    return item?.availability
+  }
+
+  const isEURegion = () => {
+    const url = binding?.canonicalBaseAddress ?? undefined
+
+    return url
+      ? !!url?.split(`/`)?.find((element) => element === `catalog-eu`)
+      : false
+  }
+
+  const { data: countryOfOriginData } = useQuery(GET_COUNTRY_OF_ORIGIN, {
+    skip: !countryOfOriginCodes?.length,
+    variables: {
+      udcs: countryOfOriginCodes,
+    },
+  })
+  const countryOfOriginList =
+    countryOfOriginData?.getCountryOfOrigin?.data ?? []
+
+  useEffect(() => {
+    if (tableData?.length > 0) {
+      setCountryOfOriginCodes(
+        tableData
+          ?.filter((item: any) => item?.JDE_Country_of_Origin)
+          ?.map((item: any) => item?.JDE_Country_of_Origin)
+      )
+    }
+  }, [tableData])
+
+  const downloadExcelFile = async () => {
+    setExcelDownloading(true)
+    const data = bindTableData(
+      tableData,
+      countryOfOriginList,
+      getLineItemStatus,
+      isEURegion
+    )
+
+    createExcelFile(data, base64Image)
+
+    setTimeout(() => {
+      setExcelDownloading(false)
+    }, 1000)
+  }
+
   return (
     <div className={`${handles.textContainerMain}`}>
       <SpecialBrandHandleModal
@@ -517,6 +602,7 @@ const UploadBlock: FunctionComponent<
               reviewedItems={reviewItems}
               onReviewItems={onReviewItems}
               onRefidLoading={onRefidLoading}
+              countryOfOriginList={countryOfOriginList}
             />
             <div
               className={`mb4 mt4 flex justify-between ${
@@ -537,17 +623,40 @@ const UploadBlock: FunctionComponent<
                 <FormattedMessage id="store/quickorder.back" />
               </Button>
               {refidLoading && <Spinner />}
-              <Button
-                variation="primary"
-                size="small"
-                isLoading={mutationLoading}
-                onClick={() => {
-                  addToCartUpload()
-                }}
-                disabled={!showAddToCart}
-              >
-                <FormattedMessage id="store/quickorder.addToCart" />
-              </Button>
+              <div className="flex justify-between">
+                {enableDownload ? (
+                  <div style={{ marginRight: '12px' }}>
+                    <Button
+                      variation="primary"
+                      size="small"
+                      onClick={downloadExcelFile}
+                      isLoading={excelDownloading}
+                      disabled={
+                        targetSystem === TARGET_SYSTEM.SAP
+                          ? !showAddToCart
+                          : isDownloadDisabled
+                      }
+                    >
+                      <FormattedMessage id="store/quickorder.download" />
+                    </Button>
+                  </div>
+                ) : (
+                  <></>
+                )}
+                <div>
+                  <Button
+                    variation="primary"
+                    size="small"
+                    isLoading={mutationLoading}
+                    onClick={() => {
+                      addToCartUpload()
+                    }}
+                    disabled={!showAddToCart}
+                  >
+                    <FormattedMessage id="store/quickorder.addToCart" />
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -573,6 +682,7 @@ interface UploadBlockInterface {
   description?: string
   componentOnly?: boolean
   downloadText?: string
+  enableDownload?: boolean
 }
 
 export default injectIntl(UploadBlock)
