@@ -165,28 +165,28 @@ export const createExcelFile = async (data, base64Image) => {
 
         if (system === TARGET_SYSTEM.JDE) {
           row = sheet.addRow({
-            skuName: product.skuName,
-            productName: product.productName,
-            leadTime: product.leadTime,
-            uom: product.uom,
-            priceUom: product.priceUom,
-            uomDescription: product.uomDescription,
-            weight: product.weight,
-            tariffCode: product.tariffCode,
-            origin: product.origin,
-            quantity: product.quantity,
-            price: product.price,
-            stockAvailability: product.stockAvailability,
+            skuName: product?.skuName ?? '',
+            productName: product?.productName ?? '',
+            leadTime: product?.leadTime ?? '',
+            uom: product?.uom ?? '',
+            priceUom: product?.priceUom ?? '',
+            uomDescription: product?.uomDescription ?? '',
+            weight: product?.weight ?? '',
+            tariffCode: product?.tariffCode ?? '',
+            origin: product?.origin ?? '',
+            quantity: product?.quantity ?? '',
+            price: product?.price ?? '',
+            stockAvailability: product?.stockAvailability ?? '',
           })
         } else {
           row = sheet.addRow({
-            skuName: product.skuName,
-            productName: product.productName,
-            leadTime: product.leadTime,
-            uomDescription: product.uomDescription,
-            moq: product.moq,
-            quantity: product.quantity,
-            availability: product.availability,
+            skuName: product?.skuName ?? '',
+            productName: product?.productName ?? '',
+            leadTime: product?.leadTime ?? '',
+            uomDescription: product?.uomDescription ?? '',
+            moq: product?.moq ?? '',
+            quantity: product?.quantity ?? '',
+            availability: product?.availability ?? '',
           })
         }
 
