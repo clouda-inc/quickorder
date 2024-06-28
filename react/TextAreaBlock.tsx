@@ -517,8 +517,7 @@ const TextAreaBlock: FunctionComponent<
         const anchor = document.createElement('a')
 
         anchor.href = url
-        anchor.download =
-          'Legacy System - Tiered Pricing and Availability Export.xlsx'
+        anchor.download = 'SEF Product Export.xlsx'
         anchor.click()
         window.URL.revokeObjectURL(url)
       })
