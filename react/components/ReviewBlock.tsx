@@ -11,7 +11,7 @@ import {
   Table,
   Tooltip,
 } from 'vtex.styleguide'
-import { useRuntime } from 'vtex.render-runtime'
+import { useRuntime, ExtensionPoint } from 'vtex.render-runtime'
 import type { WrappedComponentProps } from 'react-intl'
 import { defineMessages, injectIntl } from 'react-intl'
 import PropTypes from 'prop-types'
@@ -290,6 +290,8 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
 
   const { reviewItems } = state
 
+  console.log('items >>> ', reviewItems)
+
   // if (orderFormData?.orderForm?.orderFormId) {
   //   orderFormId = orderFormData.orderForm.orderFormId
   // }
@@ -496,6 +498,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
           JDE_Weight: itm?.JDE_Weight?.[0],
           JDE_Weight_UOM: itm?.JDE_Weight_UOM?.[0],
           JDE_Weight_Per_UOM: itm?.JDE_Weight_Per_UOM?.[0],
+          JDE_Tarrif: itm?.JDE_Tarrif?.[0],
         }
       })
 
@@ -745,6 +748,11 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                       customerNumber={customerNumber}
                       branch={rowData?.branch}
                     />
+                    {rowData?.JDE_Tarrif && rowData.JDE_Tarrif === 'Yes' ? (
+                      <ExtensionPoint id="tarrif-text-modal" />
+                    ) : (
+                      <></>
+                    )}
                   </div>
                 ) : (
                   <div />

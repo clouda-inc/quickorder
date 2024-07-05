@@ -25,6 +25,7 @@ type AvailableItem {
   JDE_Weight: [String]
   JDE_Country_of_Origin: [String]
   JDE_HTS_Code: [String]
+  JDE_Tarrif: [String]
 }
 
 type KeyValue {

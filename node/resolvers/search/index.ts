@@ -291,6 +291,8 @@ export const queries = {
             return {}
           }
 
+          // console.log('product >>> ', product)
+
           const {
             items,
             productId,
@@ -300,8 +302,10 @@ export const queries = {
             JDE_Weight,
             JDE_Country_of_Origin,
             JDE_HTS_Code,
+            JDE_Tarrif,
           } = product
 
+          console.log('jde-tarrif >>> ', JDE_Tarrif)
           // One item has one sku
           const skuItem = items[0]
           const itemId = skuItem?.itemId
@@ -435,6 +439,7 @@ export const queries = {
             JDE_Weight,
             JDE_Country_of_Origin,
             JDE_HTS_Code,
+            JDE_Tarrif,
           }
         })
 
