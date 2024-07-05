@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- Added tarrif text modal
+
 ## [0.1.92] - 2024-06-28
 
 ## [0.1.91] - 2024-06-27

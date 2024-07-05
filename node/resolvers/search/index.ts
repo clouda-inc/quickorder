@@ -300,6 +300,7 @@ export const queries = {
             JDE_Weight,
             JDE_Country_of_Origin,
             JDE_HTS_Code,
+            JDE_Tarrif,
           } = product
 
           // One item has one sku
@@ -435,6 +436,7 @@ export const queries = {
             JDE_Weight,
             JDE_Country_of_Origin,
             JDE_HTS_Code,
+            JDE_Tarrif,
           }
         })
 

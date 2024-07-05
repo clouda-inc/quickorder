@@ -142,6 +142,7 @@ const TextAreaBlock: FunctionComponent<
   useEffect(() => {
     const getEmailTemplateLogo = async () => {
       const logo = await fetchEmailTemplateLogo()
+
       setBase64Image(logo)
     }
 
@@ -405,6 +406,7 @@ const TextAreaBlock: FunctionComponent<
       udcs: countryOfOriginCodes,
     },
   })
+
   const countryOfOriginList =
     countryOfOriginData?.getCountryOfOrigin?.data ?? []
 

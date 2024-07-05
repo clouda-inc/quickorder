@@ -20,7 +20,8 @@
     "component": "AutocompleteBlock"
   },
   "quickorder-textarea": {
-    "component": "TextAreaBlockWrapper"
+    "component": "TextAreaBlockWrapper",
+    "allowed": ["tarrif-text-modal"]
   },
   "quickorder-punchout": {
     "component": "PunchoutReviewAndAddToCart",

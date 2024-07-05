@@ -35,6 +35,7 @@ query getAvbProduct(
       JDE_Weight
       JDE_Country_of_Origin
       JDE_HTS_Code
+      JDE_Tarrif
     }
     performanceData {
       key
