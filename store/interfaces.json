@@ -11,7 +11,8 @@
   },
 
   "quickorder-upload": {
-    "component": "UploadBlockWrapper"
+    "component": "UploadBlockWrapper",
+    "allowed": ["tarrif-text-modal"]
   },
   "quickorder-categories": {
     "component": "CategoryBlock"

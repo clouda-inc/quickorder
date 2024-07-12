@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixing tariff message not appearing issue in Upload block
+
 ## [0.1.93] - 2024-07-05
 
 ### Added
