@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- Added enable/disable option to download button in upload area
+
 ## [0.1.94] - 2024-07-12
 
 ### Fixed

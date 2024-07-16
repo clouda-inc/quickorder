@@ -11,6 +11,7 @@ interface UploadBlockInterface {
   description?: string
   componentOnly?: boolean
   downloadText?: string
+  enableDownload?: boolean
 }
 
 const UploadBlockWrapper = ({
@@ -18,6 +19,7 @@ const UploadBlockWrapper = ({
   description,
   componentOnly,
   downloadText,
+  enableDownload = true,
 }: UploadBlockInterface) => {
   const [tableData, setTableData] = useState<any>()
 
@@ -42,9 +44,9 @@ const UploadBlockWrapper = ({
               ...item,
               [dataType]: newData,
             }
-          } else {
-            return item
           }
+
+          return item
         })
       })
     }
@@ -56,7 +58,15 @@ const UploadBlockWrapper = ({
       accountDataLoading={accountDataLoading}
     >
       <TableDataContext.Provider value={{ tableData, handleExtractData }}>
-        <UploadBlock {...{ text, description, componentOnly, downloadText }} />
+        <UploadBlock
+          {...{
+            text,
+            description,
+            componentOnly,
+            downloadText,
+            enableDownload,
+          }}
+        />
       </TableDataContext.Provider>
     </ItemListProvider>
   )
@@ -70,6 +80,12 @@ UploadBlockWrapper.schema = {
       type: 'string',
       title: 'description',
       description: 'The label for the text input',
+    },
+    enableDownload: {
+      type: 'boolean',
+      title: 'Enable Download',
+      description: 'Enable/disable price list excel download button',
+      default: 'true',
     },
   },
 }
