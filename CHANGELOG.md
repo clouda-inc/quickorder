@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixing product status not available in bulkorder for SAP
+
 ## [0.1.95] - 2024-07-16
 
 ### Added

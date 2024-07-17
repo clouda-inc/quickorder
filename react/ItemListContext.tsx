@@ -1,11 +1,5 @@
-import React, {
-  ReactChildren,
-  ReactChild,
-  useReducer,
-  useContext,
-  createContext,
-  useEffect,
-} from 'react'
+import type { ReactChildren, ReactChild } from 'react'
+import React, { useReducer, useContext, createContext, useEffect } from 'react'
 
 export interface State {
   customerNumber: string
@@ -122,7 +116,7 @@ const categoryReducer = (state: State, action: ReducerActions): State => {
         const availability = getProductAvailability(
           selected?.availability,
           availableQuantity,
-          item?.isQuantityLoading
+          state.targetSystem === 'JDE' ? item?.isQuantityLoading : false
         )
 
         return {
