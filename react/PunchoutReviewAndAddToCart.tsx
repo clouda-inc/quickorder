@@ -84,6 +84,11 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
       (app) => app.id === 'punchout-to-go'
     )?.fields.quoteItemsAdded ?? '0'
 
+  console.info('orderForm from Punchout requisition', {
+    id: orderForm.id,
+    customData: orderForm.customData,
+  })
+
   const [warningModalOpen, setWarningModalOpen] = useState(false)
   const [invalidItems, setInvalidItems] = useState<any>([])
 
@@ -300,16 +305,16 @@ const PunchoutReviewAndAddToCart: StorefrontFunctionComponent<Props> = ({
     }
   }, [intl, error])
 
-  useEffect(() => {
-    if (quoteItemsAdded === '1') {
-      navigate({
-        to: '/cart',
-        ...(!rootPath && binding?.canonicalBaseAddress
-          ? { query: { __bindingAddress: binding.canonicalBaseAddress } }
-          : {}),
-      })
-    }
-  })
+  // useEffect(() => {
+  //   if (quoteItemsAdded === '1') {
+  //     navigate({
+  //       to: '/cart',
+  //       ...(!rootPath && binding?.canonicalBaseAddress
+  //         ? { query: { __bindingAddress: binding.canonicalBaseAddress } }
+  //         : {}),
+  //     })
+  //   }
+  // })
 
   if (!enablePunchoutQuoteValidation) {
     return null
