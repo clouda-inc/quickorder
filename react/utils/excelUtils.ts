@@ -122,7 +122,7 @@ export const createExcelFile = async (data, base64Image) => {
   sheet.getRow(1).fill = {
     type: 'pattern',
     pattern: 'solid',
-    fgColor: { argb: '14BFCC' },
+    fgColor: { argb: 'ffdb0a' },
   }
 
   sheet.getRow(1).font = {
@@ -130,7 +130,7 @@ export const createExcelFile = async (data, base64Image) => {
     family: 4,
     size: 11,
     bold: true,
-    color: { argb: 'FFFFFF' },
+    color: { argb: '000000' },
   }
 
   sheet.columns =
