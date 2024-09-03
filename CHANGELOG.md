@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+
+- Changed excel template header column text color and background color
+
 ## [0.1.96] - 2024-07-17
 
 ### Fixed
