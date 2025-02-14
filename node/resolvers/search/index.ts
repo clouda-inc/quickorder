@@ -301,7 +301,10 @@ export const queries = {
             JDE_Country_of_Origin,
             JDE_HTS_Code,
             JDE_Tarrif,
+            JDE_Tariff_Percentage
           } = product
+
+          console.log("JDE_Tariff_Percentage>>", JDE_Tariff_Percentage)
 
           // One item has one sku
           const skuItem = items[0]
@@ -437,6 +440,7 @@ export const queries = {
             JDE_Country_of_Origin,
             JDE_HTS_Code,
             JDE_Tarrif,
+            JDE_Tariff_Percentage
           }
         })
 

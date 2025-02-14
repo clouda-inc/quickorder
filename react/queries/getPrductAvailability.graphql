@@ -36,6 +36,7 @@ query getAvbProduct(
       JDE_Country_of_Origin
       JDE_HTS_Code
       JDE_Tarrif
+      JDE_Tariff_Percentage
     }
     performanceData {
       key
