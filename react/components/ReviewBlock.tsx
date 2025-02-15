@@ -546,9 +546,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
       }
 
       const { data } = await client.query(query)
-
-      console.log("data>>", data)
-
+  
       // TODO: Remove this line
       // eslint-disable-next-line no-console
       console.log(
@@ -656,8 +654,6 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
           const itemError = getLineError(rowData)
           const itemAvailability = getLineItemStatus(rowData)
 
-          console.log("rowData>>", rowData)
-
           const tooltipTitle =
             countryOfOriginList?.find(
               (coo) => coo.udc === rowData?.JDE_Country_of_Origin
@@ -751,8 +747,8 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                       customerNumber={customerNumber}
                       branch={rowData?.branch}
                     />
-                    {rowData?.JDE_Tarrif && rowData.JDE_Tarrif === 'Yes' ? (
-                      <ExtensionPoint id="tarrif-text-modal" message={rowData?.JDE_Tariff_Percentage && `\"Additional Tariff Information: This item will have an additional ${rowData?.JDE_Tariff_Percentage}% tariff added upon order placement. Please include this cost in your purchase order (PO).\"`}/>
+                    {rowData?.JDE_Tarrif && rowData.JDE_Tarrif === 'Yes' && rowData?.JDE_Tariff_Percentage ? (
+                      <ExtensionPoint id="tarrif-text-modal" tariffPercentage={rowData?.JDE_Tariff_Percentage}/>
                     ) : (
                       <></>
                     )}
