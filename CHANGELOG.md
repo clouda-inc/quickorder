@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- Add JDE_Tariff_Percentage to SKU availability and update tariff message
+
 ## [0.1.97] - 2024-09-03
 
 ### Changed
@@ -69,7 +73,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - Fixed the invalid sku handle issue in upload & order block
-- 
+-
+
 ## [0.1.84] - 2024-05-20
 
 ## [0.1.83] - 2024-05-20

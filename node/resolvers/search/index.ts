@@ -301,6 +301,7 @@ export const queries = {
             JDE_Country_of_Origin,
             JDE_HTS_Code,
             JDE_Tarrif,
+            JDE_Tariff_Percentage
           } = product
 
           // One item has one sku
@@ -437,6 +438,7 @@ export const queries = {
             JDE_Country_of_Origin,
             JDE_HTS_Code,
             JDE_Tarrif,
+            JDE_Tariff_Percentage
           }
         })
 

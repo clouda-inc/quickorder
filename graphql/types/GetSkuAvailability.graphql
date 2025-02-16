@@ -26,6 +26,7 @@ type AvailableItem {
   JDE_Country_of_Origin: [String]
   JDE_HTS_Code: [String]
   JDE_Tarrif: [String]
+  JDE_Tariff_Percentage: [String]
 }
 
 type KeyValue {

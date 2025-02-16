@@ -497,6 +497,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
           JDE_Weight_UOM: itm?.JDE_Weight_UOM?.[0],
           JDE_Weight_Per_UOM: itm?.JDE_Weight_Per_UOM?.[0],
           JDE_Tarrif: itm?.JDE_Tarrif?.[0],
+          JDE_Tariff_Percentage: itm?.JDE_Tariff_Percentage?.[0],
         }
       })
 
@@ -545,7 +546,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
       }
 
       const { data } = await client.query(query)
-
+  
       // TODO: Remove this line
       // eslint-disable-next-line no-console
       console.log(
@@ -746,8 +747,8 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                       customerNumber={customerNumber}
                       branch={rowData?.branch}
                     />
-                    {rowData?.JDE_Tarrif && rowData.JDE_Tarrif === 'Yes' ? (
-                      <ExtensionPoint id="tarrif-text-modal" />
+                    {rowData?.JDE_Tarrif && rowData.JDE_Tarrif === 'Yes' && rowData?.JDE_Tariff_Percentage ? (
+                      <ExtensionPoint id="tarrif-text-modal" tariffPercentage={rowData?.JDE_Tariff_Percentage}/>
                     ) : (
                       <></>
                     )}
