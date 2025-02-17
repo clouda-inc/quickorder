@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.98] - 2025-02-17
+
 ### Added
 
 - Add JDE_Tariff_Percentage to SKU availability and update tariff message
