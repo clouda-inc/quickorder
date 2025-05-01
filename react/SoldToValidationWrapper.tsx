@@ -5,7 +5,7 @@ import { useCssHandles } from 'vtex.css-handles'
 import { Spinner } from 'vtex.styleguide'
 
 import OrderSoldToAccount from './queries/orderSoldToAccount.graphql'
-import './sbdsefprod.sold-to-validation.css'
+import './sbdsefuat.sold-to-validation.css'
 import {defineMessages, useIntl} from 'react-intl'
 
 const messages = defineMessages({
