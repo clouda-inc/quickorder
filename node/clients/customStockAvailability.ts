@@ -38,6 +38,7 @@ export class CustomStockAvailability extends ExternalClient {
           'Agora-Subscription-Key': settings.agoraSubscriptionKey,
         },
         metric: 'get-item-availability',
+        timeout: 60000,
       }
     )
   }

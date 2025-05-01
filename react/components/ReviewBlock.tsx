@@ -838,7 +838,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                           <div className={`${styles.KeyValueValue}`}>
                             <span>{coo}</span> {'    '}
                             <img
-                              src="https://sbdsefuat.vteximg.com.br/arquivos/info-icon-checkout-cart-page.png"
+                              src="https://sbdsefprod.vteximg.com.br/arquivos/info-icon-checkout-cart-page.png"
                               alt=""
                               style={{
                                 width: '16px',

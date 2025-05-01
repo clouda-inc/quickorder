@@ -8,7 +8,7 @@ import type {
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
 import { ExtensionPoint, useRuntime } from 'vtex.render-runtime'
 import type { OrderForm } from 'vtex.checkout-graphql'
-import { useUpdateCustomField } from 'sbdsefuat.shopping-cart/OrderFormCustomFieldHooks'
+import { useUpdateCustomField } from 'sbdsefprod.shopping-cart/OrderFormCustomFieldHooks'
 import { Button, Modal, Spinner } from 'vtex.styleguide'
 import { useIntl } from 'react-intl'
 import moment from 'moment'
