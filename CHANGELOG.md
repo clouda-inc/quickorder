@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Updated
 
 - Updated to pass the gateway error.
+- Updated with the revert changes.
 
 ## [0.1.99] - 2025-05-01
 
