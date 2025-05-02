@@ -1,10 +1,10 @@
 /* eslint-disable max-params */
-import type {
+import {
   InstanceOptions,
   IOContext,
   RequestConfig,
+  ExternalClient,
 } from '@vtex/api'
-import { ExternalClient } from '@vtex/api'
 
 import { statusToError } from '../utils'
 
@@ -26,14 +26,12 @@ export class CustomStockAvailability extends ExternalClient {
     })
   }
 
-  public async getStockAvailability(
+  public getStockAvailability(
     data: StockAvailabilityInput,
     settings: AppSettings
   ): Promise<any> {
 
-
-    try {
-      const dataResponse = await this.http.post(
+    return this.http.post(
         `${settings.agoraBaseUrl}/smartOrder/VTEX/v1/material/stockavailability`,
         data,
         {
@@ -44,22 +42,6 @@ export class CustomStockAvailability extends ExternalClient {
           timeout: 60000,
         }
       )
-
-      return dataResponse
-    } catch (e) {
-      const errorStatus = e.response.status
-      if (errorStatus === 504) {
-        return {
-          itemNumber: '',
-          customer: '',
-          thruDate: '',
-          primaryUoM: '',
-          pricingUoM: '',
-          errorType: 'Gateway Timeout'
-        }
-      }
-      return null
-    }
   }
 
   protected post = <T>(url: string, data?: any, config?: RequestConfig) => {
