@@ -31,7 +31,6 @@ export class CustomStockAvailability extends ExternalClient {
     settings: AppSettings
   ): Promise<any> {
 
-
     try {
       const dataResponse = await this.http.post(
         `${settings.agoraBaseUrl}/smartOrder/VTEX/v1/material/stockavailability`,

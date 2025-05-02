@@ -57,7 +57,7 @@ export const queries = {
       supply: availabilityResponse?.Supply,
       promiseDate: availabilityResponse?.PromiseDate,
       qtyAvailable: stringToNumber(availabilityResponse?.QtyAvailable, 0),
-      errorType: ''
+      errorType: '',
     }
   },
 }
