@@ -9,4 +9,5 @@ type StockAvailability {
   supply: String
   promiseDate: String
   qtyAvailable: String
+  errorType: String
 }

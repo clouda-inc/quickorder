@@ -2,7 +2,7 @@
   "vendor": "sbdsefuat",
   "name": "bulk-order",
   "version": "0.1.99",
-  "title": "Quickorder",
+  "title": "Bulk Order",
   "description": "Allow users to add multiple products to the cart at once",
   "defaultLocale": "en-US",
   "builders": {
@@ -160,7 +160,9 @@
     },
     "free": true,
     "type": "free",
-    "availableCountries": ["*"]
+    "availableCountries": [
+      "*"
+    ]
   },
   "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"
 }
