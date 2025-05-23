@@ -28,7 +28,7 @@ export class CustomPricing extends ExternalClient {
     settings: AppSettings
   ): Promise<any> {
     const res = this.http.post(
-      `${settings.agoraBaseUrl}/smartOrder/VTEX/v1/material/price`,
+      `${settings.agoraBaseUrl}/smartOrder/VTEX/v2/material/price`,
       data,
       {
         headers: {
@@ -37,6 +37,7 @@ export class CustomPricing extends ExternalClient {
         metric: 'get-item-pricing',
       }
     )
+
     return res
   }
 
