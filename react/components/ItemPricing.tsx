@@ -51,6 +51,7 @@ interface Props {
   itemNumber: string
   customerNumber: string
   branch: string
+  stateChanged: boolean
 }
 
 const ItemPricing = ({
@@ -58,6 +59,7 @@ const ItemPricing = ({
   itemNumber,
   customerNumber,
   branch,
+  stateChanged,
 }: Props) => {
   const styles = useCssHandles(CSS_HANDLES)
   const [isOpen, setIsOpen] = useState(false)
@@ -107,7 +109,7 @@ const ItemPricing = ({
 
       refetchPriceListAndUpdateContext()
     }
-  }, [itemNumber, refetch, loading, priceList])
+  }, [itemNumber, refetch, loading, priceList, stateChanged])
 
   useEffect(() => {
     dispatch({

@@ -3,10 +3,10 @@ import { useQuery } from 'react-apollo'
 import { ExtensionPoint } from 'vtex.render-runtime'
 import { useCssHandles } from 'vtex.css-handles'
 import { Spinner } from 'vtex.styleguide'
+import { defineMessages, useIntl } from 'react-intl'
 
 import OrderSoldToAccount from './queries/orderSoldToAccount.graphql'
 import './sbdsefuat.sold-to-validation.css'
-import {defineMessages, useIntl} from 'react-intl'
 
 const messages = defineMessages({
   selectSoldToAccount: {

@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed the price table not getting in to excel.
+- Updated the agora endpoint.
+
 ## [0.1.99] - 2025-05-01
 
 ### Changed
