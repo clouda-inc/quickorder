@@ -59,7 +59,8 @@ export const queries = {
             itemPrices: prices,
           }
         } catch (err) {
-      console.log('error >>>', err)
+      console.error('error >>>', err)
+
       return {
         itemPrices: [],
       }

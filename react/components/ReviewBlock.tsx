@@ -266,6 +266,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
   const client = useApolloClient()
   const styles = useCssHandles(CSS_HANDLES)
   const { binding } = useRuntime()
+  const [stateChanged, setStateChanged] = useState(false)
 
   // const customerNumber =
   //   soldToAccount?.getOrderSoldToAccount?.customerNumber ?? ''
@@ -546,7 +547,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
       }
 
       const { data } = await client.query(query)
-  
+
       // TODO: Remove this line
       // eslint-disable-next-line no-console
       console.log(
@@ -746,6 +747,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                       itemNumber={rowData?.sku}
                       customerNumber={customerNumber}
                       branch={rowData?.branch}
+                      stateChanged={stateChanged}
                     />
                     {rowData?.JDE_Tarrif && rowData.JDE_Tarrif === 'Yes' && rowData?.JDE_Tariff_Percentage ? (
                       <ExtensionPoint id="tarrif-text-modal" tariffPercentage={rowData?.JDE_Tariff_Percentage}/>
@@ -929,6 +931,7 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
                   variation="tertiary"
                   onClick={() => {
                     removeLine(rowData.index)
+                    setStateChanged(!stateChanged)
                   }}
                 />
               </div>
