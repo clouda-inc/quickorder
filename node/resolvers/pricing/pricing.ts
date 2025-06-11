@@ -49,7 +49,7 @@ export const queries = {
               customer: item?.Customer,
               effectiveDate: item?.Effective,
               itemNumber: item?.Item,
-              price: stringToNumber(item?.Price, 2),
+              price: stringToNumber(item?.Price, 4),
               quantity: item?.Quantity,
               uom: item?.UoM,
             })
