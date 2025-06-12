@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.101] - 2025-06-12
+
 ### Updated
 
 - Updated to show 4 decimal places.
