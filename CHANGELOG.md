@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Updated
 
 - Updated to show 4 decimal places.
+- Updated to pass the gateway error.
+- Updated with the revert changes.
 
 ## [0.1.100] - 2025-05-26
 

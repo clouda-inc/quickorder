@@ -2,9 +2,7 @@ import { UserInputError } from '@vtex/api'
 
 const stringToNumber = (numberToFormat: string, decimalPoints: number) => {
   return numberToFormat != null && numberToFormat !== ''
-    ? parseFloat(numberToFormat)
-        .toFixed(decimalPoints)
-        .toString()
+    ? Number.parseFloat(numberToFormat).toFixed(decimalPoints).toString()
     : '0.00'
 }
 
@@ -26,14 +24,26 @@ export const queries = {
       process.env.VTEX_APP_ID ?? ''
     )
 
-    const availabilityResponse = await customStockAvailability.getStockAvailability(
-      {
-        Customer: args.customer,
-        ItemNumber: args.itemNumber,
-        Thru_Date: args.thruDate,
-      },
-      settings
-    )
+    const availabilityResponse =
+      await customStockAvailability.getStockAvailability(
+        {
+          Customer: args.customer,
+          ItemNumber: args.itemNumber,
+          Thru_Date: args.thruDate,
+        },
+        settings
+      )
+
+    if (availabilityResponse.errorType === 'Gateway Timeout') {
+      return {
+        itemNumber: '',
+        customer: '',
+        thruDate: '',
+        primaryUoM: '',
+        pricingUoM: '',
+        errorType: 'Gateway Timeout',
+      }
+    }
 
     return {
       itemNumber: availabilityResponse?.ItemNumber,
@@ -46,6 +56,7 @@ export const queries = {
       supply: availabilityResponse?.Supply,
       promiseDate: availabilityResponse?.PromiseDate,
       qtyAvailable: stringToNumber(availabilityResponse?.QtyAvailable, 0),
+      errorType: '',
     }
   },
 }
