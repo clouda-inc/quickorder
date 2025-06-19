@@ -122,17 +122,13 @@ const TextAreaBlock: FunctionComponent<
     const [delayedDownloadDisabled, setDelayedDownloadDisabled] = useState(true)
 
     useEffect(() => {
-      console.log('reviewState :: ', state.reviewState)
       if (!state.reviewState) {
-        console.log('setDelayedDownloadDisabled :: ')
         setDelayedDownloadDisabled(true)
         return;
       }
       const disabledValue = targetSystem === TARGET_SYSTEM.SAP ? !showAddToCart : isDownloadDisabled
-      console.log('Delaying download button start & disabledValue ::: ', disabledValue)
 
       sleep(3500).then(() => {
-        console.log('Delaying download button inside sleep')
         setDelayedDownloadDisabled(disabledValue && reviewState)
       })
     }, [targetSystem, showAddToCart, isDownloadDisabled, state])
@@ -441,10 +437,6 @@ const TextAreaBlock: FunctionComponent<
         )
       }
     }, [tableData])
-
-    useEffect(() => {
-      console.log('excelDownloading ::: ',)
-    }, [excelDownloading])
 
     const downloadExcelFile = async () => {
       setExcelDownloading(true)
