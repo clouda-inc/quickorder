@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix download file missing data issue.
+
 ## [0.1.102] - 2025-06-12
 
 ## [0.1.101] - 2025-06-12
