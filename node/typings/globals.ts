@@ -32,10 +32,23 @@ interface SalesOrgPlant {
   pagination: Pagination
   data: PlantData[]
 }
+
 interface BrandForClients {
   pagination: Pagination
   data: ClientBrand[]
 }
+
+interface DefaultBrandBehavior {
+  pagination: Pagination
+  data: DefaultBrand[]
+}
+
+interface DefaultBrand {
+  brandName: string
+  isSaleable: boolean
+  tradeSystem: string
+}
+
 interface UnitMultiplierMoQ {
   pagination: Pagination
   data: MoqUM
@@ -52,13 +65,13 @@ interface AppSettings {
 }
 
 interface SearchResponse {
-  skuRefId: string,
-  customerSku: string,
+  skuRefId: string
+  customerSku: string
   customerNumber: string
 }
 
 interface SkuRefIdWithCustomerPartArgs {
-  partNumber: string;
-  customerNumber: string;
-  targetSystem: string;
+  partNumber: string
+  customerNumber: string
+  targetSystem: string
 }
