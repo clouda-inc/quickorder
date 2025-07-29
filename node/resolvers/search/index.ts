@@ -20,6 +20,9 @@ import {
   COUNTRY_OF_ORIGIN_ACRONYM,
   COUNTRY_OF_ORIGIN_SCHEMA,
   COUNTRY_OF_ORIGIN_FIELDS,
+  BRAND_DEFAULT_BEHAVIOUR_SCHEMA,
+  BRAND_DEFAULT_BEHAVIOUR_ACRONYM,
+  BRAND_DEFAULT_BEHAVIOUR_FIELDS,
 } from '../../utils/consts'
 import { formatUOMDescription } from '../../utils/searchFieldExtension'
 import { getCustomerPartNumbers } from '../../middlewares/getCustomerPartNumbers'
@@ -246,6 +249,16 @@ export const queries = {
         key: 'START Get Brand Info',
         value: Date.now().toString(),
       })
+
+      const defaultBrands = await masterdata.searchDocumentsWithPaginationInfo<
+        DefaultBrand
+      >({
+        dataEntity: BRAND_DEFAULT_BEHAVIOUR_ACRONYM,
+        schema: BRAND_DEFAULT_BEHAVIOUR_SCHEMA,
+        fields: BRAND_DEFAULT_BEHAVIOUR_FIELDS,
+        pagination: { pageSize: 100, page: 1 },
+      })
+
       const brands = await masterdata.searchDocumentsWithPaginationInfo<
         BrandForClients
       >({
@@ -301,7 +314,7 @@ export const queries = {
             JDE_Country_of_Origin,
             JDE_HTS_Code,
             JDE_Tarrif,
-            JDE_Tariff_Percentage
+            JDE_Tariff_Percentage,
           } = product
 
           // One item has one sku
@@ -343,13 +356,20 @@ export const queries = {
 
             const productBrand = product.brand
             // const brandClientData = brandData?.brandClient?.data ?? []
+
+            // Check if the brand is saleable by default
+            const isBrandSaleable =
+              defaultBrands?.data?.find(
+                (brand: any) => brand.brandName === productBrand
+              )?.isSaleable ?? false
+
+            // Check if the default brand behavior is overridden for the customer
             const brandDataMatch: any = (brandsList ?? []).find(
               (data: any) => data.trade === productBrand
             )
 
-            availableQuantity =
-              brandDataMatch?.trade === productBrand ? AvailableQuantity : 0
-            isAuthorized = brandDataMatch?.trade === productBrand
+            isAuthorized = brandDataMatch ? !isBrandSaleable : isBrandSaleable
+            availableQuantity = isAuthorized ? AvailableQuantity : 0
           }
 
           const price = commertialOffer.SellingPrice
@@ -438,7 +458,7 @@ export const queries = {
             JDE_Country_of_Origin,
             JDE_HTS_Code,
             JDE_Tarrif,
-            JDE_Tariff_Percentage
+            JDE_Tariff_Percentage,
           }
         })
 

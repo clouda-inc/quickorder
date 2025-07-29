@@ -6,6 +6,15 @@ export const BRAND_CLIENT_ACRONYM = 'TD'
 export const BRAND_CLIENT_SCHEMA = 'mdv1'
 export const BRNAD_CLIENT_FIELDS = ['id', 'targetSystem', 'trade', 'user']
 
+export const BRAND_DEFAULT_BEHAVIOUR_ACRONYM = 'DT'
+export const BRAND_DEFAULT_BEHAVIOUR_SCHEMA = 'mdv1'
+export const BRAND_DEFAULT_BEHAVIOUR_FIELDS = [
+  'id',
+  'brandName',
+  'isSaleable',
+  'tradeSystem',
+]
+
 export const UMMOQ_CLIENT_ACRONYM = 'SL'
 export const UMMOQ_CLIENT_SCHEMA = 'mdv1'
 export const UMMOQ_CLIENT_FIELDS = [
