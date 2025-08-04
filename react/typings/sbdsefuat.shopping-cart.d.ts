@@ -1,1 +1,1 @@
-declare module 'sbdsefuat.shopping-cart/OrderFormCustomFieldHooks'
+declare module 'sbdsefprod.shopping-cart/OrderFormCustomFieldHooks'
