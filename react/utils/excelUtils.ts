@@ -70,7 +70,7 @@ export const bindTableData = (
             (coo) => coo.udc === item?.JDE_Country_of_Origin
           )?.text ?? item?.JDE_Country_of_Origin,
         quantity: item?.quantity,
-        price: `$ ${item?.price}`,
+        price: 'Contact Customer Service',
         priceUom: ' ',
         stockAvailability: item?.mto
           ? 'Made to Order'
