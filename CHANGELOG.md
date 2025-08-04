@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.105] - 2025-08-04
+
 ### Changed
 
 - Changed the text area input logic
