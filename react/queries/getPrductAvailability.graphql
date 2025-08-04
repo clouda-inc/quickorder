@@ -9,7 +9,7 @@ query getAvbProduct(
     customerNumber: $customerNumber
     targetSystem: $targetSystem
     salesOrganizationCode: $salesOrganizationCode
-  ) @context(provider: "sbdsefprod.bulk-order") {
+  ) @context(provider: "sbdsefuat.bulk-order") {
     items {
       refid
       sku
