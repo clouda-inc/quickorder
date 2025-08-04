@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+
+- Changed the text area input logic
+
 ## [0.1.104] - 2025-07-29
 
 ### Fixed

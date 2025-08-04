@@ -175,16 +175,22 @@ export const ParseText = async (
     .map(async (line: any, index: number) => {
       const lineSplitted: any = line.split(',')
 
-      if (lineSplitted.length === 2) {
+      if (lineSplitted.length === 1 || lineSplitted.length === 2) {
+        const skuReference = String(lineSplitted[0]).trim()
+        const quantity = Number(
+          lineSplitted.length === 2 ? String(lineSplitted[1]).trim() : '1'
+        )
+
         if (
-          !!lineSplitted[0] &&
-          !!String(lineSplitted[1]).trim() &&
+          !!skuReference &&
+          skuReference.length > 0 &&
           // eslint-disable-next-line no-restricted-globals
-          !isNaN(lineSplitted[1])
+          !isNaN(quantity) &&
+          quantity > 0
         ) {
           const { skuRefId, customerPartNumber, error } =
             await getRefIdWithCustomerpart(
-              String(lineSplitted[0]).trim(),
+              skuReference,
               customerNumber,
               client,
               targetSystem
@@ -232,7 +238,7 @@ export const ParseText = async (
             line: index,
             // Add encoding to handle special characters in sku name , Due to encoding sku name might be changed inside the project
             sku: skuRefId,
-            quantity: parseFloat(String(lineSplitted[1]).trim()),
+            quantity,
             content: line,
             error: null,
             partNumber: customerPartNumber,
