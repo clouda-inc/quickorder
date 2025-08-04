@@ -340,6 +340,16 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     'store/quickorder.invalidUnitMultiplier': messages.invalidUnitMultiplier,
     'store/quickorder.invalidMoq': messages.invalidMoq,
   }
+  const { useItemListDispatch } = ItemListContext
+  // const {
+  //   isLoadingCustomerInfo,
+  //   showAddToCart,
+  //   customerNumber,
+  //   targetSystem,
+  //   itemStatuses,
+  // } = useItemListState()
+
+  const dispatch = useItemListDispatch()
 
   const isEURegion = () => {
     const url = binding?.canonicalBaseAddress ?? undefined
@@ -617,6 +627,13 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     setReviewState({
       ...state,
       reviewItems: items,
+    })
+
+    dispatch({
+      type: 'REMOVE_STATUSES',
+      args: {
+        itemIndex: i,
+      },
     })
   }
 

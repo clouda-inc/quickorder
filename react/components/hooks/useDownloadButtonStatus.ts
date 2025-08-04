@@ -9,7 +9,6 @@ const useDownloadButtonStatus = (reviewItems: any[]) => {
   const [items, setItems] = useState(reviewItems)
 
   useEffect(() => {
-    console.log('>>> Table data updated: ', reviewItems)
     setItems(reviewItems)
   }, [reviewItems])
 
@@ -28,8 +27,6 @@ const useDownloadButtonStatus = (reviewItems: any[]) => {
   }
 
   const disabled = !showAddToCart || itemStatuses.some(isLoadingPredicate)
-
-  console.log(`>>> Download button disabled: `, itemStatuses, reviewItems, disabled)
 
   return {
     disabled,

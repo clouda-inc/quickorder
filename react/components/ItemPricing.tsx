@@ -68,7 +68,6 @@ const ItemPricing = ({
   const { useItemListDispatch } = ItemListContext
 
   const dispatch = useItemListDispatch()
-  console.log(`>>> Item pricing for item ${itemNumber}: `, tableData)
 
   const {
     data: itemPricingInfo,
@@ -114,7 +113,6 @@ const ItemPricing = ({
   }, [itemNumber, refetch, loading, priceList, stateChanged])
 
   useEffect(() => {
-    console.log(`>>> Price list for item ${itemNumber}: `, priceList, loading)
     dispatch({
       type: 'SET_ITEM_PRICE',
       args: {

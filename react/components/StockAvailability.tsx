@@ -48,7 +48,6 @@ const StockAvailability = ({
 
   const dispatch = useItemListDispatch()
 
-  // console.log(`>>> Stock availability for item ${itemNumber}: `, itemIndex, tableData, customerNumber)
 
   const {
     data: stockAvailabilityInfo,
@@ -69,9 +68,6 @@ const StockAvailability = ({
   )
 
   useEffect(() => {
-
-    console.log(`>>> Stock availability for item ${itemNumber}: `, stockAvailability, tableData, loading, itemIndex)
-
     dispatch({
       type: 'SET_ITEM_AVAILABILITY',
       args: {

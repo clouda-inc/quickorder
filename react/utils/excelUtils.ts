@@ -30,7 +30,6 @@ export const bindTableData = (
   isEURegion
 ) => {
 
-  console.log('>>> Download items: ', tableData, countryOfOriginList, getLineItemStatus, isEURegion)
   return tableData?.flatMap((item) => {
 
     if (!item?.priceList) {
