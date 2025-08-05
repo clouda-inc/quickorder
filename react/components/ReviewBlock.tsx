@@ -341,13 +341,6 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
     'store/quickorder.invalidMoq': messages.invalidMoq,
   }
   const { useItemListDispatch } = ItemListContext
-  // const {
-  //   isLoadingCustomerInfo,
-  //   showAddToCart,
-  //   customerNumber,
-  //   targetSystem,
-  //   itemStatuses,
-  // } = useItemListState()
 
   const dispatch = useItemListDispatch()
 
