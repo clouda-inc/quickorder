@@ -106,7 +106,7 @@ const UploadBlock: FunctionComponent<
 
   const { binding } = useRuntime()
 
-  const { disabled: isDownloadDisabled } = useDownloadButtonStatus(reviewItems)
+  const { disabled: isDownloadDisabled } = useDownloadButtonStatus(tableData)
 
   const [addToCart, { error: mutationError, loading: mutationLoading }] =
     useMutation<{ addToCart: OrderFormType }, { items: [] }>(ADD_TO_CART)

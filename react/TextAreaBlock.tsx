@@ -114,7 +114,7 @@ const TextAreaBlock: FunctionComponent<
 
   const { binding } = useRuntime()
 
-  const { disabled: isDownloadDisabled } = useDownloadButtonStatus(reviewItems)
+  const { disabled: isDownloadDisabled } = useDownloadButtonStatus(tableData)
 
   const translateMessage = (message: MessageDescriptor) => {
     return intl.formatMessage(message)

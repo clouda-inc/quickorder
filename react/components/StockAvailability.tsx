@@ -44,9 +44,10 @@ const StockAvailability = ({
   const styles = useCssHandles(CSS_HANDLES)
   const intl = useIntl()
   const { useItemListDispatch } = ItemListContext
-  const { handleExtractData } = useContext(TableDataContext) as TableData
+  const { tableData, handleExtractData } = useContext(TableDataContext) as TableData
 
   const dispatch = useItemListDispatch()
+
 
   const {
     data: stockAvailabilityInfo,
@@ -80,7 +81,7 @@ const StockAvailability = ({
         },
       },
     })
-  }, [stockAvailability, itemIndex, itemNumber, loading, dispatch])
+  }, [stockAvailability, tableData, itemIndex, itemNumber, loading, dispatch])
 
   const primaryUoM =
     stockAvailabilityInfo?.getStockAvailability?.primaryUoM ?? ''

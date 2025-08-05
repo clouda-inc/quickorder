@@ -25,6 +25,11 @@ interface SetItemStatuses {
   args: { itemStatuses: ItemStatus[] }
 }
 
+interface RemoveItemStatus {
+  type: 'REMOVE_STATUSES'
+  args: { itemIndex: number }
+}
+
 interface UpdateAllStatuses {
   type: 'UPDATE_ALL_STATUSES'
   args: { itemStatuses: ItemStatus[] }
@@ -58,6 +63,7 @@ type ReducerActions =
   | SetInitialLoading
   | SetItemAvailability
   | SetItemPrice
+  | RemoveItemStatus
 
 export type Dispatch = (action: ReducerActions) => void
 
@@ -98,6 +104,20 @@ const categoryReducer = (state: State, action: ReducerActions): State => {
         itemStatuses,
         showAddToCart: false,
         showDownloadButton: false,
+      }
+    }
+
+    case 'REMOVE_STATUSES': {
+      const itemStatuses = state.itemStatuses.filter(
+        (item: ItemStatus) => item.index !== action?.args?.itemIndex
+      ).map((item: ItemStatus, index: number) => ({
+        ...item,
+        index,
+      }))
+
+      return {
+        ...state,
+        itemStatuses,
       }
     }
 

@@ -64,7 +64,7 @@ const ItemPricing = ({
   const styles = useCssHandles(CSS_HANDLES)
   const [isOpen, setIsOpen] = useState(false)
   const intl = useIntl()
-  const { handleExtractData } = useContext(TableDataContext) as TableData
+  const { handleExtractData, tableData } = useContext(TableDataContext) as TableData
   const { useItemListDispatch } = ItemListContext
 
   const dispatch = useItemListDispatch()
@@ -95,6 +95,7 @@ const ItemPricing = ({
   }
 
   useEffect(() => {
+
     const refetchPriceListAndUpdateContext = async () => {
       const { data } = await refetch()
       const prices = data?.getItemPricing?.itemPrices ?? []
@@ -123,7 +124,9 @@ const ItemPricing = ({
         },
       },
     })
-  }, [priceList, itemIndex, itemNumber, loading, dispatch])
+  }, [priceList, itemIndex, itemNumber, loading, dispatch, tableData])
+
+  const priceListFromContext = tableData?.find((item) => item.index === itemIndex)?.priceList ?? []
 
   return loading ? (
     <div className={`${styles.priceTable}`}>
@@ -139,7 +142,7 @@ const ItemPricing = ({
           {intl.formatMessage(messages.price)} {uomSuffixForTitles}
         </div>
       </div>
-      {priceList.map((item: ItemPrices, index: number) => {
+      {priceListFromContext.map((item: ItemPrices, index: number) => {
         return index < 3 ? (
           <div
             key={`${item?.itemNumber}-${index}-${item.price}`}
@@ -181,7 +184,7 @@ const ItemPricing = ({
               {intl.formatMessage(messages.price)} {uomSuffixForTitles}
             </div>
           </div>
-          {priceList.map((item: ItemPrices) => {
+          {priceListFromContext.map((item: ItemPrices) => {
             return (
               <div
                 key={item?.itemNumber}
