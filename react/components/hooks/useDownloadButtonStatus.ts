@@ -20,13 +20,15 @@ const useDownloadButtonStatus = (reviewItems: any[]) => {
 
     const loading =
       targetSystem === TARGET_SYSTEM.JDE && reviewItem?.mto
-        ? itemStatus.isPriceLoading || !reviewItem?.priceList
-        : (itemStatus.isPriceLoading || !reviewItem?.priceList) || itemStatus.isQuantityLoading
+        ? itemStatus.isPriceLoading || !(reviewItem?.priceList || reviewItem?.priceList?.length)
+        : itemStatus.isPriceLoading || !(reviewItem?.priceList || reviewItem?.priceList?.length) || itemStatus.isQuantityLoading
 
     return loading
   }
 
   const disabled = !showAddToCart || itemStatuses.some(isLoadingPredicate)
+
+  console.log('>>> Download button disabled:', disabled, reviewItems, itemStatuses)
 
   return {
     disabled,

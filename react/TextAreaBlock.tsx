@@ -227,6 +227,8 @@ const TextAreaBlock: FunctionComponent<
 
       handleExtractData('-1', items, ' ')
 
+      // console.log()
+
       dispatch({
         type: 'UPDATE_ALL_STATUSES',
         args: {

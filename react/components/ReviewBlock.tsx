@@ -616,17 +616,18 @@ const ReviewBlock: FunctionComponent<WrappedComponentProps & any> = ({
         }
       })
 
-    onReviewItems(items)
-    setReviewState({
-      ...state,
-      reviewItems: items,
-    })
-
+      
     dispatch({
       type: 'REMOVE_STATUSES',
       args: {
         itemIndex: i,
       },
+    })
+
+    onReviewItems(items)
+    setReviewState({
+      ...state,
+      reviewItems: items,
     })
   }
 
