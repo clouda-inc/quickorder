@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.106] - 2025-08-04
+
+### Fixed
+
+- Fixed download issue in JDE, price not loading in the downloaded file
+
+## [0.1.105] - 2025-08-04
+
+## [0.1.104] - 2025-08-04
+
 ## [0.1.103] - 2025-06-19
 
 ## [0.1.102] - 2025-06-12
