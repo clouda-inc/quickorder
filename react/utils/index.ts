@@ -4,6 +4,7 @@ import GET_PRODUCT_SPECIFICATION_BY_NAME from '../queries/getProductSpecificatio
 import { TARGET_SYSTEM } from './const'
 
 const RESTRICTED_BRAND_SPIRALOCK = 'SPIRALOCK'
+const RESTRICTED_BRAND_SWS_SPARES = 'SWS SPARES'
 const SPEC_JDE_LEAD_TIME_DAYS = 'JDE_Lead_Time_Days'
 const SPEC_MADE_TO_ORDER = 'JDE_MTO'
 
@@ -216,11 +217,26 @@ export const ParseText = async (
             }
           }
 
+          // Check for SPIRALOCK brand
           const { isSameBrand: isSpiraLockItem } = await getBrandRestrictions(
             skuRefId,
             client,
             RESTRICTED_BRAND_SPIRALOCK
           )
+
+          // Check for SWS SPARES brand
+          const { isSameBrand: isSWSSparesItem } = await getBrandRestrictions(
+            skuRefId,
+            client,
+            RESTRICTED_BRAND_SWS_SPARES
+          )
+
+          // Determine branch based on brand
+          const getBranchCode = () => {
+            if (isSpiraLockItem) return '6100'
+            if (isSWSSparesItem) return '1100'
+            return '2200' // Default branch for non-special brands
+          }
 
           const thruDate =
             targetSystem === TARGET_SYSTEM.JDE
@@ -242,7 +258,7 @@ export const ParseText = async (
             content: line,
             error: null,
             partNumber: customerPartNumber,
-            branch: isSpiraLockItem ? '6100' : '2100',
+            branch: getBranchCode(),
             thruDate,
             mto,
           }

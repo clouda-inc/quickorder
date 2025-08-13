@@ -26,7 +26,7 @@ export const SpecialBrandHandleModal = ({isModalOpen, setIsModelOpen}:IProps) =>
               Invalid Cart
             </p>
             <p>
-              You cannot have both SPIRALOCK brand and other brands together, please strict to either SPIRALOCK products or non SPIRALOCK products
+              You cannot have special brands like SPIRALOCK brand, SWS Spares and other brands together, please strict to either SPIRALOCK products, SWS Spares or other products
             </p>
           </div>
       </Modal>

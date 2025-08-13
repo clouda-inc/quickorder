@@ -59,6 +59,7 @@ interface ItemType {
 }
 
 const SPECAIL_BRAND_NAME = 'SPIRALOCK'
+const SPECAIL_BRAND_NAME_2 = 'SWS SPARES'
 
 const TextAreaBlock: FunctionComponent<
   TextAreaBlockInterface & WrappedComponentProps
@@ -309,36 +310,37 @@ const TextAreaBlock: FunctionComponent<
 
   const addToCartCopyNPaste = () => {
     const currentItemsInCart = orderForm.orderForm.items
-
-    const isSpecialBrandItemExistInCurrentCart = (
-      currentItemsInCart ?? []
-    ).find(
+  
+    const isSpecialBrandItemExistInCurrentCart = (currentItemsInCart ?? []).find(
       (item: any) =>
-        item?.additionalInfo?.brandName?.toUpperCase() === SPECAIL_BRAND_NAME
+        item?.additionalInfo?.brandName?.toUpperCase() === SPECAIL_BRAND_NAME ||
+        item?.additionalInfo?.brandName?.toUpperCase() === SPECAIL_BRAND_NAME_2
     )
-
+  
     const specialBrandItemInReviewItems = (reviewItems ?? []).filter(
-      (item: any) => item.brand.toUpperCase() === SPECAIL_BRAND_NAME
+      (item: any) => 
+        item?.brand?.toUpperCase() === SPECAIL_BRAND_NAME ||
+        item?.brand?.toUpperCase() === SPECAIL_BRAND_NAME_2
     )
-
+  
     const cond1 =
       currentItemsInCart.length > 0 &&
       !!isSpecialBrandItemExistInCurrentCart &&
       specialBrandItemInReviewItems.length === reviewItems.length
-
+  
     const cond2 =
       currentItemsInCart.length === 0 &&
       specialBrandItemInReviewItems.length === reviewItems.length
-
+  
     const cond3 =
       currentItemsInCart.length === 0 &&
       specialBrandItemInReviewItems.length === 0
-
+  
     const cond4 =
       currentItemsInCart.length > 0 &&
       !isSpecialBrandItemExistInCurrentCart &&
       specialBrandItemInReviewItems.length === 0
-
+  
     if (cond1 || cond2 || cond3 || cond4) {
       const items: any = reviewItems
         .filter((item: any) => item.error === null && item.vtexSku !== null)
@@ -349,24 +351,24 @@ const TextAreaBlock: FunctionComponent<
             seller,
           }
         })
-
+  
       const merge = (internalItems: any) => {
         return internalItems.reduce((acc, val) => {
           const { id, quantity }: ItemType = val
           const ind = acc.findIndex((el: any) => el.id === id)
-
+  
           if (ind !== -1) {
             acc[ind].quantity += quantity
           } else {
             acc.push(val)
           }
-
+  
           return acc
         }, [])
       }
-
+  
       const mergedItems = merge(items)
-
+  
       callAddToCart(mergedItems)
     } else {
       setIsModelOpen(true)
