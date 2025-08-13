@@ -976,3 +976,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Initial release with Copy/Paste and One by One modules.
+- Added SWS Spares brand restrictions
