@@ -8,8 +8,6 @@ export const isValidToAddItems = (
   brandsOfCartItems: string[],
   brandsOfNewItems: string[]
 ) => {
-  console.log('inputs >>>> ', brandsOfCartItems, brandsOfNewItems)
-
   if (brandsOfNewItems?.length === 0) {
     return false
   }
@@ -37,10 +35,6 @@ export const isValidToAddItems = (
         )
       ? INVALID_STATE
       : DEFAULT_STATE
-
-  console.log('cartState >>>> ', cartState)
-  console.log('uniqueBrandsOfNewItems >>>> ', uniqueBrandsOfNewItems)
-  console.log('newItemsState >>>> ', newItemsState)
 
   return (
     newItemsState !== INVALID_STATE &&

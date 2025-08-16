@@ -310,22 +310,6 @@ const TextAreaBlock: FunctionComponent<
   const handles = useCssHandles(CSS_HANDLES)
 
   const addToCartCopyNPaste = () => {
-    // const currentItemsInCart = orderForm.orderForm.items
-
-    // const isSpecialBrandItemExistInCurrentCart = (
-    //   currentItemsInCart ?? []
-    // ).find(
-    //   (item: any) =>
-    //     item?.additionalInfo?.brandName?.toUpperCase() === SPECAIL_BRAND_NAME ||
-    //     item?.additionalInfo?.brandName?.toUpperCase() === SPECAIL_BRAND_NAME_2
-    // )
-
-    // const specialBrandItemInReviewItems = (reviewItems ?? []).filter(
-    //   (item: any) =>
-    //     item?.brand?.toUpperCase() === SPECAIL_BRAND_NAME ||
-    //     item?.brand?.toUpperCase() === SPECAIL_BRAND_NAME_2
-    // )
-
     const validToAddItems = isValidToAddItems(
       orderForm?.orderForm?.items?.map(
         (item: any) => item?.additionalInfo?.brandName ?? ''
@@ -333,25 +317,6 @@ const TextAreaBlock: FunctionComponent<
       reviewItems?.map((item: any) => item?.brand ?? '')
     )
 
-    // const cond1 =
-    //   currentItemsInCart.length > 0 &&
-    //   !!isSpecialBrandItemExistInCurrentCart &&
-    //   specialBrandItemInReviewItems.length === reviewItems.length
-
-    // const cond2 =
-    //   currentItemsInCart.length === 0 &&
-    //   specialBrandItemInReviewItems.length === reviewItems.length
-
-    // const cond3 =
-    //   currentItemsInCart.length === 0 &&
-    //   specialBrandItemInReviewItems.length === 0
-
-    // const cond4 =
-    //   currentItemsInCart.length > 0 &&
-    //   !isSpecialBrandItemExistInCurrentCart &&
-    //   specialBrandItemInReviewItems.length === 0
-
-    // if (cond1 || cond2 || cond3 || cond4) {
     if (validToAddItems) {
       const items: any = reviewItems
         .filter((item: any) => item.error === null && item.vtexSku !== null)
