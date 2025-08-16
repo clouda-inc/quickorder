@@ -235,7 +235,8 @@ export const ParseText = async (
           const getBranchCode = () => {
             if (isSpiraLockItem) return '6100'
             if (isSWSSparesItem) return '1100'
-            return '2200' // Default branch for non-special brands
+
+            return '2100' // Default branch for non-special brands
           }
 
           const thruDate =
