@@ -394,6 +394,12 @@ const TextAreaBlock: FunctionComponent<
     return item?.availability
   }
 
+  const getAvailableQuantity = (lineItem: any) => {
+    const item = itemStatuses.find((itm: any) => itm.index === lineItem.index)
+
+    return item?.availableQuantity
+  }
+
   const isEURegion = () => {
     const url = binding?.canonicalBaseAddress ?? undefined
 
@@ -424,10 +430,13 @@ const TextAreaBlock: FunctionComponent<
 
   const downloadExcelFile = async () => {
     setExcelDownloading(true)
+
+    console.log(">>>< Item statuses:", itemStatuses)
     const data = bindTableData(
       tableData,
       countryOfOriginList,
       getLineItemStatus,
+      getAvailableQuantity,
       isEURegion
     )
 

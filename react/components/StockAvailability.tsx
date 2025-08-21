@@ -104,6 +104,7 @@ const StockAvailability = ({
 
       refetchStockAvailabilityAndUpdateContext()
     }
+    
   }, [itemNumber, refetch, loading, stockAvailability])
 
   return loading ? (
