@@ -430,8 +430,6 @@ const TextAreaBlock: FunctionComponent<
 
   const downloadExcelFile = async () => {
     setExcelDownloading(true)
-
-    console.log(">>>< Item statuses:", itemStatuses)
     const data = bindTableData(
       tableData,
       countryOfOriginList,
