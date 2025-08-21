@@ -1,5 +1,6 @@
 // Add brands' names in UPPERCASE //
-export const RESTRICTED_BRANDS = ['SPIRALOCK', 'SWS SPARES']
+// export const RESTRICTED_BRANDS = ['SPIRALOCK', 'SWS SPARES']
+export const RESTRICTED_BRANDS = ['SPIRALOCK']
 export const DEFAULT_STATE = 'DEFAULT'
 export const INVALID_STATE = 'INVALID'
 export const EMPTY_CART = 'ZERO'
