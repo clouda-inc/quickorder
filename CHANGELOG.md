@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.110] - 2025-08-21
+
 ### Added
 
 - Added simplified logic for brand restricted cart
