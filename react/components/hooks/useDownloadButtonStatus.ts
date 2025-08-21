@@ -28,8 +28,6 @@ const useDownloadButtonStatus = (reviewItems: any[]) => {
 
   const disabled = !showAddToCart || itemStatuses.some(isLoadingPredicate)
 
-  console.log('>>> Download button disabled:', disabled, reviewItems, itemStatuses)
-
   return {
     disabled,
   }

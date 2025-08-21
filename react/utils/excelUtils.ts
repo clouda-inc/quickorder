@@ -27,10 +27,13 @@ export const bindTableData = (
   tableData,
   countryOfOriginList,
   getLineItemStatus,
+  getAvailableQuantity,
   isEURegion
 ) => {
 
   return tableData?.flatMap((item) => {
+
+    const stockAvailability = getAvailableQuantity(item)
 
     if (!item?.priceList) {
       return {
@@ -74,8 +77,8 @@ export const bindTableData = (
         priceUom: ' ',
         stockAvailability: item?.mto
           ? 'Made to Order'
-          : item?.stockAvailability > 0
-          ? `${item.stockAvailability} M`
+          : stockAvailability > 0
+          ? `${stockAvailability} M`
           : 'Out of Stock',
         system: TARGET_SYSTEM.JDE,
       }
@@ -101,8 +104,8 @@ export const bindTableData = (
       priceUom: priceItem?.uom,
       stockAvailability: item?.mto
         ? 'Made to Order'
-        : item?.stockAvailability > 0
-        ? `${item.stockAvailability} M`
+        : stockAvailability > 0
+        ? `${stockAvailability} M`
         : 'Out of Stock',
       system: TARGET_SYSTEM.JDE,
     }))
