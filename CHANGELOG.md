@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- Added simplified logic for brand restricted cart
+
 ## [0.1.109] - 2025-08-21
 
 ### Fixed
@@ -982,3 +986,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Initial release with Copy/Paste and One by One modules.
+- Added SWS Spares brand restrictions

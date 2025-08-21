@@ -30,6 +30,7 @@ import {
   fetchEmailTemplateLogo,
   bindTableData,
 } from './utils/excelUtils'
+import { isValidToAddItems } from './utils/checkBrandRestrictions'
 
 interface ItemType {
   id: string
@@ -59,8 +60,6 @@ const messages = defineMessages({
     label: '',
   },
 })
-
-const SPECAIL_BRAND_NAME = 'SPIRALOCK'
 
 const UploadBlock: FunctionComponent<
   UploadBlockInterface & WrappedComponentProps
@@ -383,38 +382,14 @@ const UploadBlock: FunctionComponent<
   }
 
   const addToCartUpload = () => {
-    const currentItemsInCart = orderForm.orderForm.items
-
-    const isSpecialBrandItemExistInCurrentCart = (
-      currentItemsInCart ?? []
-    ).find(
-      (item: any) =>
-        item?.additionalInfo?.brandName?.toUpperCase() === SPECAIL_BRAND_NAME
+    const validToAddItems = isValidToAddItems(
+      orderForm?.orderForm?.items?.map(
+        (item: any) => item?.additionalInfo?.brandName ?? ''
+      ),
+      reviewItems?.map((item: any) => item?.brand ?? '')
     )
 
-    const specialBrandItemInReviewItems = (reviewItems ?? []).filter(
-      (item: any) => item.brand.toUpperCase() === SPECAIL_BRAND_NAME
-    )
-
-    const cond1 =
-      currentItemsInCart.length > 0 &&
-      !!isSpecialBrandItemExistInCurrentCart &&
-      specialBrandItemInReviewItems.length === reviewItems.length
-
-    const cond2 =
-      currentItemsInCart.length === 0 &&
-      specialBrandItemInReviewItems.length === reviewItems.length
-
-    const cond3 =
-      currentItemsInCart.length === 0 &&
-      specialBrandItemInReviewItems.length === 0
-
-    const cond4 =
-      currentItemsInCart.length > 0 &&
-      !isSpecialBrandItemExistInCurrentCart &&
-      specialBrandItemInReviewItems.length === 0
-
-    if (cond1 || cond2 || cond3 || cond4) {
+    if (validToAddItems) {
       const items: any = reviewItems
         .filter((item: any) => item.error === null && item.vtexSku !== null)
         .map(({ vtexSku, quantity, seller, unit }: any) => {
