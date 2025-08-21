@@ -4,12 +4,14 @@ import { Modal } from 'vtex.styleguide'
 
 interface IProps {
   isModalOpen: boolean
-  setIsModelOpen: (e: boolean)=> void
+  setIsModelOpen: (e: boolean) => void
 }
 
-export const SpecialBrandHandleModal = ({isModalOpen, setIsModelOpen}:IProps) => {
-
-  const handleClose: React.MouseEventHandler<HTMLDivElement> =(e)=> {
+export const SpecialBrandHandleModal = ({
+  isModalOpen,
+  setIsModelOpen,
+}: IProps) => {
+  const handleClose: React.MouseEventHandler<HTMLDivElement> = (e) => {
     e.preventDefault()
     e.stopPropagation()
     setIsModelOpen(false)
@@ -17,20 +19,16 @@ export const SpecialBrandHandleModal = ({isModalOpen, setIsModelOpen}:IProps) =>
 
   return (
     <>
-      <Modal
-        responsiveFullScreen
-        isOpen={isModalOpen}
-        onClose={handleClose}>
-          <div className="">
-            <p className="f3 f3-ns fw3 gray">
-              Invalid Cart
-            </p>
-            <p>
-              You cannot have special brands like SPIRALOCK brand, SWS Spares and other brands together, please strict to either SPIRALOCK products, SWS Spares or other products
-            </p>
-          </div>
+      <Modal responsiveFullScreen isOpen={isModalOpen} onClose={handleClose}>
+        <div className="">
+          <p className="f3 f3-ns fw3 gray">Invalid Cart</p>
+          <p>
+            You cannot have special brands like SPIRALOCK brand and other brands
+            together please strict to either SPIRALOCK products or other
+            products
+          </p>
+        </div>
       </Modal>
     </>
   )
 }
-
