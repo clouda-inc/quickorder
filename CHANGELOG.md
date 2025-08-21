@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Added simplified logic for brand restricted cart
 
+## [0.1.109] - 2025-08-21
+
+### Fixed
+
+- Downloaded file stock is unavailable all the time issue fixed
+
 ## [0.1.108] - 2025-08-05
 
 ### Fixed
